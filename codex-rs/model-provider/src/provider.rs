@@ -6,6 +6,8 @@ use codex_api::Provider;
 use codex_api::SharedAuthProvider;
 use codex_login::AuthManager;
 use codex_login::CodexAuth;
+use codex_model_provider_info::AMAZON_BEDROCK_PROVIDER_ID;
+use codex_model_provider_info::DEEPSEEK_PROVIDER_ID;
 use codex_model_provider_info::ModelProviderInfo;
 use codex_models_manager::manager::OpenAiModelsManager;
 use codex_models_manager::manager::SharedModelsManager;
@@ -16,6 +18,7 @@ use codex_protocol::openai_models::ModelsResponse;
 use crate::amazon_bedrock::AmazonBedrockModelProvider;
 use crate::auth::auth_manager_for_provider;
 use crate::auth::resolve_provider_auth;
+use crate::deepseek::DeepSeekModelProvider;
 use crate::models_endpoint::OpenAiModelsEndpoint;
 
 /// Optional provider-backed features that Codex may expose at runtime.
@@ -138,11 +141,30 @@ pub fn create_model_provider(
     provider_info: ModelProviderInfo,
     auth_manager: Option<Arc<AuthManager>>,
 ) -> SharedModelProvider {
-    if provider_info.is_amazon_bedrock() {
+    create_model_provider_for_id(provider_info.name.clone(), provider_info, auth_manager)
+}
+
+/// Creates the runtime model provider for a configured provider ID.
+pub fn create_model_provider_for_id(
+    provider_id: impl AsRef<str>,
+    provider_info: ModelProviderInfo,
+    auth_manager: Option<Arc<AuthManager>>,
+) -> SharedModelProvider {
+    let provider_id = provider_id.as_ref();
+    if provider_id == AMAZON_BEDROCK_PROVIDER_ID || provider_info.is_amazon_bedrock() {
         Arc::new(AmazonBedrockModelProvider::new(provider_info))
+    } else if is_deepseek_provider_id(provider_id) {
+        Arc::new(DeepSeekModelProvider::new(provider_info, auth_manager))
     } else {
         Arc::new(ConfiguredModelProvider::new(provider_info, auth_manager))
     }
+}
+
+fn is_deepseek_provider_id(provider_id: &str) -> bool {
+    provider_id == DEEPSEEK_PROVIDER_ID
+        || provider_id
+            .strip_prefix(DEEPSEEK_PROVIDER_ID)
+            .is_some_and(|suffix| suffix.starts_with('-'))
 }
 
 /// Runtime model provider backed by configured `ModelProviderInfo`.
@@ -256,6 +278,7 @@ mod tests {
     use codex_model_provider_info::ModelProviderAwsAuthInfo;
     use codex_model_provider_info::WireApi;
     use codex_models_manager::manager::RefreshStrategy;
+    use codex_models_manager::model_info::model_info_from_slug;
     use codex_protocol::config_types::ModelProviderAuthInfo;
     use codex_protocol::openai_models::ModelInfo;
     use codex_protocol::openai_models::ModelsResponse;
@@ -465,6 +488,140 @@ mod tests {
                 requires_openai_auth: false,
             })
         );
+    }
+
+    #[test]
+    fn deepseek_provider_disables_provider_bound_capabilities() {
+        let provider = create_model_provider_for_id(
+            DEEPSEEK_PROVIDER_ID,
+            ModelProviderInfo::create_deepseek_provider(),
+            /*auth_manager*/ None,
+        );
+
+        assert_eq!(
+            provider.capabilities(),
+            ProviderCapabilities {
+                namespace_tools: false,
+                image_generation: false,
+                web_search: false,
+            }
+        );
+    }
+
+    #[test]
+    fn deepseek_provider_returns_no_account_state() {
+        let provider = create_model_provider_for_id(
+            DEEPSEEK_PROVIDER_ID,
+            ModelProviderInfo::create_deepseek_provider(),
+            /*auth_manager*/ None,
+        );
+
+        assert_eq!(
+            provider.account_state(),
+            Ok(ProviderAccountState {
+                account: None,
+                requires_openai_auth: false,
+            })
+        );
+    }
+
+    #[tokio::test]
+    async fn deepseek_provider_creates_static_models_manager() {
+        let provider = create_model_provider_for_id(
+            DEEPSEEK_PROVIDER_ID,
+            ModelProviderInfo::create_deepseek_provider(),
+            /*auth_manager*/ None,
+        );
+        let manager =
+            provider.models_manager(test_codex_home(), /*config_model_catalog*/ None);
+
+        let catalog = manager.raw_model_catalog(RefreshStrategy::Online).await;
+        let model_ids = catalog
+            .models
+            .iter()
+            .map(|model| model.slug.as_str())
+            .collect::<Vec<_>>();
+
+        assert_eq!(model_ids, vec!["deepseek-v4-pro", "deepseek-v4-flash"]);
+        assert!(
+            catalog
+                .models
+                .iter()
+                .all(|model| !model.supports_search_tool)
+        );
+    }
+
+    #[tokio::test]
+    async fn deepseek_provider_id_creates_deepseek_provider_for_custom_name() {
+        let provider = create_model_provider_for_id(
+            "deepseek-vendor",
+            ModelProviderInfo {
+                name: "Vendor DeepSeek".to_string(),
+                base_url: Some("https://api.deepseek.com".to_string()),
+                env_key: Some("DEEPSEEK_API_KEY".to_string()),
+                wire_api: WireApi::ChatCompletions,
+                ..Default::default()
+            },
+            /*auth_manager*/ None,
+        );
+
+        assert_eq!(
+            provider.capabilities(),
+            ProviderCapabilities {
+                namespace_tools: false,
+                image_generation: false,
+                web_search: false,
+            }
+        );
+
+        let manager =
+            provider.models_manager(test_codex_home(), /*config_model_catalog*/ None);
+        let catalog = manager.raw_model_catalog(RefreshStrategy::Online).await;
+        let model_ids = catalog
+            .models
+            .iter()
+            .map(|model| model.slug.as_str())
+            .collect::<Vec<_>>();
+
+        assert_eq!(model_ids, vec!["deepseek-v4-pro", "deepseek-v4-flash"]);
+    }
+
+    #[test]
+    fn custom_provider_id_does_not_infer_deepseek_from_name() {
+        let provider = create_model_provider_for_id(
+            "vendor-deepseek",
+            ModelProviderInfo {
+                name: "DeepSeek".to_string(),
+                base_url: Some("https://api.deepseek.com".to_string()),
+                env_key: Some("DEEPSEEK_API_KEY".to_string()),
+                wire_api: WireApi::ChatCompletions,
+                ..Default::default()
+            },
+            /*auth_manager*/ None,
+        );
+
+        assert_eq!(provider.capabilities(), ProviderCapabilities::default());
+    }
+
+    #[tokio::test]
+    async fn deepseek_provider_uses_configured_static_catalog_when_present() {
+        let custom_model = model_info_from_slug("custom-deepseek-model");
+
+        let provider = create_model_provider(
+            ModelProviderInfo::create_deepseek_provider(),
+            /*auth_manager*/ None,
+        );
+        let manager = provider.models_manager(
+            test_codex_home(),
+            Some(ModelsResponse {
+                models: vec![custom_model],
+            }),
+        );
+
+        let catalog = manager.raw_model_catalog(RefreshStrategy::Online).await;
+
+        assert_eq!(catalog.models.len(), 1);
+        assert_eq!(catalog.models[0].slug, "custom-deepseek-model");
     }
 
     #[tokio::test]

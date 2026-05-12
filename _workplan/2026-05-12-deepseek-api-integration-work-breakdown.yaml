@@ -1,0 +1,123 @@
+goal: >-
+  接入 DeepSeek Chat Completions API，使 Codex 能以受限能力运行
+  deepseek-v4-pro 与 deepseek-v4-flash。
+task_type: 'implementation'
+status: 'completed'
+source_of_truth:
+  current_user_request: true
+  roadmap: '_workplan/2026-05-12-deepseek-api-integration-roadmap.md'
+  analysis:
+    - 'docs/deepseek-api/integration/openai-interface-analysis.md'
+    - 'docs/deepseek-api/integration/deepseek-integration-assessment.md'
+principles:
+  - '一事一做：一次只推进一个 work package。'
+  - '上下文压缩后先读本 workplan，再继续当前未完成 package。'
+  - 'DeepSeek 暂缺搜索工具，首版必须禁用 web_search。'
+  - '协议转换集中在 API/client 边界，不散落到 turn loop。'
+  - '不恢复无约束旧 chat 行为。'
+quality_gates:
+  - 'awk 行宽检查不得出现超过 88 字符的新增行。'
+  - 'Rust 修改后在 codex-rs 运行 just fmt。'
+  - '每个 touched crate 运行最小相关测试。'
+  - '每个 package 更新 Completion Evidence。'
+assumptions:
+  - 'DeepSeek 文档快照代表 2026-05-12 的接入目标。'
+  - '首版可以使用静态 model_catalog_json 补足 ModelInfo。'
+  - '首版不实现 DeepSeek strict schema beta 默认开启。'
+scope_notes:
+  in:
+    - 'DeepSeek Chat Completions 文本与流式适配。'
+    - '基础 function tool calls。'
+    - 'reasoning_content 保存与回传。'
+    - 'JSON object 输出降级。'
+    - 'cache hit/miss usage 映射。'
+  out:
+    - 'web_search、image_generation 和 Responses hosted tools。'
+    - 'DeepSeek strict schema beta 默认启用。'
+    - '完整多模态能力。'
+planned_work_packages:
+  - id: '00-wire-api-contract'
+    name: 'Wire API 协议边界'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      00-wire-api-contract.md"
+    managed_requirements:
+      - '新增受限 Chat Completions wire API 表达。'
+    functional_scope:
+      in:
+        - 'WireApi 枚举与反序列化。'
+      out:
+        - 'HTTP client 和请求转换。'
+  - id: '01-chat-endpoint-types'
+    name: 'Chat Completions endpoint 类型'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      01-chat-endpoint-types.md"
+    managed_requirements:
+      - '定义 DeepSeek 所需 Chat 请求、响应和 chunk 类型。'
+    functional_scope:
+      in:
+        - 'codex-api endpoint 类型和最小 client。'
+      out:
+        - 'core 路由接入。'
+  - id: '02-request-adapter'
+    name: 'Responses 到 Chat 请求适配'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      02-request-adapter.md"
+    managed_requirements:
+      - '把 Prompt 和历史转换成 DeepSeek messages。'
+    functional_scope:
+      in:
+        - 'messages、tools、thinking、JSON output 转换。'
+      out:
+        - 'SSE parser。'
+  - id: '03-stream-adapter'
+    name: 'DeepSeek 流式响应适配'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      03-stream-adapter.md"
+    managed_requirements:
+      - '把 chat.completion.chunk 转成 ResponseEvent。'
+    functional_scope:
+      in:
+        - '文本、reasoning、tool arguments、usage。'
+      out:
+        - 'provider catalog。'
+  - id: '04-model-client-routing'
+    name: 'ModelClient 路由接入'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      04-model-client-routing.md"
+    managed_requirements:
+      - '按 wire API 路由到 Chat Completions。'
+    functional_scope:
+      in:
+        - 'HTTP stream path 和错误映射。'
+      out:
+        - 'WebSocket 支持。'
+  - id: '05-deepseek-provider-catalog'
+    name: 'DeepSeek provider 与模型目录'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      05-deepseek-provider-catalog.md"
+    managed_requirements:
+      - '提供 DeepSeek provider 能力边界和 model catalog 方案。'
+    functional_scope:
+      in:
+        - '禁用不支持能力。'
+        - '静态模型元数据。'
+      out:
+        - '动态补全所有 ModelInfo 字段。'
+  - id: '06-integration-tests'
+    name: '集成测试与证据'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-api-integration-work-packages/\
+      06-integration-tests.md"
+    managed_requirements:
+      - '覆盖首版验收矩阵并记录证据。'
+    functional_scope:
+      in:
+        - 'unit tests、core tests 和行宽检查。'
+      out:
+        - '完整 workspace 长跑测试，除非用户另行确认。'

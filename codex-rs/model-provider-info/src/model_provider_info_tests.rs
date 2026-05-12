@@ -117,6 +117,81 @@ wire_api = "chat"
 
     let err = toml::from_str::<ModelProviderInfo>(provider_toml).unwrap_err();
     assert!(err.to_string().contains(CHAT_WIRE_API_REMOVED_ERROR));
+    assert!(err.to_string().contains("chat_completions"));
+}
+
+#[test]
+fn test_deserialize_chat_completions_wire_api() {
+    let provider_toml = r#"
+name = "DeepSeek"
+base_url = "https://api.deepseek.com"
+env_key = "DEEPSEEK_API_KEY"
+wire_api = "chat_completions"
+        "#;
+
+    let provider: ModelProviderInfo = toml::from_str(provider_toml).unwrap();
+
+    assert_eq!(provider.wire_api, WireApi::ChatCompletions);
+}
+
+#[test]
+fn test_display_chat_completions_wire_api() {
+    assert_eq!(WireApi::ChatCompletions.to_string(), "chat_completions");
+}
+
+#[test]
+fn test_create_deepseek_provider() {
+    let provider = ModelProviderInfo::create_deepseek_provider();
+
+    assert_eq!(
+        provider,
+        ModelProviderInfo {
+            name: "DeepSeek".into(),
+            base_url: Some("https://api.deepseek.com".into()),
+            env_key: Some("DEEPSEEK_API_KEY".into()),
+            env_key_instructions: None,
+            experimental_bearer_token: None,
+            auth: None,
+            aws: None,
+            wire_api: WireApi::ChatCompletions,
+            query_params: None,
+            http_headers: None,
+            env_http_headers: None,
+            request_max_retries: None,
+            stream_max_retries: None,
+            stream_idle_timeout_ms: None,
+            websocket_connect_timeout_ms: None,
+            requires_openai_auth: false,
+            supports_websockets: false,
+        }
+    );
+}
+
+#[test]
+fn test_built_in_model_providers_include_deepseek() {
+    let providers = built_in_model_providers(/*openai_base_url*/ None);
+
+    assert_eq!(
+        providers.get(DEEPSEEK_PROVIDER_ID),
+        Some(&ModelProviderInfo::create_deepseek_provider())
+    );
+}
+
+#[test]
+fn test_built_in_model_providers_use_deepseek_base_url_override() {
+    let providers = built_in_model_providers_with_base_urls(
+        /*openai_base_url*/ None,
+        Some("http://127.0.0.1:8080/v1".to_string()),
+    );
+
+    let provider = providers
+        .get(DEEPSEEK_PROVIDER_ID)
+        .expect("DeepSeek provider should be built in");
+
+    assert_eq!(
+        provider.base_url.as_deref(),
+        Some("http://127.0.0.1:8080/v1")
+    );
 }
 
 #[test]

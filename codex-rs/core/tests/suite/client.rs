@@ -16,6 +16,7 @@ use codex_model_provider_info::ModelProviderInfo;
 use codex_model_provider_info::WireApi;
 use codex_model_provider_info::built_in_model_providers;
 use codex_models_manager::bundled_models_response;
+use codex_models_manager::model_info::model_info_from_slug;
 use codex_otel::SessionTelemetry;
 use codex_otel::TelemetryAuthMode;
 use codex_protocol::ThreadId;
@@ -39,6 +40,7 @@ use codex_protocol::models::ReasoningItemContent;
 use codex_protocol::models::ReasoningItemReasoningSummary;
 use codex_protocol::models::ResponseItem;
 use codex_protocol::models::WebSearchAction;
+use codex_protocol::openai_models::ModelsResponse;
 use codex_protocol::openai_models::ReasoningEffort;
 use codex_protocol::protocol::EventMsg;
 use codex_protocol::protocol::Op;
@@ -57,6 +59,8 @@ use core_test_support::responses::ev_completed_with_tokens;
 use core_test_support::responses::ev_message_item_added;
 use core_test_support::responses::ev_output_text_delta;
 use core_test_support::responses::ev_response_created;
+use core_test_support::responses::mount_chat_seq;
+use core_test_support::responses::mount_chat_sse_once;
 use core_test_support::responses::mount_sse_once;
 use core_test_support::responses::mount_sse_once_match;
 use core_test_support::responses::mount_sse_sequence;
@@ -902,6 +906,7 @@ async fn send_provider_auth_request(server: &MockServer, auth: ModelProviderAuth
         thread_id.into(),
         thread_id,
         /*installation_id*/ "11111111-1111-4111-8111-111111111111".to_string(),
+        /*provider_id*/ "test-provider".to_string(),
         provider,
         SessionSource::Exec,
         config.model_verbosity,
@@ -988,6 +993,237 @@ async fn includes_base_instructions_override_in_request() {
             .unwrap()
             .contains("test instructions")
     );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn chat_completions_wire_api_uses_chat_completions_route() {
+    skip_if_no_network!();
+
+    let server = MockServer::start().await;
+    let sse_body = concat!(
+        "data: {\"id\":\"chatcmpl-1\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"role\":\"assistant\",\"content\":\"hello\"},\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,\"model\":\"gpt-test\",",
+        "\"object\":\"chat.completion.chunk\",\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    );
+    let body = sse_body.to_string();
+    let resp_mock = mount_chat_sse_once(&server, body).await;
+
+    let provider = ModelProviderInfo {
+        name: "chat-completions-test".into(),
+        base_url: Some(format!("{}/v1", server.uri())),
+        env_key: None,
+        env_key_instructions: None,
+        experimental_bearer_token: None,
+        auth: None,
+        aws: None,
+        wire_api: WireApi::ChatCompletions,
+        query_params: None,
+        http_headers: None,
+        env_http_headers: None,
+        request_max_retries: Some(0),
+        stream_max_retries: Some(0),
+        stream_idle_timeout_ms: Some(5_000),
+        websocket_connect_timeout_ms: None,
+        requires_openai_auth: false,
+        supports_websockets: true,
+    };
+    let codex_home = TempDir::new().unwrap();
+    let mut config = load_default_config_for_test(&codex_home).await;
+    config.model_provider_id = provider.name.clone();
+    config.model_provider = provider.clone();
+    let effort = config.model_reasoning_effort;
+    let summary = config.model_reasoning_summary;
+    let model = codex_core::test_support::get_model_offline(config.model.as_deref());
+    config.model = Some(model.clone());
+    let config = Arc::new(config);
+    let model_info =
+        codex_core::test_support::construct_model_info_offline(model.as_str(), &config);
+    let thread_id = ThreadId::new();
+    let session_telemetry = SessionTelemetry::new(
+        thread_id,
+        model.as_str(),
+        model_info.slug.as_str(),
+        /*account_id*/ None,
+        Some("test@test.com".to_string()),
+        /*auth_mode*/ None,
+        "test_originator".to_string(),
+        /*log_user_prompts*/ false,
+        "test".to_string(),
+        SessionSource::Exec,
+    );
+    let client = ModelClient::new(
+        Some(AuthManager::from_auth_for_testing(CodexAuth::from_api_key(
+            "unused-api-key",
+        ))),
+        thread_id.into(),
+        thread_id,
+        /*installation_id*/ "11111111-1111-4111-8111-111111111111".to_string(),
+        /*provider_id*/ "test-provider".to_string(),
+        provider,
+        SessionSource::Exec,
+        config.model_verbosity,
+        /*enable_request_compression*/ false,
+        /*include_timing_metrics*/ false,
+        /*beta_features_header*/ None,
+        /*attestation_provider*/ None,
+    );
+    let mut client_session = client.new_session();
+    let mut prompt = Prompt::default();
+    prompt.input.push(ResponseItem::Message {
+        id: None,
+        role: "user".to_string(),
+        content: vec![ContentItem::InputText {
+            text: "hello".to_string(),
+        }],
+        phase: None,
+    });
+
+    let mut stream = client_session
+        .stream(
+            &prompt,
+            &model_info,
+            &session_telemetry,
+            effort,
+            summary.unwrap_or(ReasoningSummary::Auto),
+            /*service_tier*/ None,
+            /*turn_metadata_header*/ None,
+            &codex_rollout_trace::InferenceTraceContext::disabled(),
+        )
+        .await
+        .expect("chat completions stream should start");
+    while let Some(event) = stream.next().await {
+        let event = event.expect("chat completions stream should not fail");
+        if matches!(event, ResponseEvent::Completed { .. }) {
+            break;
+        }
+    }
+
+    let request = resp_mock.single_request();
+    assert_eq!(request.path(), "/v1/chat/completions");
+    let body = request.body_json();
+    assert_eq!(body["model"], model_info.slug);
+    let messages = body["messages"].as_array().expect("messages array");
+    assert!(
+        messages
+            .iter()
+            .any(|message| message["role"].as_str() == Some("user"))
+    );
+    assert_eq!(body["stream"], true);
+    assert_eq!(body["stream_options"]["include_usage"], true);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn deepseek_provider_replays_reasoning_tool_history() -> anyhow::Result<()> {
+    skip_if_no_network!(Ok(()));
+
+    let server = MockServer::start().await;
+    let tool_args = json!({}).to_string();
+    let first_response = concat!(
+        "data: {\"id\":\"chatcmpl-tool\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"reasoning_content\":\"need shell\"},\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: {\"id\":\"chatcmpl-tool\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"tool_calls\":[{\"index\":0,\"id\":\"call-sync\",\"type\":\"function\",",
+        "\"function\":{\"name\":\"test_sync_tool\",\"arguments\":\"{}\"}}]},",
+        "\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    )
+    .to_string();
+    let second_response = concat!(
+        "data: {\"id\":\"chatcmpl-final\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"content\":\"done\"},\"finish_reason\":null,\"logprobs\":null}],",
+        "\"created\":1718345014,\"model\":\"deepseek-v4-pro\",",
+        "\"object\":\"chat.completion.chunk\",\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    )
+    .to_string();
+    let responses = vec![first_response, second_response];
+    let chat_mock = mount_chat_seq(&server, responses).await;
+
+    let provider_base_url = server.uri();
+    let mut builder = test_codex()
+        .with_model("deepseek-v4-pro")
+        .with_config(move |config| {
+            let mut provider = ModelProviderInfo::create_deepseek_provider();
+            provider.base_url = Some(provider_base_url);
+            provider.env_key = None;
+            provider.request_max_retries = Some(0);
+            provider.stream_max_retries = Some(0);
+            provider.stream_idle_timeout_ms = Some(5_000);
+            config.model_provider_id = "deepseek".to_string();
+            config.model_provider = provider;
+            config.model = Some("deepseek-v4-pro".to_string());
+            config.include_apply_patch_tool = false;
+            let mut model = model_info_from_slug("deepseek-v4-pro");
+            model.experimental_supported_tools = vec!["test_sync_tool".to_string()];
+            config.model_catalog = Some(ModelsResponse {
+                models: vec![model],
+            });
+        });
+    let test = builder.build(&server).await?;
+
+    let sandbox = test.config.legacy_sandbox_policy();
+    test.submit_turn_with_policy("run a local echo", sandbox)
+        .await?;
+
+    let requests = chat_mock.requests();
+    assert_eq!(requests.len(), 2);
+    let first_body = requests[0].body_json();
+    let second_body = requests[1].body_json();
+
+    assert_eq!(requests[0].path(), "/chat/completions");
+    assert_eq!(first_body["model"].as_str(), Some("deepseek-v4-pro"));
+    assert!(
+        first_body["tools"]
+            .as_array()
+            .expect("tools array")
+            .iter()
+            .any(|tool| tool["function"]["name"].as_str() == Some("test_sync_tool"))
+    );
+    assert!(
+        first_body["tools"]
+            .as_array()
+            .expect("tools array")
+            .iter()
+            .all(|tool| tool["type"].as_str() == Some("function"))
+    );
+
+    let messages = second_body["messages"]
+        .as_array()
+        .expect("messages array in follow-up request");
+    let tool_call_message = messages
+        .iter()
+        .find(|message| message.get("tool_calls").is_some())
+        .expect("follow-up should replay assistant tool call");
+    assert_eq!(
+        tool_call_message["reasoning_content"].as_str(),
+        Some("need shell")
+    );
+    assert_eq!(
+        tool_call_message["tool_calls"][0]["function"]["name"].as_str(),
+        Some("test_sync_tool")
+    );
+    assert_eq!(
+        tool_call_message["tool_calls"][0]["function"]["arguments"].as_str(),
+        Some(tool_args.as_str())
+    );
+    assert!(
+        messages
+            .iter()
+            .any(|message| message["role"].as_str() == Some("tool")
+                && message["tool_call_id"].as_str() == Some("call-sync"))
+    );
+    assert_eq!(second_body["stream"], true);
+    assert_eq!(second_body["stream_options"]["include_usage"], true);
+
+    Ok(())
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
@@ -2325,6 +2561,7 @@ async fn azure_responses_request_includes_store_and_reasoning_ids() {
         thread_id.into(),
         thread_id,
         /*installation_id*/ "11111111-1111-4111-8111-111111111111".to_string(),
+        /*provider_id*/ "test-provider".to_string(),
         provider.clone(),
         SessionSource::Exec,
         config.model_verbosity,

@@ -1,0 +1,203 @@
+spec_id: 'workplan-artifact-boundary'
+spec_version: '1.0'
+spec_type: 'artifact-shape-contract'
+applies_to:
+  - '_workplan/*-roadmap.md'
+  - '_workplan/*-work-breakdown.yaml'
+  - '_workplan/*-work-packages/README.md'
+  - '_workplan/*-work-packages/[0-9][0-9]-*.md'
+  - '_workplan/specs/*.content.spec.yaml'
+  - '_workplan/specs/*.content.meta_spec.yaml'
+language: 'zh-CN'
+purpose: >-
+  定义 _workplan 产物的最小可验证结构与边界协议，
+  不定义实施任务范围。
+
+interpretation:
+  not_a_backlog: true
+  not_an_implementation_scope: true
+  implementation_scope_source:
+    - 'current_user_request'
+    - 'explicit_source_documents'
+    - 'approved_workplan_artifact'
+  optionality_semantics:
+    must: 'required for artifact validity'
+    should: 'recommended; missing produces warning only'
+    may: 'allowed extension; do not generate unless context requires it'
+  examples_are_normative: false
+  ai_reading_rule: >-
+    AI must treat this file as a boundary contract, not as an instruction to
+    widen the current task.
+
+artifact_profiles:
+  roadmap:
+    artifact_kind: 'roadmap'
+    path_profile: '_workplan/*-roadmap.md'
+    required_slots_semantics: 'closed exact-once set; duplicates invalid'
+    required_sections:
+      - 'Goal'
+      - 'Source Documents'
+      - 'Current Implementation'
+      - 'Target Capability'
+      - 'Roadmap Phases'
+      - 'Quality Gates'
+    optional_sections:
+      risks:
+        level: 'should'
+        include_when:
+          - 'project has external dependencies'
+          - 'project spans multiple work packages'
+          - 'evidence is incomplete or stale'
+      residual_risks:
+        level: 'should'
+        include_when:
+          - 'native validators or external tools are involved'
+          - 'fallback behavior exists'
+      open_questions:
+        level: 'may'
+        include_when:
+          - 'scope has unresolved decisions'
+      decision_log:
+        level: 'may'
+        include_when:
+          - 'there is a review or audit loop'
+  work_breakdown:
+    artifact_kind: 'workBreakdown'
+    path_profile: '_workplan/*-work-breakdown.yaml'
+    required_slots_semantics: 'closed exact-once set; duplicates invalid'
+    required_keys:
+      - 'goal'
+      - 'task_type'
+      - 'status'
+      - 'source_of_truth'
+      - 'principles'
+      - 'quality_gates'
+      - 'planned_work_packages'
+    optional_keys:
+      assumptions:
+        level: 'should'
+        include_when:
+          - 'the plan depends on evidence or tool support that may change'
+      scope_notes:
+        level: 'may'
+        include_when:
+          - 'the project needs an explicit scope fence'
+  package_index:
+    artifact_kind: 'packageIndex'
+    path_profile: '_workplan/*-work-packages/README.md'
+    required_slots_semantics: 'closed exact-once set; duplicates invalid'
+    required_sections:
+      - 'Purpose'
+      - 'Source Of Truth'
+      - 'Execution Order'
+      - 'Dependency Graph'
+      - 'Global Quality Gates'
+      - 'Review Loop'
+      - 'Status'
+  work_package:
+    artifact_kind: 'workPackage'
+    path_profile: '_workplan/*-work-packages/[0-9][0-9]-*.md'
+    required_slots_semantics: 'closed exact-once set; duplicates invalid'
+    required_sections:
+      - 'Metadata'
+      - 'Objective'
+      - 'Functional Scope'
+      - 'Non-Functional Requirements'
+      - 'Quality Standards'
+      - 'Subplan'
+      - 'Audit-Evaluate-Optimize Loop'
+      - 'Definition Of Done'
+      - 'Completion Evidence'
+    optional_sections:
+      risks:
+        level: 'should'
+        include_when:
+          - 'the package touches external tools, migrations, or evidence drift'
+      open_questions:
+        level: 'may'
+        include_when:
+          - 'there are unresolved design choices'
+      notes:
+        level: 'may'
+        include_when:
+          - 'the package needs extra context but not a new requirement'
+  content_spec:
+    artifact_kind: 'contentSpec'
+    path_profile:
+      - '_workplan/specs/*.content.spec.yaml'
+      - '_workplan/specs/*.content.meta_spec.yaml'
+    required_slots_semantics: 'closed non-empty exact-once anchors'
+    required_anchors:
+      - 'spec_id'
+      - 'spec_version'
+      - 'spec_type'
+      - 'applies_to'
+      - 'language'
+      - 'purpose'
+      - 'interpretation'
+      - 'artifact_profiles'
+      - 'scope_fences'
+      - 'linter_behavior'
+
+scope_fences:
+  hard_boundary:
+    - 'This spec does not authorize additional implementation work.'
+    - 'This spec does not add new scope beyond the current user request.'
+    - >-
+      This spec does not replace explicit roadmap, work breakdown, or work
+      package content.
+  expansion_policy:
+    - 'Optional sections are only generated when triggered by context.'
+    - 'Missing SHOULD sections are warnings, not automatic scope expansion.'
+    - >-
+      Missing SHOULD or MAY slots may create findings only; they must not
+      generate executable work items or backlog.
+    - >-
+      Examples are informative findings context only; they must not generate
+      executable work items or backlog.
+
+linter_behavior:
+  must_checks:
+    - 'file naming matches lower-kebab-case and date prefix rules'
+    - 'required sections, keys, or anchors exist exactly once'
+    - 'duplicate required slots are invalid'
+    - >-
+      references use declared _workplan path profiles; filesystem existence is
+      an external quality gate, not a Workplans formal proof
+    - >-
+      Work package documents include metadata, objective, scope, DoD, and
+      completion evidence.
+  should_checks:
+    - 'roadmap contains risks when the project is externally coupled'
+    - 'work-breakdown.yaml records source_of_truth for traceability'
+    - 'README includes execution order and dependency graph'
+  may_checks:
+    - 'decision logs'
+    - 'open questions'
+    - 'additional notes or evidence matrices'
+  severity_mapping:
+    missing_must: 'error'
+    missing_should: 'warning'
+    missing_may: 'advisory'
+    must_not_violation: 'error'
+    scope_overreach: 'error'
+    expansion_without_trigger: 'warning'
+    ambiguous_example: 'warning'
+
+examples_policy:
+  - 'Examples are informative only.'
+  - 'Examples must not be interpreted as required backlog items.'
+  - >-
+    Linter and AI assistants should not infer extra work from a section
+    existing in the spec.
+  - >-
+    Examples may support review findings only; they must not generate
+    executable work items.
+
+references:
+  roadmap_patterns:
+    - '_workplan/2026-05-07-agent-skill-linter-roadmap.md'
+  legacy_work_breakdown_patterns:
+    - '_workplan/2026-05-07-agent-skill-linter-wbs.yaml'
+  legacy_work_package_patterns:
+    - '_workplan/2026-05-07-agent-skill-linter-wbs/README.md'

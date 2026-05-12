@@ -1,0 +1,195 @@
+spec_id: 'workplan-work-breakdown'
+spec_version: '1.0'
+spec_type: 'artifact_content_contract'
+meta_spec_id: 'workplan-work-breakdown'
+meta_spec_version: '1.0'
+meta_spec_type: 'artifact_content_contract'
+document_kind: 'workplan-work-breakdown'
+artifact_kinds:
+  work_breakdown: 'workBreakdown'
+  package_index: 'packageIndex'
+path_profiles:
+  work_breakdown: '_workplan/*-work-breakdown.yaml'
+  package_index: '_workplan/*-work-packages/README.md'
+  package_document: '_workplan/*-work-packages/[0-9][0-9]-*.md'
+applies_to:
+  - '_workplan/*-work-breakdown.yaml'
+  - '_workplan/*-work-packages/README.md'
+language: 'zh-CN'
+purpose: >-
+  定义 workplan work breakdown 文档的最小形状，用于保持工作拆分、
+  执行顺序、依赖关系和完成证据可检查。
+
+interpretation:
+  not_a_backlog: true
+  not_an_implementation_scope: true
+  source_of_truth:
+    - 'approved_roadmap'
+    - 'current_user_request'
+    - 'explicit_source_documents'
+  ai_reading_rule: >-
+    AI must treat work breakdown artifacts as scoped planning records. A work
+    package exists only when it is listed by the approved work breakdown or an
+    explicit user request.
+
+work_breakdown_contract:
+  required_key_semantics:
+    closed_set: true
+    exact_once: true
+    duplicate_keys_invalid: true
+  required_keys:
+    - 'goal'
+    - 'task_type'
+    - 'status'
+    - 'source_of_truth'
+    - 'principles'
+    - 'quality_gates'
+    - 'planned_work_packages'
+  package_required_keys:
+    - 'id'
+    - 'document'
+  package_profile_guidance_keys:
+    - 'name'
+    - 'status'
+    - 'managed_requirements'
+    - 'functional_scope'
+  package_scope_guidance_keys:
+    - 'in'
+    - 'out'
+  package_matching:
+    one_to_one_by_id_and_path: true
+    unique_planned_package_ids: true
+    unique_package_document_ids: true
+    unique_package_document_paths: true
+    planned_id_must_equal_document_id: true
+    planned_document_path_must_equal_package_document_path: true
+    document_path_profile: '_workplan/*-work-packages/[0-9][0-9]-*.md'
+    filesystem_existence_proof_required: false
+
+package_index_contract:
+  artifact_kind: 'packageIndex'
+  path_profile: '_workplan/*-work-packages/README.md'
+  required_section_semantics:
+    closed_set: true
+    exact_once: true
+    duplicate_sections_invalid: true
+  required_sections:
+    - 'Purpose'
+    - 'Source Of Truth'
+    - 'Execution Order'
+    - 'Dependency Graph'
+    - 'Global Quality Gates'
+    - 'Review Loop'
+    - 'Status'
+
+artifact_profiles:
+  work_breakdown:
+    artifact_kind: 'workBreakdown'
+    path_profile: '_workplan/*-work-breakdown.yaml'
+    required_slots_semantics: 'closed exact-once set; duplicates invalid'
+    required_keys:
+      - 'goal'
+      - 'task_type'
+      - 'status'
+      - 'source_of_truth'
+      - 'principles'
+      - 'quality_gates'
+      - 'planned_work_packages'
+  package_index:
+    artifact_kind: 'packageIndex'
+    path_profile: '_workplan/*-work-packages/README.md'
+    required_slots_semantics: 'closed exact-once set; duplicates invalid'
+    required_sections:
+      - 'Purpose'
+      - 'Source Of Truth'
+      - 'Execution Order'
+      - 'Dependency Graph'
+      - 'Global Quality Gates'
+      - 'Review Loop'
+      - 'Status'
+
+scope_fences:
+  hard_boundary:
+    - 'This breakdown contract does not authorize work outside its scope.'
+    - 'This breakdown contract does not prove filesystem existence.'
+    - 'This breakdown contract must remain outside DAAT core admission.'
+  expansion_policy:
+    - 'Optional package guidance requires explicit context triggers.'
+    - 'Missing SHOULD or MAY guidance creates findings only.'
+    - 'Examples must not generate executable work items.'
+
+linter_behavior:
+  must_checks:
+    - 'breakdown required keys exist exactly once'
+    - 'package index required sections exist exactly once'
+    - 'planned package ids and document paths match one-to-one'
+  should_checks:
+    - 'quality gates should include executable or reviewable gates'
+    - 'source records should remain traceable to approved roadmap artifacts'
+  may_checks:
+    - 'breakdowns may include assumptions or scope notes'
+  severity_mapping:
+    missing_must: 'error'
+    missing_should: 'warning'
+    missing_may: 'advisory'
+    must_not_violation: 'error'
+    scope_overreach: 'error'
+    expansion_without_trigger: 'warning'
+    ambiguous_example: 'warning'
+
+approved_hierarchy:
+  roadmap_to_work_breakdown: true
+  work_breakdown_to_package_index: true
+  work_breakdown_to_package_documents: true
+  typed_bounded_artifacts_required: true
+  direct_package_execution_from_roadmap: false
+  roadmap_approval_required: true
+  work_breakdown_approval_required: true
+  work_breakdown_source_roadmap_matches_roadmap_artifact_id: true
+  work_breakdown_source_must_include_approved_roadmap: true
+  binding_is_relation_not_closed_shape_key: true
+
+static_checks:
+  must:
+    - 'each planned_work_packages entry has a matching work package document'
+    - 'each work package document has a matching id in the breakdown YAML'
+    - 'planned package and package document paths match one-to-one'
+    - 'planned package ids are unique'
+    - 'package document ids are unique'
+    - 'package document paths are unique'
+    - 'work package document paths follow the _workplan package path profile'
+    - 'approved hierarchy marks roadmap and work breakdown approved'
+    - 'work breakdown sourceRoadmap equals source roadmap artifact id'
+    - 'work breakdown sources include approvedRoadmap authorization'
+    - 'package index execution order references declared package ids'
+    - 'package index dependency graph mentions declared package ids'
+  should:
+    - 'quality gates should include at least one executable or reviewable gate'
+    - 'source_of_truth should include roadmap or explicit source documents'
+  must_not:
+    - 'work breakdown YAML must not point to files outside _workplan'
+    - 'work breakdown must not authorize implementation outside its scope'
+
+severity_mapping:
+  missing_must: 'error'
+  missing_should: 'warning'
+  missing_may: 'advisory'
+  must_not_violation: 'error'
+  scope_overreach: 'error'
+  expansion_without_trigger: 'warning'
+  ambiguous_example: 'warning'
+
+generation_guard:
+  optional_missing_creates_finding_only: true
+  examples_create_finding_only: true
+  executable_items_from_optional_missing: false
+
+examples:
+  informative_only: true
+  files:
+    - '_workplan/2026-05-07-agent-skill-linter-wbs.yaml'
+    - '_workplan/2026-05-07-agent-skill-linter-wbs/README.md'
+  legacy_term_note: >-
+    Existing examples may use WBS names. New workplan artifacts should use
+    work-breakdown and work-packages names unless a project explicitly needs
+    PMI terminology.

@@ -1,0 +1,195 @@
+spec_id: 'workplan-content-spec'
+spec_version: '1.0'
+spec_type: 'meta_content_contract'
+meta_spec_id: 'workplan-content-spec'
+meta_spec_version: '1.0'
+meta_spec_type: 'meta_content_contract'
+applies_to:
+  - '_workplan/specs/*.content.spec.yaml'
+  - '_workplan/specs/*.content.meta_spec.yaml'
+scope:
+  - '_workplan/specs/*.content.spec.yaml'
+  - '_workplan/specs/*.content.meta_spec.yaml'
+language: 'zh-CN'
+purpose: >-
+  定义 workplan content spec 的最小生成与校验规则，用于指导未来新的
+  内容契约文件创建。
+
+interpretation:
+  not_a_backlog: true
+  not_an_implementation_scope: true
+  not_a_template_lock: true
+  implementation_scope_source:
+    - 'current_user_request'
+    - 'explicit_source_documents'
+    - 'approved_workplan_artifact'
+  optionality_semantics:
+    must: 'required for meta spec validity'
+    should: 'recommended; missing produces warning only'
+    may: 'allowed extension; do not generate unless context requires it'
+  ai_reading_rule: >-
+    AI must treat this file as a generator contract for future content specs,
+    not as a task backlog.
+
+required_anchors_for_content_spec:
+  - 'spec_id'
+  - 'spec_version'
+  - 'spec_type'
+  - 'applies_to'
+  - 'language'
+  - 'purpose'
+  - 'interpretation'
+  - 'artifact_profiles'
+  - 'scope_fences'
+  - 'linter_behavior'
+
+required_anchor_semantics:
+  non_empty: true
+  closed_set: true
+  exact_once: true
+  duplicate_anchors_invalid: true
+  source_model: 'DAAT.Extensions.Workplans.Model.contentSpecRequiredAnchors'
+
+artifact_profiles:
+  content_spec:
+    artifact_kind: 'contentSpec'
+    path_profile:
+      - '_workplan/specs/*.content.spec.yaml'
+      - '_workplan/specs/*.content.meta_spec.yaml'
+    required_slots_semantics: 'closed non-empty exact-once anchors'
+    required_anchors:
+      - 'spec_id'
+      - 'spec_version'
+      - 'spec_type'
+      - 'applies_to'
+      - 'language'
+      - 'purpose'
+      - 'interpretation'
+      - 'artifact_profiles'
+      - 'scope_fences'
+      - 'linter_behavior'
+
+scope_fences:
+  hard_boundary:
+    - 'This meta spec does not authorize implementation work.'
+    - 'This meta spec does not prove parser or filesystem behavior.'
+    - 'This meta spec does not replace artifact-specific contracts.'
+  expansion_policy:
+    - 'Optional anchors or examples are findings-only unless triggered.'
+    - 'Missing SHOULD or MAY guidance must not generate executable work items.'
+    - 'External tooling checks remain repository quality gates.'
+
+linter_behavior:
+  must_checks:
+    - 'content spec anchors exist exactly once'
+    - 'duplicate required anchors are invalid'
+    - 'content spec path profiles stay under _workplan/specs'
+  should_checks:
+    - 'content specs should state optional expansion triggers'
+    - 'content specs should mark examples as informative only'
+  may_checks:
+    - 'content specs may include examples or recommended layouts'
+  severity_mapping:
+    missing_must: 'error'
+    missing_should: 'warning'
+    missing_may: 'advisory'
+    must_not_violation: 'error'
+    scope_overreach: 'error'
+    expansion_without_trigger: 'warning'
+    ambiguous_example: 'warning'
+
+generation_rules:
+  file_location:
+    directory: '_workplan/specs'
+    suffix: '.content.spec.yaml'
+    rule: '每个 content spec 文件必须放在 specs 目录下。'
+  naming:
+    style: 'lower-kebab-case'
+    rule: '文件名应表达适用对象或边界主题。'
+  scope_design:
+    rule: >-
+      content spec 只定义产物的最小可验证结构与边界，
+      不定义具体实现任务。
+  contract_style:
+    rule: '优先使用 artifact-shape-contract 或等价的结构契约类型。'
+  optionality:
+    rule: 'MUST 是硬约束，SHOULD 是 warning 级建议，MAY 是可选扩展。'
+  expansion_guard:
+    rule: >-
+      会扩大实施范围的字段必须带 include_when 或等价触发条件。
+  examples:
+    rule: '示例必须明确标注为 informative only，不能被解释为 backlog。'
+
+required_sections_for_new_content_spec:
+  interpretation:
+    must_include:
+      - 'not_a_backlog'
+      - 'not_an_implementation_scope'
+      - 'implementation_scope_source'
+      - 'optionality_semantics'
+      - 'ai_reading_rule'
+  artifact_profiles:
+    must_include:
+      - 'roadmap'
+      - 'work_breakdown'
+      - 'package_index'
+      - 'work_package'
+      - 'content_spec'
+  scope_fences:
+    must_include:
+      - 'hard_boundary'
+      - 'expansion_policy'
+  linter_behavior:
+    must_include:
+      - 'must_checks'
+      - 'should_checks'
+      - 'may_checks'
+      - 'severity_mapping'
+
+default_severity_policy:
+  missing_must: 'error'
+  missing_should: 'warning'
+  missing_may: 'advisory'
+  must_not_violation: 'error'
+  expansion_without_trigger: 'warning'
+  scope_overreach: 'error'
+  ambiguous_example: 'warning'
+
+anti_overreach_rules:
+  - 'content spec 不能声明新的实施任务。'
+  - 'content spec 不能替代 roadmap、work breakdown 或 work package。'
+  - 'content spec 不能把 optional section 变成默认 backlog。'
+  - >-
+    任何新增能力必须显式来源于 current_user_request、
+    explicit_source_documents 或 approved_workplan_artifact。
+
+recommended_layout:
+  directory: '_workplan/specs'
+  files:
+    - 'workplan-content-spec.content.meta_spec.yaml'
+    - '*.content.spec.yaml'
+    - '*.content.meta_spec.yaml'
+  optional_index:
+    - 'README.md'
+  optional_subprofiles:
+    - 'workplan-artifact-boundary.content.spec.yaml'
+    - 'workplan-roadmap.content.meta_spec.yaml'
+    - 'workplan-work-breakdown.content.meta_spec.yaml'
+    - 'workplan-work-package.content.meta_spec.yaml'
+
+validation:
+  - 'meta spec should parse as YAML as an external tooling quality gate'
+  - 'meta spec must live under _workplan/specs'
+  - 'meta spec must describe how future content specs are generated'
+  - 'new content spec files must include the required anchors'
+  - 'new content spec files must keep required anchors exact-once'
+  - 'new content spec files must make optional expansion explicit'
+  - 'new content spec files must state that examples are informative only'
+  - 'git diff --check should pass as an external repository quality gate'
+
+notes:
+  - 'This file is the upper contract for future content specs.'
+  - 'It should stay small and stable, so that future linter work can rely on it.'
+  - >-
+    If future content specs need more detail, add subprofiles rather than
+    inflating this file into a monolithic template.

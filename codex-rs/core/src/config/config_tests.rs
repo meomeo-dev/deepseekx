@@ -64,6 +64,7 @@ use codex_features::FeaturesToml;
 use codex_model_provider_info::LMSTUDIO_OSS_PROVIDER_ID;
 use codex_model_provider_info::OLLAMA_OSS_PROVIDER_ID;
 use codex_model_provider_info::WireApi;
+use codex_model_provider_info::built_in_model_providers;
 use codex_models_manager::bundled_models_response;
 use codex_protocol::config_types::ServiceTier;
 use codex_protocol::models::ActivePermissionProfile;
@@ -505,6 +506,35 @@ region = "us-west-2"
             .and_then(|aws| aws.region.as_deref()),
         Some("us-west-2")
     );
+}
+
+#[tokio::test]
+async fn load_config_accepts_deepseek_prefixed_custom_provider_id() {
+    let cfg = toml::from_str::<ConfigToml>(
+        r#"
+model_provider = "deepseek-vendor"
+model = "deepseek-v4-flash"
+
+[model_providers.deepseek-vendor]
+name = "Vendor DeepSeek"
+base_url = "https://api.deepseek.com"
+env_key = "DEEPSEEK_API_KEY"
+wire_api = "chat_completions"
+"#,
+    )
+    .expect("DeepSeek custom provider should deserialize");
+
+    let config = Config::load_from_base_config_with_overrides(
+        cfg,
+        ConfigOverrides::default(),
+        tempdir().expect("tempdir").abs(),
+    )
+    .await
+    .expect("load config");
+
+    assert_eq!(config.model_provider_id, "deepseek-vendor");
+    assert_eq!(config.model_provider.name, "Vendor DeepSeek");
+    assert_eq!(config.model_provider.wire_api, WireApi::ChatCompletions);
 }
 
 #[tokio::test]

@@ -311,6 +311,66 @@ async fn get_model_info_matches_hyphenated_provider_namespace_suffix() {
 }
 
 #[tokio::test]
+async fn get_model_info_applies_one_m_context_window_alias() {
+    let config = ModelsManagerConfig::default();
+    let remote = remote_model(
+        "deepseek-v4-flash",
+        "DeepSeek V4 Flash",
+        /*priority*/ 0,
+    );
+    let manager = static_manager_for_tests(ModelsResponse {
+        models: vec![remote],
+    });
+
+    let model_info = manager
+        .get_model_info("deepseek-v4-flash[1m]", &config)
+        .await;
+
+    assert_eq!(model_info.slug, "deepseek-v4-flash");
+    assert_eq!(model_info.context_window, Some(1_000_000));
+    assert_eq!(model_info.max_context_window, Some(1_000_000));
+    assert!(!model_info.used_fallback_model_metadata);
+}
+
+#[tokio::test]
+async fn model_context_window_override_wins_over_one_m_alias() {
+    let config = ModelsManagerConfig {
+        model_context_window: Some(384_000),
+        ..Default::default()
+    };
+    let remote = remote_model(
+        "deepseek-v4-flash",
+        "DeepSeek V4 Flash",
+        /*priority*/ 0,
+    );
+    let manager = static_manager_for_tests(ModelsResponse {
+        models: vec![remote],
+    });
+
+    let model_info = manager
+        .get_model_info("deepseek-v4-flash[1m]", &config)
+        .await;
+
+    assert_eq!(model_info.slug, "deepseek-v4-flash");
+    assert_eq!(model_info.context_window, Some(384_000));
+    assert_eq!(model_info.max_context_window, Some(1_000_000));
+    assert!(!model_info.used_fallback_model_metadata);
+}
+
+#[tokio::test]
+async fn one_m_alias_fallback_uses_base_model_slug() {
+    let config = ModelsManagerConfig::default();
+    let manager = static_manager_for_tests(ModelsResponse { models: vec![] });
+
+    let model_info = manager.get_model_info("deepseek-custom[1m]", &config).await;
+
+    assert_eq!(model_info.slug, "deepseek-custom");
+    assert_eq!(model_info.context_window, Some(1_000_000));
+    assert_eq!(model_info.max_context_window, Some(1_000_000));
+    assert!(model_info.used_fallback_model_metadata);
+}
+
+#[tokio::test]
 async fn get_model_info_rejects_multi_segment_namespace_suffix_matching() {
     let codex_home = tempdir().expect("temp dir");
     let config = ModelsManagerConfig::default();

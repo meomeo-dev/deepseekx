@@ -3,7 +3,7 @@ use crate::SkillLoadOutcome;
 use crate::config::GhostSnapshotConfig;
 use crate::environment_selection::ResolvedTurnEnvironments;
 use codex_model_provider::SharedModelProvider;
-use codex_model_provider::create_model_provider;
+use codex_model_provider::create_model_provider_for_id;
 use codex_protocol::SessionId;
 use codex_protocol::models::AdditionalPermissionProfile;
 use codex_protocol::protocol::ThreadSource;
@@ -471,7 +471,11 @@ impl Session {
         let image_generation_tool_auth_allowed =
             image_generation_tool_auth_allowed(auth_manager.as_deref());
         let auth_manager_for_context = auth_manager.clone();
-        let provider_for_context = create_model_provider(provider, auth_manager);
+        let provider_for_context = create_model_provider_for_id(
+            &per_turn_config.model_provider_id,
+            provider,
+            auth_manager,
+        );
         let provider_capabilities = provider_for_context.capabilities();
         let session_telemetry_for_context = session_telemetry;
         let tools_config = ToolsConfig::new(&ToolsConfigParams {

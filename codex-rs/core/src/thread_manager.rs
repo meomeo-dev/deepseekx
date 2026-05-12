@@ -24,7 +24,7 @@ use codex_extension_api::ExtensionRegistry;
 use codex_extension_api::empty_extension_registry;
 use codex_login::AuthManager;
 use codex_login::CodexAuth;
-use codex_model_provider::create_model_provider;
+use codex_model_provider::create_model_provider_for_id;
 use codex_model_provider_info::ModelProviderInfo;
 use codex_model_provider_info::OPENAI_PROVIDER_ID;
 use codex_models_manager::manager::RefreshStrategy;
@@ -218,7 +218,11 @@ pub fn build_models_manager(
     config: &Config,
     auth_manager: Arc<AuthManager>,
 ) -> SharedModelsManager {
-    let provider = create_model_provider(config.model_provider.clone(), Some(auth_manager));
+    let provider = create_model_provider_for_id(
+        &config.model_provider_id,
+        config.model_provider.clone(),
+        Some(auth_manager),
+    );
     provider.models_manager(
         config.codex_home.to_path_buf(),
         config.model_catalog.clone(),
@@ -369,8 +373,12 @@ impl ThreadManager {
             state: Arc::new(ThreadManagerState {
                 threads: Arc::new(RwLock::new(HashMap::new())),
                 thread_created_tx,
-                models_manager: create_model_provider(provider, Some(auth_manager.clone()))
-                    .models_manager(codex_home, /*config_model_catalog*/ None),
+                models_manager: create_model_provider_for_id(
+                    OPENAI_PROVIDER_ID,
+                    provider,
+                    Some(auth_manager.clone()),
+                )
+                .models_manager(codex_home, /*config_model_catalog*/ None),
                 environment_manager,
                 skills_manager,
                 plugins_manager,

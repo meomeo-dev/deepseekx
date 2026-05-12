@@ -29,6 +29,9 @@ use tracing::instrument;
 
 pub use crate::tools::context::ToolCallSource;
 
+const APPLY_PATCH_CHAT_COMPLETIONS_INPUT_FIELD: &str = "input";
+const APPLY_PATCH_TOOL_NAME: &str = "apply_patch";
+
 #[derive(Clone, Debug)]
 pub struct ToolCall {
     pub tool_name: ToolName,
@@ -126,15 +129,18 @@ impl ToolRouter {
             {
                 Some(config.spec.clone())
             }
-            ToolSpec::Namespace(namespace) => namespace.tools.iter().find_map(|tool| match tool {
-                ResponsesApiNamespaceTool::Function(tool)
-                    if tool_name.namespace.as_deref() == Some(namespace.name.as_str())
-                        && tool.name == tool_name.name =>
-                {
-                    Some(ToolSpec::Function(tool.clone()))
-                }
-                _ => None,
-            }),
+            ToolSpec::Namespace(namespace) => {
+                let same_namespace =
+                    tool_name.namespace.as_deref() == Some(namespace.name.as_str());
+                namespace.tools.iter().find_map(|tool| match tool {
+                    ResponsesApiNamespaceTool::Function(tool)
+                        if same_namespace && tool.name == tool_name.name =>
+                    {
+                        Some(ToolSpec::Function(tool.clone()))
+                    }
+                    _ => None,
+                })
+            }
             _ => None,
         })
     }
@@ -165,12 +171,16 @@ impl ToolRouter {
             })
     }
 
+    fn supports_parallel_mcp(&self, server: &str) -> bool {
+        self.parallel_mcp_server_names.contains(server)
+    }
+
     pub fn tool_supports_parallel(&self, call: &ToolCall) -> bool {
         match &call.payload {
             // MCP parallel support is configured per server, including for deferred
             // tools that may not have a matching spec entry. Use the parsed payload
             // server so similarly named servers/tools cannot collide.
-            ToolPayload::Mcp { server, .. } => self.parallel_mcp_server_names.contains(server),
+            ToolPayload::Mcp { server, .. } => self.supports_parallel_mcp(server),
             _ => self.configured_tool_supports_parallel(&call.tool_name),
         }
     }
@@ -189,7 +199,8 @@ impl ToolRouter {
                 ..
             } => {
                 let tool_name = ToolName::new(namespace, name);
-                if let Some(tool_info) = session.resolve_mcp_tool_info(&tool_name).await {
+                let tool_info = session.resolve_mcp_tool_info(&tool_name).await;
+                if let Some(tool_info) = tool_info {
                     Ok(Some(ToolCall {
                         tool_name: tool_info.canonical_tool_name(),
                         call_id,
@@ -200,10 +211,19 @@ impl ToolRouter {
                         },
                     }))
                 } else {
+                    let payload = if tool_name.namespace.is_none()
+                        && tool_name.name == APPLY_PATCH_TOOL_NAME
+                    {
+                        ToolPayload::Custom {
+                            input: apply_patch_args_input(&arguments)?,
+                        }
+                    } else {
+                        ToolPayload::Function { arguments }
+                    };
                     Ok(Some(ToolCall {
                         tool_name,
                         call_id,
-                        payload: ToolPayload::Function { arguments },
+                        payload,
                     }))
                 }
             }
@@ -300,6 +320,22 @@ impl ToolRouter {
     }
 }
 
+fn apply_patch_args_input(arguments: &str) -> Result<String, FunctionCallError> {
+    let value: serde_json::Value = serde_json::from_str(arguments).map_err(|err| {
+        let message = format!("failed to parse apply_patch arguments: {err}");
+        FunctionCallError::RespondToModel(message)
+    })?;
+    let Some(input) = value
+        .get(APPLY_PATCH_CHAT_COMPLETIONS_INPUT_FIELD)
+        .and_then(serde_json::Value::as_str)
+    else {
+        return Err(FunctionCallError::RespondToModel(
+            "apply_patch arguments must include string field `input`".to_string(),
+        ));
+    };
+    Ok(input.to_string())
+}
+
 pub(crate) fn extension_tool_bundles(session: &Session) -> Vec<ExtensionToolBundle> {
     session
         .services
@@ -334,9 +370,11 @@ fn filter_deferred_dynamic_tool_spec(
         ToolSpec::Namespace(mut namespace) => {
             let namespace_name = namespace.name.clone();
             namespace.tools.retain(|tool| match tool {
-                ResponsesApiNamespaceTool::Function(tool) => !deferred_dynamic_tools.contains(
-                    &ToolName::namespaced(namespace_name.as_str(), tool.name.as_str()),
-                ),
+                ResponsesApiNamespaceTool::Function(tool) => {
+                    let ns = namespace_name.as_str();
+                    let tool_name = ToolName::namespaced(ns, tool.name.as_str());
+                    !deferred_dynamic_tools.contains(&tool_name)
+                }
             });
             if namespace.tools.is_empty() {
                 None

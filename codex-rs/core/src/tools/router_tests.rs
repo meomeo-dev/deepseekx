@@ -62,8 +62,7 @@ struct ExtensionEchoExecutor;
 impl ToolExecutor for ExtensionEchoExecutor {
     fn execute<'a>(&'a self, call: ExtensionToolCall) -> ToolFuture<'a> {
         Box::pin(async move {
-            let arguments: serde_json::Value =
-                serde_json::from_str(&call.arguments).expect("test arguments should parse");
+            let arguments: serde_json::Value = parse_json(&call.arguments);
             Ok(json!({
                 "arguments": arguments,
                 "callId": call.call_id.clone(),
@@ -80,11 +79,8 @@ fn extension_tool_test_registry() -> Arc<ExtensionRegistry<Config>> {
 }
 
 #[tokio::test]
-#[expect(
-    clippy::await_holding_invalid_type,
-    reason = "test builds a router from session-owned MCP manager state"
-)]
-async fn parallel_support_does_not_match_namespaced_local_tool_names() -> anyhow::Result<()> {
+#[expect(clippy::await_holding_invalid_type, reason = "session-owned state")]
+async fn parallel_support_ignores_namespaced_local_tools() -> anyhow::Result<()> {
     let (session, turn) = make_session_and_context().await;
     let mcp_tools = session
         .services
@@ -159,6 +155,37 @@ async fn build_tool_call_uses_namespace_for_registry_name() -> anyhow::Result<()
             assert_eq!(arguments, "{}");
         }
         other => panic!("expected function payload, got {other:?}"),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn build_tool_call_bridges_apply_patch_args() -> anyhow::Result<()> {
+    let (session, _) = make_session_and_context().await;
+    let session = Arc::new(session);
+    let patch = "*** Begin Patch\n*** Add File: demo.txt\n+ok\n*** End Patch\n";
+
+    let call = ToolRouter::build_tool_call(
+        &session,
+        ResponseItem::FunctionCall {
+            id: None,
+            name: "apply_patch".to_string(),
+            namespace: None,
+            arguments: serde_json::json!({ "input": patch }).to_string(),
+            call_id: "patch-call".to_string(),
+        },
+    )
+    .await?
+    .expect("apply_patch function_call should produce a tool call");
+
+    assert_eq!(call.tool_name, ToolName::plain("apply_patch"));
+    assert_eq!(call.call_id, "patch-call");
+    match call.payload {
+        ToolPayload::Custom { input } => {
+            assert_eq!(input, patch);
+        }
+        other => panic!("expected custom payload, got {other:?}"),
     }
 
     Ok(())
@@ -266,7 +293,7 @@ async fn model_visible_specs_filter_deferred_dynamic_tools() -> anyhow::Result<(
 }
 
 #[tokio::test]
-async fn extension_tool_bundles_are_model_visible_and_dispatchable() -> anyhow::Result<()> {
+async fn extension_tools_are_visible_and_dispatchable() -> anyhow::Result<()> {
     let (mut session, turn) = make_session_and_context().await;
     session.services.extensions = extension_tool_test_registry();
 
@@ -328,8 +355,7 @@ async fn extension_tool_bundles_are_model_visible_and_dispatchable() -> anyhow::
             let FunctionCallOutputBody::Text(text) = output.body else {
                 panic!("expected text function call output")
             };
-            let value: serde_json::Value =
-                serde_json::from_str(&text).expect("extension tool output should be json");
+            let value: serde_json::Value = parse_json(&text);
             assert_eq!(
                 value,
                 json!({
@@ -343,6 +369,10 @@ async fn extension_tool_bundles_are_model_visible_and_dispatchable() -> anyhow::
     }
 
     Ok(())
+}
+
+fn parse_json(text: &str) -> serde_json::Value {
+    serde_json::from_str(text).expect("test JSON should parse")
 }
 
 fn namespace_function_names(specs: &[ToolSpec], namespace_name: &str) -> Vec<String> {

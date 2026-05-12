@@ -1,0 +1,39 @@
+goal: >-
+  为 DeepSeek 多厂商接入实现 provider ID 命名空间识别，并验证
+  deepseek-* 自定义 provider 可真实运行。
+task_type: 'implementation'
+status: 'completed'
+source_of_truth:
+  current_user_request: true
+  roadmap: '_workplan/2026-05-12-deepseek-provider-id-roadmap.md'
+  analysis:
+    - 'docs/deepseek-api/integration/provider-profile-provider-id-analysis.md'
+    - 'docs/deepseek-api/integration/deepseek-integration-assessment.md'
+principles:
+  - '一事一做：一次只推进一个 work package。'
+  - 'profile 负责选择 provider，/model 只切换当前 provider 的模型。'
+  - 'provider.name 只做展示名，不做 DeepSeek runtime 机器判断。'
+  - 'DeepSeek runtime 基于 deepseek 或 deepseek-* provider ID。'
+quality_gates:
+  - 'awk 行宽检查不得出现超过 88 字符的新增行。'
+  - 'Rust 修改后在 codex-rs 运行 just fmt。'
+  - '修改 ConfigToml 或嵌套类型后运行 just write-config-schema。'
+  - '每个 touched crate 运行最小相关测试。'
+  - 'server 模式真实 DeepSeek smoke test 成功。'
+planned_work_packages:
+  - id: '00-provider-id-runtime'
+    name: 'Provider ID runtime 识别'
+    status: 'completed'
+    document: "_workplan/2026-05-12-deepseek-provider-id-work-packages/\
+      00-provider-id-runtime.md"
+    managed_requirements:
+      - '不新增 model_api_provider 配置键。'
+      - 'DeepSeek runtime 基于 provider ID 而不是 provider.name。'
+    functional_scope:
+      in:
+        - 'model-provider runtime 选择与静态 catalog 测试。'
+        - 'core、app-server、tui 中传递 active provider ID。'
+        - 'config schema、集成文档和 server 模式真实验证。'
+      out:
+        - '跨 provider 的 /model 混合列表。'
+        - 'DeepSeek /models 动态补全完整 ModelInfo。'

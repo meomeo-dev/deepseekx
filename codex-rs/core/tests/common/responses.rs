@@ -997,6 +997,14 @@ fn base_mock() -> (MockBuilder, ResponseMock) {
     (mock, response_mock)
 }
 
+fn chat_completions_mock() -> (MockBuilder, ResponseMock) {
+    let response_mock = ResponseMock::new();
+    let mock = Mock::given(method("POST"))
+        .and(path_regex(".*/chat/completions$"))
+        .and(response_mock.clone());
+    (mock, response_mock)
+}
+
 fn compact_mock() -> (MockBuilder, ResponseMock) {
     let response_mock = ResponseMock::new();
     let mock = Mock::given(method("POST"))
@@ -1032,6 +1040,54 @@ pub async fn mount_sse_once(server: &MockServer, body: String) -> ResponseMock {
         .up_to_n_times(1)
         .mount(server)
         .await;
+    response_mock
+}
+
+pub async fn mount_chat_sse_once(server: &MockServer, body: String) -> ResponseMock {
+    let (mock, response_mock) = chat_completions_mock();
+    mock.respond_with(sse_response(body))
+        .up_to_n_times(1)
+        .mount(server)
+        .await;
+    response_mock
+}
+
+/// Mounts a sequence of SSE response bodies for POSTs to `/chat/completions`.
+/// Panics if more requests are received than bodies provided.
+pub async fn mount_chat_seq(server: &MockServer, bodies: Vec<String>) -> ResponseMock {
+    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::Ordering;
+
+    struct SeqResponder {
+        num_calls: AtomicUsize,
+        responses: Vec<String>,
+    }
+
+    impl Respond for SeqResponder {
+        fn respond(&self, _: &wiremock::Request) -> ResponseTemplate {
+            let call_num = self.num_calls.fetch_add(1, Ordering::SeqCst);
+            match self.responses.get(call_num) {
+                Some(body) => ResponseTemplate::new(200)
+                    .insert_header("content-type", "text/event-stream")
+                    .set_body_string(body.clone()),
+                None => panic!("no response for {call_num}"),
+            }
+        }
+    }
+
+    let num_calls = bodies.len();
+    let responder = SeqResponder {
+        num_calls: AtomicUsize::new(0),
+        responses: bodies,
+    };
+
+    let (mock, response_mock) = chat_completions_mock();
+    mock.respond_with(responder)
+        .up_to_n_times(num_calls as u64)
+        .expect(num_calls as u64)
+        .mount(server)
+        .await;
+
     response_mock
 }
 

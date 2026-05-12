@@ -129,7 +129,7 @@ use codex_config::types::ModelAvailabilityNuxConfig;
 use codex_core_plugins::PluginsManager;
 use codex_exec_server::EnvironmentManager;
 use codex_features::Feature;
-use codex_model_provider::create_model_provider;
+use codex_model_provider::create_model_provider_for_id;
 use codex_model_provider_info::ModelProviderInfo;
 use codex_models_manager::model_presets::HIDE_GPT_5_1_CODEX_MAX_MIGRATION_PROMPT_CONFIG;
 use codex_models_manager::model_presets::HIDE_GPT5_1_MIGRATION_PROMPT_CONFIG;
@@ -545,8 +545,12 @@ fn active_turn_not_steerable_turn_error(error: &TypedRequestError) -> Option<App
     .then_some(turn_error)
 }
 
-async fn resolve_runtime_model_provider_base_url(provider: &ModelProviderInfo) -> Option<String> {
-    let provider = create_model_provider(provider.clone(), /*auth_manager*/ None);
+async fn resolve_runtime_model_provider_base_url(
+    provider_id: &str,
+    provider: &ModelProviderInfo,
+) -> Option<String> {
+    let provider =
+        create_model_provider_for_id(provider_id, provider.clone(), /*auth_manager*/ None);
     match provider.runtime_base_url().await {
         Ok(base_url) => base_url,
         Err(err) => {
@@ -742,8 +746,11 @@ impl App {
         let workspace_command_runner: WorkspaceCommandRunner = Arc::new(
             AppServerWorkspaceCommandRunner::new(app_server.request_handle()),
         );
-        let runtime_model_provider_base_url =
-            resolve_runtime_model_provider_base_url(&config.model_provider).await;
+        let runtime_model_provider_base_url = resolve_runtime_model_provider_base_url(
+            &config.model_provider_id,
+            &config.model_provider,
+        )
+        .await;
 
         let enhanced_keys_supported = tui.enhanced_keys_supported();
         let wait_for_initial_session_configured =

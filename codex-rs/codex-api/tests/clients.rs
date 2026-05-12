@@ -8,6 +8,22 @@ use bytes::Bytes;
 use codex_api::ApiError;
 use codex_api::AuthError;
 use codex_api::AuthProvider;
+use codex_api::ChatCompletionChunk;
+use codex_api::ChatCompletionsClient;
+use codex_api::ChatCompletionsOptions;
+use codex_api::ChatCompletionsRequest;
+use codex_api::ChatFunctionTool;
+use codex_api::ChatMessage;
+use codex_api::ChatReasoningEffort;
+use codex_api::ChatResponseFormat;
+use codex_api::ChatResponseFormatType;
+use codex_api::ChatStreamOptions;
+use codex_api::ChatThinking;
+use codex_api::ChatThinkingType;
+use codex_api::ChatTool;
+use codex_api::ChatToolChoice;
+use codex_api::ChatToolChoiceMode;
+use codex_api::ChatToolType;
 use codex_api::Compression;
 use codex_api::Provider;
 use codex_api::ResponsesApiRequest;
@@ -270,6 +286,162 @@ async fn responses_client_uses_responses_path() -> Result<()> {
     let requests = state.take_stream_requests();
     assert_path_ends_with(&requests, "/responses");
     Ok(())
+}
+
+#[tokio::test]
+async fn chat_completions_client_uses_chat_completions_path() -> Result<()> {
+    let state = RecordingState::default();
+    let transport = RecordingTransport::new(state.clone());
+    let auth = Arc::new(NoAuth);
+    let client = ChatCompletionsClient::new(transport, provider("deepseek"), auth);
+
+    let request = ChatCompletionsRequest {
+        model: "deepseek-v4-pro".into(),
+        messages: vec![ChatMessage::User {
+            content: "Return JSON.".into(),
+            name: None,
+        }],
+        tools: vec![ChatTool {
+            r#type: ChatToolType::Function,
+            function: ChatFunctionTool {
+                name: "get_weather".into(),
+                description: Some("Get weather for a location.".into()),
+                parameters: Some(serde_json::json!({
+                    "type": "object",
+                    "properties": {
+                        "location": { "type": "string" }
+                    },
+                    "required": ["location"]
+                })),
+                strict: Some(false),
+            },
+        }],
+        tool_choice: Some(ChatToolChoice::Mode(ChatToolChoiceMode::Auto)),
+        thinking: Some(ChatThinking {
+            r#type: ChatThinkingType::Enabled,
+        }),
+        reasoning_effort: Some(ChatReasoningEffort::High),
+        response_format: Some(ChatResponseFormat {
+            r#type: ChatResponseFormatType::JsonObject,
+        }),
+        stream: true,
+        stream_options: Some(ChatStreamOptions {
+            include_usage: true,
+        }),
+    };
+
+    let _stream = client
+        .stream_request(
+            request,
+            ChatCompletionsOptions {
+                compression: Compression::None,
+                ..Default::default()
+            },
+        )
+        .await?;
+
+    let requests = state.take_stream_requests();
+    assert_path_ends_with(&requests, "/chat/completions");
+    let req = &requests[0];
+    assert_eq!(
+        req.headers
+            .get(http::header::ACCEPT)
+            .and_then(|v| v.to_str().ok()),
+        Some("text/event-stream")
+    );
+
+    let body = req
+        .body
+        .as_ref()
+        .and_then(RequestBody::json)
+        .expect("chat completions request body");
+    assert_eq!(body["model"], "deepseek-v4-pro");
+    assert_eq!(body["messages"][0]["role"], "user");
+    assert_eq!(body["tools"][0]["type"], "function");
+    assert_eq!(body["tool_choice"], "auto");
+    assert_eq!(body["thinking"]["type"], "enabled");
+    assert_eq!(body["reasoning_effort"], "high");
+    assert_eq!(body["response_format"]["type"], "json_object");
+    assert_eq!(body["stream_options"]["include_usage"], true);
+
+    Ok(())
+}
+
+#[test]
+fn chat_completion_chunk_parses_deepseek_core_fields() {
+    let chunk = serde_json::json!({
+        "id": "1f633d8bfc032625086f14113c411638",
+        "choices": [
+            {
+                "delta": {
+                    "content": "Hello",
+                    "reasoning_content": "Thinking",
+                    "role": "assistant",
+                    "tool_calls": [
+                        {
+                            "index": 0,
+                            "id": "call_1",
+                            "type": "function",
+                            "function": {
+                                "name": "get_weather",
+                                "arguments": "{\"location\":\"Hangzhou\"}"
+                            }
+                        }
+                    ]
+                },
+                "finish_reason": null,
+                "index": 0,
+                "logprobs": null
+            }
+        ],
+        "created": 1718345013,
+        "model": "deepseek-v4-pro",
+        "object": "chat.completion.chunk",
+        "system_fingerprint": "fp_a49d71b8a1",
+        "usage": {
+            "completion_tokens": 9,
+            "prompt_tokens": 17,
+            "prompt_cache_hit_tokens": 3,
+            "prompt_cache_miss_tokens": 14,
+            "total_tokens": 26,
+            "completion_tokens_details": {
+                "reasoning_tokens": 4
+            }
+        }
+    });
+
+    let chunk: ChatCompletionChunk = serde_json::from_value(chunk).unwrap();
+
+    assert_eq!(chunk.id, "1f633d8bfc032625086f14113c411638");
+    assert_eq!(chunk.choices[0].delta.content.as_deref(), Some("Hello"));
+    assert_eq!(
+        chunk.choices[0].delta.reasoning_content.as_deref(),
+        Some("Thinking")
+    );
+    assert_eq!(
+        chunk.choices[0].delta.tool_calls.as_ref().unwrap()[0]
+            .function
+            .as_ref()
+            .unwrap()
+            .arguments
+            .as_deref(),
+        Some("{\"location\":\"Hangzhou\"}")
+    );
+    assert_eq!(
+        chunk.usage.as_ref().unwrap().prompt_cache_hit_tokens,
+        Some(3)
+    );
+    assert_eq!(
+        chunk
+            .usage
+            .as_ref()
+            .unwrap()
+            .completion_tokens_details
+            .as_ref()
+            .unwrap()
+            .reasoning_tokens,
+        Some(4)
+    );
 }
 
 #[tokio::test]

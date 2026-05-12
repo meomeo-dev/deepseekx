@@ -3746,6 +3746,13 @@
             "responses"
           ],
           "type": "string"
+        },
+        {
+          "description": "Chat Completions API at `/chat/completions`.",
+          "enum": [
+            "chat_completions"
+          ],
+          "type": "string"
         }
       ]
     }
@@ -3854,6 +3861,10 @@
         }
       ],
       "description": "Debugging and reproducibility settings."
+    },
+    "deepseek_base_url": {
+      "description": "Base URL override for the built-in `deepseek` model provider.",
+      "type": "string"
     },
     "default_permissions": {
       "description": "Default permissions profile to apply. Names starting with `:` refer to built-in profiles; other names are resolved from the `[permissions]` table.",

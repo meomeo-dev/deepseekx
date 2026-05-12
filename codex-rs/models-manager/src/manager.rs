@@ -437,6 +437,31 @@ fn find_model_by_namespaced_suffix(model: &str, candidates: &[ModelInfo]) -> Opt
     find_model_by_longest_prefix(suffix, candidates)
 }
 
+fn context_window_alias(model: &str) -> Option<(&str, i64)> {
+    let base = model.strip_suffix("[1m]")?;
+    (!base.is_empty()).then_some((base, 1_000_000))
+}
+
+fn find_model_info_candidate(
+    model: &str,
+    candidates: &[ModelInfo],
+) -> (String, Option<ModelInfo>, Option<i64>) {
+    if let Some((base_model, context_window)) = context_window_alias(model) {
+        let remote = find_model_by_longest_prefix(base_model, candidates)
+            .or_else(|| find_model_by_namespaced_suffix(base_model, candidates));
+        if let Some(mut remote) = remote {
+            remote.context_window = Some(context_window);
+            remote.max_context_window = Some(context_window);
+            return (base_model.to_string(), Some(remote), Some(context_window));
+        }
+        return (base_model.to_string(), None, Some(context_window));
+    }
+
+    let remote = find_model_by_longest_prefix(model, candidates)
+        .or_else(|| find_model_by_namespaced_suffix(model, candidates));
+    (model.to_string(), remote, None)
+}
+
 pub(crate) fn construct_model_info_from_candidates(
     model: &str,
     candidates: &[ModelInfo],
@@ -444,16 +469,21 @@ pub(crate) fn construct_model_info_from_candidates(
 ) -> ModelInfo {
     // First use the normal longest-prefix match. If that misses, allow a narrowly scoped
     // retry for namespaced slugs like `custom/gpt-5.3-codex`.
-    let remote = find_model_by_longest_prefix(model, candidates)
-        .or_else(|| find_model_by_namespaced_suffix(model, candidates));
+    let (resolved_model, remote, alias_context_window) =
+        find_model_info_candidate(model, candidates);
     let model_info = if let Some(remote) = remote {
         ModelInfo {
-            slug: model.to_string(),
+            slug: resolved_model,
             used_fallback_model_metadata: false,
             ..remote
         }
     } else {
-        model_info::model_info_from_slug(model)
+        let mut model_info = model_info::model_info_from_slug(&resolved_model);
+        if let Some(context_window) = alias_context_window {
+            model_info.context_window = Some(context_window);
+            model_info.max_context_window = Some(context_window);
+        }
+        model_info
     };
     model_info::with_config_overrides(model_info, config)
 }
