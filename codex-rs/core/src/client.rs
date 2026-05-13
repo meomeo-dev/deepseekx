@@ -104,6 +104,7 @@ use tokio_tungstenite::tungstenite::Error;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_util::sync::CancellationToken;
 use tracing::debug;
+use tracing::info;
 use tracing::instrument;
 use tracing::trace;
 use tracing::warn;
@@ -111,11 +112,22 @@ use tracing::warn;
 use crate::attestation::AttestationContext;
 use crate::attestation::AttestationProvider;
 use crate::attestation::X_OAI_ATTESTATION_HEADER;
+use crate::chat_completions::ChatJsonOutputMode;
 use crate::chat_completions::ChatToolStrictMode;
-use crate::chat_completions::build_chat_completions_request;
+use crate::chat_completions::build_chat_completions_request_with_json_mode;
 use crate::client_common::Prompt;
 use crate::client_common::ResponseEvent;
 use crate::client_common::ResponseStream;
+use crate::deepseek_json_output::JsonValidationFailure;
+use crate::deepseek_json_output::JsonValidationOutcome;
+use crate::deepseek_json_output::MAX_REPAIR_ATTEMPTS;
+use crate::deepseek_json_output::build_deepseek_json_repair_request;
+use crate::deepseek_json_output::capture_deepseek_json_output_stream;
+use crate::deepseek_json_output::capture_deepseek_json_repair_patch_stream;
+use crate::deepseek_json_output::patch_json;
+use crate::deepseek_json_output::release_buffered_json_events;
+use crate::deepseek_json_output::release_repaired_json_events;
+use crate::deepseek_json_output::validate_json;
 use crate::feedback_tags;
 use crate::flags::CODEX_RS_SSE_FIXTURE;
 use crate::util::emit_feedback_auth_recovery_tags;
@@ -975,6 +987,16 @@ impl Drop for ModelClientSession {
     }
 }
 
+struct DeepSeekJsonRepairRequestParams<'a> {
+    schema: &'a serde_json::Value,
+    model: &'a str,
+    current: &'a str,
+    error: &'a str,
+    strict_mode: ChatToolStrictMode,
+    upstream_idle_timeout: Duration,
+    turn_metadata_header: Option<&'a str>,
+}
+
 impl ModelClientSession {
     pub(crate) fn reset_websocket_session(&mut self) {
         self.websocket_session.connection = None;
@@ -1301,11 +1323,27 @@ impl ModelClientSession {
                 self.client.state.is_deepseek_provider,
                 &client_setup.api_provider.base_url,
             );
-            let build_request = build_chat_completions_request;
-            let request = build_request(prompt, model_info, effort, strict_mode)?;
+            let json_output_mode = if self.client.state.is_deepseek_provider {
+                ChatJsonOutputMode::DeepSeek
+            } else {
+                ChatJsonOutputMode::Generic
+            };
+            let is_deepseek_provider = self.client.state.is_deepseek_provider;
+            let has_output_schema = prompt.output_schema.is_some();
+            let request = build_chat_completions_request_with_json_mode(
+                prompt,
+                model_info,
+                effort,
+                strict_mode,
+                json_output_mode,
+            )?;
+            let enable_deepseek_json_repair =
+                is_deepseek_provider && has_output_schema && prompt.output_schema_strict;
             let options = self.build_chat_completions_options(turn_metadata_header);
             let inference_trace_attempt = inference_trace.start_attempt();
             inference_trace_attempt.record_started(&request);
+            let provider_info = self.client.state.provider.info();
+            let idle_timeout = provider_info.stream_idle_timeout();
             let client = ApiChatCompletionsClient::new(
                 transport,
                 client_setup.api_provider,
@@ -1316,15 +1354,29 @@ impl ModelClientSession {
 
             match stream_result {
                 Ok(stream) => {
-                    let stream = spawn_chat_completions_stream(
-                        stream,
-                        self.client.state.provider.info().stream_idle_timeout(),
-                    );
-                    let (stream, _) = map_response_stream(
-                        stream,
-                        session_telemetry.clone(),
-                        inference_trace_attempt,
-                    );
+                    let stream = spawn_chat_completions_stream(stream, idle_timeout);
+                    let stream = if let (true, Some(schema)) =
+                        (enable_deepseek_json_repair, prompt.output_schema.as_ref())
+                    {
+                        self.validated_deepseek_json_stream(
+                            stream,
+                            schema,
+                            model_info,
+                            strict_mode,
+                            session_telemetry.clone(),
+                            inference_trace_attempt,
+                            idle_timeout,
+                            turn_metadata_header,
+                        )
+                        .await?
+                    } else {
+                        let (stream, _) = map_response_stream(
+                            stream,
+                            session_telemetry.clone(),
+                            inference_trace_attempt,
+                        );
+                        stream
+                    };
                     return Ok(stream);
                 }
                 Err(ApiError::Transport(
@@ -1360,6 +1412,139 @@ impl ModelClientSession {
                 }
             }
         }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    async fn validated_deepseek_json_stream(
+        &self,
+        stream: codex_api::ResponseStream,
+        schema: &serde_json::Value,
+        model_info: &ModelInfo,
+        strict_mode: ChatToolStrictMode,
+        session_telemetry: SessionTelemetry,
+        inference_trace_attempt: InferenceTraceAttempt,
+        upstream_idle_timeout: Duration,
+        turn_metadata_header: Option<&str>,
+    ) -> Result<ResponseStream> {
+        let initial_upstream_request_id = stream.upstream_request_id.clone();
+        let consumer_dropped = CancellationToken::new();
+        let capture_stream = capture_deepseek_json_output_stream;
+        let capture = capture_stream(stream, consumer_dropped.clone())
+            .await
+            .map_err(map_api_error)?;
+
+        let events = if capture.has_tool_call {
+            release_buffered_json_events(capture)
+        } else {
+            match validate_json(capture.content.clone(), schema) {
+                JsonValidationOutcome::Valid(_) => release_buffered_json_events(capture),
+                JsonValidationOutcome::Invalid(failure) => {
+                    let repaired = self
+                        .repair_deepseek_json_output(
+                            failure,
+                            schema,
+                            model_info,
+                            strict_mode,
+                            upstream_idle_timeout,
+                            turn_metadata_header,
+                        )
+                        .await?;
+                    release_repaired_json_events(capture, repaired)
+                }
+            }
+        };
+        let response_id = initial_upstream_request_id;
+        let api_stream = response_stream_from_events(events, response_id);
+        let (stream, _) =
+            map_response_stream(api_stream, session_telemetry, inference_trace_attempt);
+        Ok(stream)
+    }
+
+    async fn repair_deepseek_json_output(
+        &self,
+        failure: JsonValidationFailure,
+        schema: &serde_json::Value,
+        model_info: &ModelInfo,
+        strict_mode: ChatToolStrictMode,
+        upstream_idle_timeout: Duration,
+        turn_metadata_header: Option<&str>,
+    ) -> Result<String> {
+        let mut current = failure.content;
+        let mut error = failure.error;
+        for attempt in 1..=MAX_REPAIR_ATTEMPTS {
+            info!(
+                attempt,
+                "repairing DeepSeek JSON output with virtual response.json patch"
+            );
+            let patch = self
+                .request_deepseek_json_repair_patch(DeepSeekJsonRepairRequestParams {
+                    schema,
+                    model: &model_info.slug,
+                    current: &current,
+                    error: &error,
+                    strict_mode,
+                    upstream_idle_timeout,
+                    turn_metadata_header,
+                })
+                .await?;
+            current = match patch_json(current.clone(), &patch).await {
+                Ok(content) => content,
+                Err(patch_error) => {
+                    error = patch_error;
+                    continue;
+                }
+            };
+            match validate_json(current.clone(), schema) {
+                JsonValidationOutcome::Valid(valid) => {
+                    return Ok(valid.content.trim().to_string());
+                }
+                JsonValidationOutcome::Invalid(failure) => {
+                    current = failure.content;
+                    error = failure.error;
+                }
+            }
+        }
+        Err(CodexErr::InvalidRequest(format!(
+            "DeepSeek JSON output failed schema validation after \
+             {MAX_REPAIR_ATTEMPTS} repair attempts: {error}"
+        )))
+    }
+
+    async fn request_deepseek_json_repair_patch(
+        &self,
+        params: DeepSeekJsonRepairRequestParams<'_>,
+    ) -> Result<String> {
+        let DeepSeekJsonRepairRequestParams {
+            schema,
+            model,
+            current,
+            error,
+            strict_mode,
+            upstream_idle_timeout,
+            turn_metadata_header,
+        } = params;
+        let client_setup = self.client.current_client_setup().await?;
+        let request = build_deepseek_json_repair_request(
+            model,
+            schema,
+            current,
+            error,
+            matches!(strict_mode, ChatToolStrictMode::Enabled),
+        );
+        let client = ApiChatCompletionsClient::new(
+            ReqwestTransport::new(build_reqwest_client()),
+            client_setup.api_provider,
+            client_setup.api_auth,
+        );
+        let options = self.build_chat_completions_options(turn_metadata_header);
+        let stream = client
+            .stream_request(request, options)
+            .await
+            .map_err(map_api_error)?;
+        let stream = spawn_chat_completions_stream(stream, upstream_idle_timeout);
+        capture_deepseek_json_repair_patch_stream(stream, CancellationToken::new())
+            .await
+            .map_err(map_api_error)
     }
 
     /// Streams a turn via the OpenAI Responses API.
@@ -1930,6 +2115,26 @@ fn map_response_stream(
         session_telemetry,
         inference_trace_attempt,
     )
+}
+
+fn response_stream_from_events(
+    events: Vec<ResponseEvent>,
+    upstream_request_id: Option<String>,
+) -> codex_api::ResponseStream {
+    type ApiEventResult = std::result::Result<ResponseEvent, ApiError>;
+    let capacity = RESPONSE_STREAM_CHANNEL_CAPACITY;
+    let (tx_event, rx_event) = mpsc::channel::<ApiEventResult>(capacity);
+    tokio::spawn(async move {
+        for event in events {
+            if tx_event.send(Ok(event)).await.is_err() {
+                return;
+            }
+        }
+    });
+    codex_api::ResponseStream {
+        rx_event,
+        upstream_request_id,
+    }
 }
 
 fn map_response_events<S>(
