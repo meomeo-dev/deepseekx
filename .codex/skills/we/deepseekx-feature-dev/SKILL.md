@@ -15,9 +15,20 @@ daily development from branch confusion in a stateless LLM session.
 
 - Develop from `deepseekx/main` into `deepseekx/<feature-slug>`.
 - Prepare changes for PR back into `deepseekx/main`.
+- Hand commit, push, PR, merge, and branch cleanup decisions to
+  `$we:deepseekx-github-flow`.
 - Do not synchronize upstream OpenAI mainline or version tags here. Use
   `$we:deepseek-branch-sync` for Codex version-aligned sync work.
 - Do not publish releases or tags here.
+
+## Role Contract
+
+- 用户是发起者（user as initiator）。
+- AI/LLM 是执行者（LLM as executor）。
+- 用户决定是否提交、推送、开 PR、合并或删除分支。
+- 执行者负责开发、验证、整理 diff，并在收尾时路由到
+  `$we:deepseekx-github-flow`。
+- 用户只说“看下”“是否需要”“检查状态”时，默认不要执行合并或推送。
 
 ## Required Branch Model
 
@@ -86,9 +97,8 @@ Use a concise lowercase kebab-case slug tied to the request.
 3. Make scoped changes that follow existing project patterns.
 4. Run focused checks for the touched area.
 5. Stage only intended files.
-6. Commit with a concise message when the user asks or the task requires it.
-7. Push with `git push -u origin deepseekx/<feature-slug>` when PR work is
-   requested.
+6. Use `$we:deepseekx-github-flow` for commit readiness and user confirmation.
+7. Use `$we:deepseekx-github-flow` for push, PR, merge, or branch cleanup.
 
 ## Validation
 
@@ -142,6 +152,8 @@ gh pr create --base deepseekx/main --head deepseekx/<feature-slug>
 ```
 
 Include changed areas, checks run, and any skipped checks with reasons.
+Do not merge the PR or local branch into `deepseekx/main` from this skill.
+Use `$we:deepseekx-github-flow` after the user confirms the integration path.
 
 ## Final Response
 
@@ -153,4 +165,5 @@ Report:
 - checks run
 - commit hash, if committed
 - push or PR URL, if created
+- next GitHub Flow action that needs user confirmation
 - remaining dirty or untracked files

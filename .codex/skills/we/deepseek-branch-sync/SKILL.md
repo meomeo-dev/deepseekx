@@ -29,6 +29,17 @@ arbitrary upstream mainline head.
   `$we:deepseekx-feature-dev` for feature work.
 - Do not rebase a shared DeepSeek branch unless the user explicitly requests
   history rewrite and accepts the risk.
+- Use `$we:deepseekx-github-flow` for push, PR, merge-to-main, tag, and
+  branch cleanup confirmation after the sync branch is ready.
+
+## Role Contract
+
+- 用户是发起者（user as initiator）。
+- AI/LLM 是执行者（LLM as executor）。
+- 用户选择要同步的 upstream version ref、集成方式、是否推送、是否合并、
+  是否创建 downstream tag。
+- 执行者负责预检、创建 sync 分支、合并 upstream ref、解决冲突和验证。
+- 用户只说“看下”“分析”“是否需要”时，默认不要合并、推送或打 tag。
 
 ## Version Alignment Policy
 
@@ -173,6 +184,12 @@ Solo developer default:
 - Still keep a sync branch first, because it provides a rollback point and a
   clear place to resolve conflicts.
 - Push `deepseekx/main` only after checks pass and the user confirms.
+- Run `$we:deepseekx-github-flow` with merge intent before merge-to-main:
+
+```bash
+.codex/skills/we/deepseekx-github-flow/scripts/preflight_github_flow.sh \
+  --intent merge
+```
 
 GitHub Flow option:
 
@@ -195,6 +212,10 @@ PR integration:
 git push -u origin deepseekx/sync/rust-v0.131.0
 gh pr create --base deepseekx/main --head deepseekx/sync/rust-v0.131.0
 ```
+
+Push, PR creation, direct local merge, downstream tag creation, and cleanup of
+`deepseekx/sync/<version>` all need user confirmation through the GitHub Flow
+role contract.
 
 ## Conflict Handling
 
@@ -244,4 +265,5 @@ Report:
 - conflicts, if any
 - tests/checks run
 - commit hash, if a commit was created
+- push, PR, tag, merge, or cleanup action waiting for user confirmation
 - remaining untracked or dirty files

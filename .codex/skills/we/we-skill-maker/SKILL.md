@@ -22,7 +22,7 @@ plugins.
 - Prefer names that describe the repeated operation:
   `deepseek-cache-bench`, `deepseek-branch-sync`,
   `deepseekx-worktree-clean`, `deepseekx-bug-fix`,
-  `deepseekx-feature-dev`.
+  `deepseekx-feature-dev`, `deepseekx-github-flow`.
 - Avoid vague names such as `helper`, `tool`, `workflow`, or `misc`.
 - Directory must be `.codex/skills/we/<short_name>/`.
 - Frontmatter `name` must be `we:<short_name>`.
@@ -70,6 +70,9 @@ explicitly asks. Put operational instructions in `SKILL.md`.
   checks and stop conditions.
 - For development workflows, branch and remote state must be checked by a
   preflight script. Do not rely on LLM memory.
+- For git workflow skills, document that the user is the initiator and the
+  AI/LLM is the executor. Commit, push, PR, merge, tag, and branch cleanup
+  must have explicit confirmation boundaries.
 - Keep high-risk upstream sync, ordinary feature development, and release
   operations in separate skills when they repeat often.
 - If a workflow can destroy work, require explicit user confirmation in the

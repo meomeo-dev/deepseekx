@@ -19,6 +19,17 @@ description: Inspect and clean DeepSeekX branch and worktree state before
 该技能负责把工作区整理到可判断、可继续的状态。不要用它实现功能、
 修复业务错误，或同步上游代码。
 
+需要提交、推送、PR、合并或删除分支时，整理完成后路由到
+`$we:deepseekx-github-flow`。
+
+## 角色契约
+
+- 用户是发起者（user as initiator）。
+- AI/LLM 是执行者（LLM as executor）。
+- 用户决定未知文件归属、是否提交、是否合并、是否删除分支。
+- 执行者负责只读检查、分类建议、维护 ignore 规则和安全整理。
+- 用户只说“看下”“是否需要”“检查状态”时，默认只做诊断。
+
 ## 硬性边界
 
 - 不运行 `git reset --hard`、`git checkout --`、`git clean`。
@@ -62,7 +73,8 @@ description: Inspect and clean DeepSeekX branch and worktree state before
 - 有未跟踪生成物：加入 `.gitignore` 或 `.git/info/exclude`。
 - 有未跟踪密钥：维护 ignore 规则，不要暂存。
 - 当前分支有未合入 `deepseekx/main` 的提交：先决定合并、PR、
-  保留分支，或继续在该分支工作。
+  保留分支，或继续在该分支工作；需要集成时路由到
+  `$we:deepseekx-github-flow`。
 - 当前分支已经合入且工作区干净：可在用户确认后删除已合并分支。
 
 ## Gitignore 决策
@@ -85,7 +97,7 @@ description: Inspect and clean DeepSeekX branch and worktree state before
 ## 整理流程
 
 1. 运行预检并阅读全部分类。
-2. 若当前分支有待合并提交，先决定是否合并到 `deepseekx/main`。
+2. 若当前分支有待合并提交，先用 `$we:deepseekx-github-flow` 判断。
 3. 若 tracked 文件脏，检查 diff，确认属于当前任务后再提交。
 4. 若 untracked 文件是源码、测试或文档，确认意图后再纳入提交。
 5. 若 untracked 文件是密钥或生成物，维护 ignore 规则。
@@ -101,4 +113,5 @@ description: Inspect and clean DeepSeekX branch and worktree state before
 - 当前分支是否需要合并或 PR。
 - 已提交、已忽略、仍需用户判断的文件。
 - 是否修改 `.gitignore` 或 `.git/info/exclude`。
+- 是否需要转入 `$we:deepseekx-github-flow`。
 - 剩余 dirty 或 untracked 文件。

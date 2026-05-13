@@ -29,6 +29,8 @@ description: Use when discussing, planning, triggering, or debugging the
 - 不自动运行 `all`，除非用户明确确认。
 - 不触碰 `.env`、API key、证书、签名密钥或 billing 凭据。
 - 不使用 destructive git 命令。
+- 不在 dirty worktree 或未确认的功能分支上触发。需要提交、推送、
+  合并或整理分支时，先使用 `$we:deepseekx-github-flow`。
 
 ## 默认沟通规则
 
@@ -73,6 +75,9 @@ GitHub 识别到 workflow 后，后续才用 `--ref deepseekx/nightly` 指定源
 如果用户要求在功能分支直接跑，先说明这会按该分支源码产物构建。用户确认后
 可以执行，但不要把它描述为正式 nightly。
 
+触发前的 ref 应来自已完成 GitHub Flow 收口的稳定分支，或来自用户明确
+确认的临时分支。
+
 ## 目标选择
 
 优先省钱：
@@ -113,6 +118,8 @@ all
 - 是否能读取 Actions 用量。
 
 如果有未跟踪密钥文件，例如 `DEEPSEEK_API_KEY.env`，不要暂存或提交。
+如果当前 ref 还需要提交、推送、PR、合并或删分支，先路由到
+`$we:deepseekx-github-flow`。
 
 ## 余额与用量查询
 

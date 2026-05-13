@@ -14,6 +14,17 @@ description: Diagnose and fix DeepSeekX bugs from a clean worktree with
 
 不要用该技能做普通新功能开发；新功能使用 `$we:deepseekx-feature-dev`。
 不要用该技能同步上游；版本同步使用 `$we:deepseek-branch-sync`。
+提交、推送、PR、合并和删分支的收尾动作使用
+`$we:deepseekx-github-flow`。
+
+## 角色契约
+
+- 用户是发起者（user as initiator）。
+- AI/LLM 是执行者（LLM as executor）。
+- 用户决定是否提交、推送、开 PR、合并或删除分支。
+- 执行者负责复现、修复、验证、整理 diff，并在收尾时路由到
+  `$we:deepseekx-github-flow`。
+- 用户只说“看下”“是否需要”“检查状态”时，默认不要执行合并或推送。
 
 ## 硬入口门禁
 
@@ -58,6 +69,7 @@ git switch -c deepseekx/fix-<bug-slug>
 5. 运行针对 touched area 的最小有效检查。
 6. 如果涉及 Rust，遵守项目 `AGENTS.md` 的 fmt、test、fix 顺序。
 7. 提交前确认暂存区没有 secrets、scratch 文件或无关用户改动。
+8. 使用 `$we:deepseekx-github-flow` 判断提交、推送、PR 或合并门槛。
 
 ## 验证
 
@@ -96,6 +108,9 @@ git diff --cached --name-only
 - 测试、fixture、schema 或 snapshot 的变更是有意的。
 - `DEEPSEEK_API_KEY.env` 等密钥文件被 ignore 或保持未暂存。
 
+提交本身可以在用户明确要求时执行。推送、PR、合并和分支清理必须交给
+`$we:deepseekx-github-flow` 判断下一步和确认边界。
+
 ## 最终回复
 
 汇报：
@@ -105,4 +120,5 @@ git diff --cached --name-only
 - 修复文件。
 - 测试或检查结果。
 - commit hash，如果已提交。
+- 需要用户确认的 GitHub Flow 下一步。
 - 剩余 dirty 或 untracked 文件。
