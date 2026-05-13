@@ -1,5 +1,5 @@
 ---
-name: we-skill-maker
+name: we:we-skill-maker
 description: Create or maintain project-local WE skills under
   .codex/skills/we/<short_name>/ with concise SKILL.md instructions, optional
   scripts/templates/data folders, project safety checks, and commit hygiene.
@@ -23,7 +23,8 @@ plugins.
   `deepseek-cache-bench`, `deepseek-branch-sync`.
 - Avoid vague names such as `helper`, `tool`, `workflow`, or `misc`.
 - Directory must be `.codex/skills/we/<short_name>/`.
-- Frontmatter `name` must match `<short_name>`.
+- Frontmatter `name` must be `we:<short_name>`.
+- Invoke WE skills with `$we:<short_name>` after Codex reloads skills.
 
 ## Required Shape
 

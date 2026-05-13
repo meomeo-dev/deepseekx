@@ -1,5 +1,5 @@
 ---
-name: deepseek-cache-bench
+name: we:deepseek-cache-bench
 description: Run a Docker-isolated Codex app-server benchmark that dynamically
   supervises deepseek-v4-pro while it builds a production-grade runnable
   10,000+ line dashboard, then preserves source, logs, stats, report HTML, and

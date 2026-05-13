@@ -1,5 +1,5 @@
 ---
-name: deepseek-branch-sync
+name: we:deepseek-branch-sync
 description: Safely synchronize a long-lived DeepSeek integration branch with
   the latest main branch using GitHub Flow style guardrails, preflight checks,
   non-destructive merge defaults, and explicit verification before commits or

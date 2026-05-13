@@ -25,7 +25,7 @@ fi
 mkdir -p "${skill_dir}"
 cat > "${skill_file}" <<EOF
 ---
-name: ${name}
+name: we:${name}
 description: ${description}
 ---
 
