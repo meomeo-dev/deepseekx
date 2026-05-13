@@ -20,7 +20,8 @@ plugins.
 
 - Use a short lowercase kebab-case name.
 - Prefer names that describe the repeated operation:
-  `deepseek-cache-bench`, `deepseek-branch-sync`.
+  `deepseek-cache-bench`, `deepseek-branch-sync`,
+  `deepseekx-feature-dev`.
 - Avoid vague names such as `helper`, `tool`, `workflow`, or `misc`.
 - Directory must be `.codex/skills/we/<short_name>/`.
 - Frontmatter `name` must be `we:<short_name>`.
@@ -66,6 +67,10 @@ explicitly asks. Put operational instructions in `SKILL.md`.
 - Helper scripts should default to read-only unless mutation is the point.
 - For branch, Docker, network, or filesystem operations, include preflight
   checks and stop conditions.
+- For development workflows, branch and remote state must be checked by a
+  preflight script. Do not rely on LLM memory.
+- Keep high-risk upstream sync, ordinary feature development, and release
+  operations in separate skills when they repeat often.
 - If a workflow can destroy work, require explicit user confirmation in the
   skill text instead of automating it.
 
@@ -76,10 +81,12 @@ explicitly asks. Put operational instructions in `SKILL.md`.
 3. Write `SKILL.md` first.
 4. Add `scripts/`, `templates/`, `data/`, or `references/` only when they
    materially improve repeatability.
-5. Prefer small scripts over long pasted shell snippets.
-6. Validate the skill files.
-7. Stage only the new or changed skill directory.
-8. Commit when the user asks, leaving unrelated files untouched.
+5. Add a read-only preflight script for branch, Docker, network, or filesystem
+   workflows.
+6. Prefer small scripts over long pasted shell snippets.
+7. Validate the skill files.
+8. Stage only the new or changed skill directory.
+9. Commit when the user asks, leaving unrelated files untouched.
 
 ## Scaffold Helper
 

@@ -1,22 +1,27 @@
 ---
 name: we:deepseek-branch-sync
 description: Safely synchronize a long-lived DeepSeek integration branch with
-  the latest main branch using GitHub Flow style guardrails, preflight checks,
-  non-destructive merge defaults, and explicit verification before commits or
-  pushes.
+  upstream openai/codex main using GitHub Flow style guardrails, preflight
+  checks, non-destructive merge defaults, and explicit verification before
+  commits or pushes.
 ---
 
 # DeepSeek Branch Sync
 
-Use this skill when maintaining a long-lived DeepSeek integration branch that
-needs the latest `main` changes. The goal is safe synchronization, not speed.
+Use this skill when maintaining the DeepSeek downstream trunk
+`deepseekx/main` and merging the latest upstream `openai/codex` mainline into
+it. The goal is safe synchronization, not speed.
 
-## Branch Model
+## Remote And Branch Model
 
-- `main`: local mirror of upstream mainline.
-- `feature/deepseek-api-integration` or `deepseek`: long-lived DeepSeek line.
-- Short task branches may branch from the DeepSeek line when useful.
-- Prefer merge from `origin/main` into the DeepSeek line.
+- `origin`: fork remote, `https://github.com/meomeo-dev/deepseekx.git`.
+- `upstream`: source remote, `https://github.com/openai/codex.git`.
+- `upstream/main`: upstream OpenAI Codex mainline.
+- `deepseekx/main`: long-lived DeepSeek downstream trunk.
+- `deepseekx/<feature>`: short-lived downstream feature branch.
+- Prefer merge from `upstream/main` into `deepseekx/main`.
+- Do not use this skill for ordinary feature development. Use
+  `$we:deepseekx-feature-dev` for feature work.
 - Do not rebase a shared DeepSeek branch unless the user explicitly requests
   history rewrite and accepts the risk.
 
@@ -30,8 +35,8 @@ needs the latest `main` changes. The goal is safe synchronization, not speed.
   and harmless, or the user has approved.
 - If conflicts occur, stop after reporting conflicted files unless the user
   asked to resolve them.
-- Prefer `git fetch origin` plus `git merge origin/main` while on the
-  DeepSeek branch.
+- Prefer `git fetch upstream` plus `git merge --no-ff upstream/main` while on
+  `deepseekx/main`.
 
 ## Preflight
 
@@ -39,7 +44,7 @@ Run the read-only preflight script before any sync operation:
 
 ```bash
 .codex/skills/we/deepseek-branch-sync/scripts/preflight_branch_sync.sh \
-  feature/deepseek-api-integration origin/main
+  deepseekx/main upstream/main
 ```
 
 Review:
@@ -48,8 +53,9 @@ Review:
 - dirty tracked files
 - untracked files
 - ahead/behind counts
-- merge-base with `origin/main`
+- merge-base with `upstream/main`
 - whether the target branch exists locally
+- whether `origin` and `upstream` match the expected repositories
 
 If `DEEPSEEK_API_KEY.env` or other secret-like files are present, leave them
 untracked and mention that they were intentionally not touched.
@@ -59,21 +65,21 @@ untracked and mention that they were intentionally not touched.
 Use this when the user asks to bring the DeepSeek branch up to date.
 
 ```bash
-git fetch origin
-git switch feature/deepseek-api-integration
-git merge --no-ff origin/main
+git fetch upstream
+git switch deepseekx/main
+git merge --no-ff upstream/main
 ```
 
 If the branch does not exist locally:
 
 ```bash
 git fetch origin
-git switch -c feature/deepseek-api-integration origin/main
+git switch -c deepseekx/main origin/deepseekx/main
 ```
 
-Only use a shorter `deepseek` branch name if the user confirms renaming or
-creating it. Renaming a shared branch changes collaboration habits, so do not
-do it implicitly.
+If neither local nor remote `deepseekx/main` exists, stop and ask before
+creating a new downstream trunk. Do not recreate shared branch topology
+implicitly.
 
 ## Conflict Handling
 
@@ -108,7 +114,7 @@ Commit only the intended merge or sync changes.
 Recommended merge commit message:
 
 ```text
-Merge origin/main into DeepSeek integration branch
+Merge upstream/main into deepseekx/main
 ```
 
 If only creating the skill or documentation, use a normal feature commit.

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-target_branch="${1:-feature/deepseek-api-integration}"
-upstream_ref="${2:-origin/main}"
+target_branch="${1:-deepseekx/main}"
+upstream_ref="${2:-upstream/main}"
+expected_origin="https://github.com/meomeo-dev/deepseekx.git"
+expected_upstream="https://github.com/openai/codex.git"
 
 echo "== branch sync preflight =="
 echo "target_branch=${target_branch}"
@@ -15,6 +17,19 @@ echo
 
 echo "== remotes =="
 git remote -v
+echo
+
+echo "== remote expectation =="
+origin_url="$(git remote get-url origin 2>/dev/null || true)"
+upstream_url="$(git remote get-url upstream 2>/dev/null || true)"
+echo "origin=${origin_url:-missing}"
+echo "upstream=${upstream_url:-missing}"
+if [[ "${origin_url}" != "${expected_origin}" ]]; then
+  echo "WARN: origin does not match ${expected_origin}"
+fi
+if [[ "${upstream_url}" != "${expected_upstream}" ]]; then
+  echo "WARN: upstream does not match ${expected_upstream}"
+fi
 echo
 
 echo "== worktree status =="
@@ -57,7 +72,12 @@ fi
 echo
 
 echo "== secret-like untracked paths =="
-git status --short \
-  | awk '/^\\?\\?/ {print $2}' \
-  | grep -E '(^|/)([^/]*\\.env|.*KEY.*|.*TOKEN.*)$' \
+git status --porcelain=v1 \
+  | while IFS= read -r line; do
+      status="${line:0:2}"
+      if [[ "${status}" == "??" ]]; then
+        echo "${line:3}"
+      fi
+    done \
+  | grep -E '(^|/)([^/]*\.env|.*KEY.*|.*TOKEN.*)$' \
   || true
