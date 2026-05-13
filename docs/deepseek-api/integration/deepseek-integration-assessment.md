@@ -159,10 +159,14 @@ DeepSeek 支持 OpenAI Chat Completions function tools。当前 Codex 工具面
 - local shell、apply patch、MCP tools 可在 adapter 侧转换成 function
   tools，但名称、schema 和输出消息必须符合 Chat Completions 形状。
 
-strict 模式是可选增强，不应作为首版默认。DeepSeek strict 需要 beta
-base URL，并要求函数 schema 满足更严格限制。例如 object 所有属性
-必须 required，且 `additionalProperties: false`。当前工具 schema 未
-保证满足这些限制。
+strict 模式是可选增强，不应作为普通 DeepSeek URL 的默认能力。
+DeepSeek strict 需要 beta `base_url`，并要求函数 schema 满足更严格
+限制。例如 object 所有属性必须 required，且
+`additionalProperties: false`。
+
+当前决策是：不新增配置，不动态切换 URL。只有用户显式配置
+`base_url = "https://api.deepseek.com/beta"` 时，Chat adapter 才发送
+`strict: true`，并把 function schema 规范化为 strict 兼容形态。
 
 ## apply_patch 兼容映射
 
@@ -344,5 +348,6 @@ DeepSeek API 可接入，但工作性质是协议适配，不是 provider 配置
 首版应明确收窄能力：支持文本、流式、基础 function tools、
 reasoning content、JSON object 输出和静态模型 catalog；禁用搜索、
 图片生成、
-namespace/custom hosted tools 和 WebSocket。完成这些边界后，再考虑 strict
-schema、动态模型目录和更完整的 usage 统计。
+namespace/custom hosted tools 和 WebSocket。strict schema 仅在用户显式
+配置官方 beta `base_url` 时启用；动态模型目录和更完整的 usage 统计
+仍作为后续增强。

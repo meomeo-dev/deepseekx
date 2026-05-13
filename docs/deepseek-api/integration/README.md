@@ -8,6 +8,8 @@
   可行性、风险、推荐方案和首版验收标准。
 - `reasoning-cache-history-analysis.md`：分析 DeepSeek 与 OpenAI 在
   reasoning、缓存、多轮历史和工具调用拼接上的差异。
+- `deepseek-chat-cache-tool-audit.md`：记录当前实现是否符合 DeepSeek
+  多轮对话、KV cache 和 tool calls 官方建议。
 - `provider-profile-provider-id-analysis.md`：分析 `profile + provider`
   配置形状、`/model` 列表来源，以及 DeepSeek provider ID 命名空间。
 

@@ -109,19 +109,16 @@ OpenAI 的缓存语义也不同。Codex 会在 Responses 请求上设置
 - `delta.tool_calls` 转为 `FunctionCall` 或 `CustomToolCall`。
 - usage 的 `prompt_cache_hit_tokens` 映射到 `cached_input_tokens`。
 
-当前 adapter 已尝试把线性历史中的 `ResponseItem::Reasoning` 作为
-pending reasoning，并附加到后续 `FunctionCall` 或 `CustomToolCall`
-对应的 assistant message 上。
+当前 adapter 把线性历史按 user message 切分为用户轮次，并判断每个
+segment 是否包含受支持的 tool call。该实现已覆盖 DeepSeek 的
+用户轮次级规则：
 
-该实现只覆盖“reasoning 后紧跟工具调用”的局部形态。它尚未
-完整建模
-DeepSeek 的用户轮次级规则：
-
-- 无工具轮次的 reasoning 应在 assistant final message 后清空。
-- 有工具轮次中，最终 assistant message 的 `reasoning_content` 也应
-  在后续请求中回传。
-- pending reasoning 不能跨 `user`、assistant final message 或无关
-  item 泄漏到后续工具调用。
+- 无工具轮次的 reasoning 不会回填到 assistant final message。
+- 有工具轮次中，tool-call assistant message 会带回对应
+  `reasoning_content`。
+- 有工具轮次中，最终 assistant message 也会带回对应
+  `reasoning_content`。
+- user message 会切断上一轮 pending reasoning，避免泄漏到下一轮。
 
 ## 四种历史拼接场景
 
@@ -190,9 +187,9 @@ Codex 内部可以继续把 streaming raw reasoning 显示给用户界面，但�
 构造 DeepSeek 下一轮 `messages[]` 时，不能让该 reasoning 泄漏到
 后续无关 assistant tool-call message。
 
-当前 adapter 对 assistant final message 不回填 `reasoning_content`，
-这符合“无工具轮次”要求。但实现还必须在 assistant final message 后
-清空 pending reasoning，避免下一轮非思考工具调用错误携带旧推理。
+当前 adapter 对无工具轮次的 assistant final message 不回填
+`reasoning_content`，这符合 DeepSeek 要求。按 user message 切分
+segment 后，上一轮 pending reasoning 不会泄漏到下一轮工具调用。
 
 ### 思考模式且有工具调用
 
@@ -267,14 +264,11 @@ DeepSeek 的非思考模式需要 `thinking.type = "disabled"`。
 
 ### reasoning_content 关联范围
 
-当前 adapter 使用单个 `pending_reasoning_content`，只在遇到
-`FunctionCall` 或 `CustomToolCall` 时消耗。
+当前 adapter 已按 user message 切分历史，并先识别两个 user message
+之间是否发生工具调用，再决定哪些 assistant message 携带
+`reasoning_content`。
 
-该局部状态不足以表达 DeepSeek 的用户轮次级规则。正确实现需要先
-识别两个 user message 之间是否发生工具调用，再决定哪些 assistant
-message 需要携带 `reasoning_content`。
-
-建议规则：
+维护规则：
 
 - 将历史按 `user` message 切分为用户轮次。
 - 对每个用户轮次判断是否包含 tool call。
@@ -286,24 +280,14 @@ message 需要携带 `reasoning_content`。
 
 ### 持久化与恢复
 
-`ResponseItem::Reasoning.content` 中的 `ReasoningText` 在 serde
-序列化时会被跳过。该策略适合 OpenAI Responses，因为 OpenAI 使用
-`encrypted_content` 参与后续请求。
+`ResponseItem::Reasoning.content` 中的 `ReasoningText` 会被 serde
+序列化保留，可作为 DeepSeek 后续 Chat 请求的 raw
+`reasoning_content` 来源。
 
 DeepSeek 的 `reasoning_content` 是后续 Chat 请求必须显式回传的原文。
-如果只保存在 `ReasoningText` 中，resume、fork 或 rollout 恢复后可能
-丢失该字段，导致后续 DeepSeek 工具历史请求失败。
-
-DeepSeek 接入需要为可回放 reasoning 建立持久化策略。可选方向
-包括：
-
-- 新增专用于 provider replay 的受控字段。
-- 在 Chat adapter 生成可持久化的 assistant message 影子结构。
-- 在 compaction 前后显式丢弃整段 DeepSeek 工具轮次，而不是保留
-  缺失 reasoning 的半段历史。
-
-该策略必须与隐私和安全边界一起审查，因为它会保存 raw
-`reasoning_content`。
+因此恢复、分叉或 rollout 重放时必须继续保留该字段与对应 assistant
+message 的绑定。若未来出于隐私或压缩策略丢弃 raw reasoning，则不能
+保留缺失 reasoning 的工具轮次。
 
 ### 压缩与截断
 

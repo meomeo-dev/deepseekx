@@ -24,6 +24,8 @@ use codex_protocol::openai_models::ReasoningEffort;
 use codex_tools::AdditionalProperties;
 use codex_tools::FreeformTool;
 use codex_tools::JsonSchema;
+use codex_tools::JsonSchemaPrimitiveType;
+use codex_tools::JsonSchemaType;
 use codex_tools::ResponsesApiTool;
 use codex_tools::ToolSpec;
 use std::collections::BTreeMap;
@@ -38,10 +40,18 @@ const UNSUPPORTED_IMAGES_MESSAGE: &str = concat!(
     "does not support images",
 );
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum ChatToolStrictMode {
+    PreserveToolSetting,
+    Disabled,
+    Enabled,
+}
+
 pub(crate) fn build_chat_completions_request(
     prompt: &Prompt,
     model_info: &ModelInfo,
     effort: Option<ReasoningEffort>,
+    strict_mode: ChatToolStrictMode,
 ) -> Result<ChatCompletionsRequest> {
     let mut messages = Vec::new();
     if !prompt.base_instructions.text.is_empty() {
@@ -51,14 +61,14 @@ pub(crate) fn build_chat_completions_request(
         });
     }
     messages.extend(chat_messages_from_items(&prompt.get_formatted_input())?);
-    let tools = chat_tools_from_specs(&prompt.tools)?;
+    let tools = chat_tools_from_specs(&prompt.tools, strict_mode)?;
 
     Ok(ChatCompletionsRequest {
         model: model_info.slug.clone(),
         messages,
         tools,
         tool_choice: Some(ChatToolChoice::Mode(ChatToolChoiceMode::Auto)),
-        thinking: chat_thinking(model_info, effort),
+        thinking: think(model_info, effort),
         reasoning_effort: chat_reasoning_effort(model_info, effort),
         response_format: prompt.output_schema.as_ref().map(|_| ChatResponseFormat {
             r#type: ChatResponseFormatType::JsonObject,
@@ -78,7 +88,8 @@ fn chat_messages_from_items(items: &[ResponseItem]) -> Result<Vec<ChatMessage>> 
         if let ResponseItem::Message { role, content, .. } = item
             && role == "user"
         {
-            append_chat_messages_from_segment(&items[segment_start..index], &mut messages)?;
+            let segment = &items[segment_start..index];
+            append_chat_messages_from_segment(segment, &mut messages)?;
             messages.push(chat_message_from_content(role, content, None)?);
             segment_start = index + 1;
         }
@@ -105,7 +116,8 @@ fn append_chat_messages_from_segment(
             }
             ResponseItem::Message { role, content, .. } if role == "assistant" => {
                 let content = Some(content_text(content)?);
-                let (tool_calls, next_index) = collect_chat_tool_calls(items, index + 1)?;
+                let start = index + 1;
+                let (tool_calls, next_index) = collect_tool_calls(items, start)?;
                 messages.push(ChatMessage::Assistant {
                     content,
                     name: None,
@@ -123,7 +135,7 @@ fn append_chat_messages_from_segment(
                 index += 1;
             }
             ResponseItem::FunctionCall { .. } | ResponseItem::CustomToolCall { .. } => {
-                let (tool_calls, next_index) = collect_chat_tool_calls(items, index)?;
+                let (tool_calls, next_index) = collect_tool_calls(items, index)?;
                 messages.push(ChatMessage::Assistant {
                     content: None,
                     name: None,
@@ -167,7 +179,7 @@ fn append_chat_messages_from_segment(
     Ok(())
 }
 
-fn collect_chat_tool_calls(
+fn collect_tool_calls(
     items: &[ResponseItem],
     mut index: usize,
 ) -> Result<(Option<Vec<ChatToolCall>>, usize)> {
@@ -295,13 +307,19 @@ fn function_output_text(
     }
 }
 
-fn chat_tools_from_specs(tools: &[ToolSpec]) -> Result<Vec<ChatTool>> {
+fn chat_tools_from_specs(
+    tools: &[ToolSpec],
+    strict_mode: ChatToolStrictMode,
+) -> Result<Vec<ChatTool>> {
     tools
         .iter()
         .map(|tool| match tool {
-            ToolSpec::Function(function) => Ok(chat_tool_from_function(function)),
+            ToolSpec::Function(function) => {
+                let tool = chat_tool_from_function(function, strict_mode);
+                Ok(tool)
+            }
             ToolSpec::Freeform(freeform) if freeform.name == APPLY_PATCH_TOOL_NAME => {
-                Ok(chat_tool_from_apply_patch(freeform))
+                Ok(chat_tool_from_apply_patch(freeform, strict_mode))
             }
             ToolSpec::Namespace(_)
             | ToolSpec::ToolSearch { .. }
@@ -316,7 +334,10 @@ fn chat_tools_from_specs(tools: &[ToolSpec]) -> Result<Vec<ChatTool>> {
         .collect()
 }
 
-fn chat_tool_from_apply_patch(freeform: &FreeformTool) -> ChatTool {
+fn chat_tool_from_apply_patch(
+    freeform: &FreeformTool,
+    strict_mode: ChatToolStrictMode,
+) -> ChatTool {
     let mut properties = BTreeMap::new();
     properties.insert(
         APPLY_PATCH_CHAT_COMPLETIONS_INPUT_FIELD.to_string(),
@@ -336,21 +357,88 @@ fn chat_tool_from_apply_patch(freeform: &FreeformTool) -> ChatTool {
             name: freeform.name.clone(),
             description: Some(freeform.description.clone()),
             parameters: serde_json::to_value(parameters).ok(),
-            strict: Some(true),
+            strict: Some(matches!(
+                strict_mode,
+                ChatToolStrictMode::PreserveToolSetting | ChatToolStrictMode::Enabled
+            )),
         },
     }
 }
 
-fn chat_tool_from_function(function: &ResponsesApiTool) -> ChatTool {
-    let parameters = serde_json::to_value(&function.parameters).unwrap_or_default();
+fn chat_tool_from_function(
+    function: &ResponsesApiTool,
+    strict_mode: ChatToolStrictMode,
+) -> ChatTool {
+    let (parameters, strict) = match strict_mode {
+        ChatToolStrictMode::PreserveToolSetting => {
+            let parameters = function.parameters.clone();
+            (parameters, function.strict)
+        }
+        ChatToolStrictMode::Disabled => (function.parameters.clone(), false),
+        ChatToolStrictMode::Enabled => {
+            let parameters = deepseek_strict_parameters(&function.parameters);
+            (parameters, true)
+        }
+    };
+    let parameters = serde_json::to_value(parameters).unwrap_or_default();
     ChatTool {
         r#type: ChatToolType::Function,
         function: ChatFunctionTool {
             name: function.name.clone(),
             description: Some(function.description.clone()),
             parameters: Some(parameters),
-            strict: Some(function.strict),
+            strict: Some(strict),
         },
+    }
+}
+
+fn deepseek_strict_parameters(parameters: &JsonSchema) -> JsonSchema {
+    let mut parameters = parameters.clone();
+    let is_empty_schema = parameters.schema_type.is_none()
+        && parameters.properties.is_none()
+        && parameters.items.is_none()
+        && parameters.any_of.is_none();
+    if is_empty_schema {
+        let object_type = JsonSchemaType::Single(JsonSchemaPrimitiveType::Object);
+        parameters.schema_type = Some(object_type);
+        parameters.properties = Some(BTreeMap::new());
+    }
+    normalize_deepseek_strict_schema(&mut parameters);
+    parameters
+}
+
+fn normalize_deepseek_strict_schema(schema: &mut JsonSchema) {
+    if schema.schema_type.is_none() && schema.properties.is_some() {
+        let object_type = JsonSchemaType::Single(JsonSchemaPrimitiveType::Object);
+        schema.schema_type = Some(object_type);
+    }
+
+    if let Some(properties) = schema.properties.as_mut() {
+        for property in properties.values_mut() {
+            normalize_deepseek_strict_schema(property);
+        }
+    }
+    if let Some(items) = schema.items.as_mut() {
+        normalize_deepseek_strict_schema(items);
+    }
+    if let Some(any_of) = schema.any_of.as_mut() {
+        for variant in any_of {
+            normalize_deepseek_strict_schema(variant);
+        }
+    }
+
+    let is_object = matches!(
+        schema.schema_type,
+        Some(JsonSchemaType::Single(JsonSchemaPrimitiveType::Object))
+    );
+    if is_object {
+        let required = schema
+            .properties
+            .as_ref()
+            .map(|properties| properties.keys().cloned().collect())
+            .unwrap_or_default();
+        schema.required = Some(required);
+        schema.additional_properties = Some(AdditionalProperties::Boolean(false));
     }
 }
 
@@ -364,15 +452,22 @@ fn apply_patch_chat_arguments(input: &str) -> Result<String> {
     })
 }
 
-fn chat_thinking(model_info: &ModelInfo, effort: Option<ReasoningEffort>) -> Option<ChatThinking> {
-    if !model_info.supports_reasoning_summaries {
+fn think(model: &ModelInfo, effort: Option<ReasoningEffort>) -> Option<ChatThinking> {
+    if !model.supports_reasoning_summaries {
         return None;
     }
 
-    let r#type = match effort.or(model_info.default_reasoning_level) {
-        Some(ReasoningEffort::None | ReasoningEffort::Minimal) => ChatThinkingType::Disabled,
-        Some(_) => ChatThinkingType::Enabled,
-        None => return None,
+    let configured = effort.or(model.default_reasoning_level);
+    let disabled = matches!(
+        configured,
+        Some(ReasoningEffort::None) | Some(ReasoningEffort::Minimal)
+    );
+    let r#type = if disabled {
+        ChatThinkingType::Disabled
+    } else if configured.is_some() {
+        ChatThinkingType::Enabled
+    } else {
+        return None;
     };
     Some(ChatThinking { r#type })
 }
@@ -457,7 +552,13 @@ mod tests {
 
         let effort = Some(ReasoningEffort::XHigh);
         let model = model_info();
-        let request = build_chat_completions_request(&prompt, &model, effort).unwrap();
+        let request = build_chat_completions_request(
+            &prompt,
+            &model,
+            effort,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
 
         assert_eq!(request.model, "deepseek-v4-pro");
         assert_eq!(request.messages.len(), 4);
@@ -481,7 +582,13 @@ mod tests {
         model.slug = "deepseek-v4-flash".to_string();
         model.context_window = Some(1_000_000);
 
-        let request = build_chat_completions_request(&prompt, &model, None).unwrap();
+        let request = build_chat_completions_request(
+            &prompt,
+            &model,
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
 
         assert_eq!(request.model, "deepseek-v4-flash");
     }
@@ -518,7 +625,13 @@ mod tests {
         };
 
         let model = model_info();
-        let request = build_chat_completions_request(&prompt, &model, None).unwrap();
+        let request = build_chat_completions_request(
+            &prompt,
+            &model,
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
 
         let ChatMessage::Assistant {
             reasoning_content,
@@ -555,7 +668,14 @@ mod tests {
             ..Prompt::default()
         };
 
-        let request = build_chat_completions_request(&prompt, &model_info(), None).unwrap();
+        let model = model_info();
+        let request = build_chat_completions_request(
+            &prompt,
+            &model,
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
 
         let ChatMessage::Assistant {
             reasoning_content,
@@ -604,7 +724,14 @@ mod tests {
             ..Prompt::default()
         };
 
-        let request = build_chat_completions_request(&prompt, &model_info(), None).unwrap();
+        let model = model_info();
+        let request = build_chat_completions_request(
+            &prompt,
+            &model,
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
 
         let ChatMessage::Assistant {
             reasoning_content,
@@ -637,11 +764,124 @@ mod tests {
             &Prompt::default(),
             &model_info(),
             Some(ReasoningEffort::None),
+            ChatToolStrictMode::PreserveToolSetting,
         )
         .unwrap();
 
         assert_eq!(request.thinking.unwrap().r#type, ChatThinkingType::Disabled);
         assert_eq!(request.reasoning_effort, None);
+    }
+
+    #[test]
+    fn disables_function_strict_without_deepseek_beta() {
+        let mut tool = weather_tool();
+        let ToolSpec::Function(function) = &mut tool else {
+            panic!("expected function tool");
+        };
+        function.strict = true;
+        let prompt = Prompt {
+            tools: vec![tool],
+            ..Prompt::default()
+        };
+
+        let request = build_chat_completions_request(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::Disabled,
+        )
+        .unwrap();
+
+        assert_eq!(request.tools[0].function.name, "get_weather");
+        assert_eq!(request.tools[0].function.strict, Some(false));
+    }
+
+    #[test]
+    fn preserves_function_strict_for_non_deepseek_chat_provider() {
+        let mut tool = weather_tool();
+        let ToolSpec::Function(function) = &mut tool else {
+            panic!("expected function tool");
+        };
+        function.strict = true;
+        let prompt = Prompt {
+            tools: vec![tool],
+            ..Prompt::default()
+        };
+
+        let request = build_chat_completions_request(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
+
+        assert_eq!(request.tools[0].function.name, "get_weather");
+        assert_eq!(request.tools[0].function.strict, Some(true));
+    }
+
+    #[test]
+    fn enables_strict_function_tools_for_deepseek_beta() {
+        let mut nested_properties = BTreeMap::new();
+        let id_schema = JsonSchema::string(/*description*/ None);
+        nested_properties.insert("id".to_string(), id_schema);
+        nested_properties.insert(
+            "timeout_ms".to_string(),
+            JsonSchema::number(/*description*/ None),
+        );
+        let mut properties = BTreeMap::new();
+        properties.insert(
+            "barrier".to_string(),
+            JsonSchema::object(
+                nested_properties,
+                Some(vec!["id".to_string()]),
+                Some(true.into()),
+            ),
+        );
+        properties.insert("mode".to_string(), JsonSchema::string(/*description*/ None));
+        let prompt = Prompt {
+            tools: vec![ToolSpec::Function(ResponsesApiTool {
+                name: "sync".to_string(),
+                description: "Synchronize tests.".to_string(),
+                strict: false,
+                defer_loading: None,
+                parameters: JsonSchema::object(
+                    properties,
+                    Some(vec!["barrier".to_string()]),
+                    /*additional_properties*/ None,
+                ),
+                output_schema: None,
+            })],
+            ..Prompt::default()
+        };
+
+        let request = build_chat_completions_request(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::Enabled,
+        )
+        .unwrap();
+        let parameters = request.tools[0]
+            .function
+            .parameters
+            .as_ref()
+            .expect("function parameters");
+
+        assert_eq!(request.tools[0].function.strict, Some(true));
+        assert_eq!(
+            parameters["required"],
+            serde_json::json!(["barrier", "mode"])
+        );
+        assert_eq!(parameters["additionalProperties"], serde_json::json!(false));
+        assert_eq!(
+            parameters["properties"]["barrier"]["required"],
+            serde_json::json!(["id", "timeout_ms"])
+        );
+        assert_eq!(
+            parameters["properties"]["barrier"]["additionalProperties"],
+            serde_json::json!(false)
+        );
     }
 
     #[test]
@@ -668,11 +908,14 @@ mod tests {
         };
 
         let model = model_info();
-        let request = build_chat_completions_request(&prompt, &model, None).unwrap();
+        let strict_mode = ChatToolStrictMode::Disabled;
+        let result = build_chat_completions_request(&prompt, &model, None, strict_mode);
+        let request = result.unwrap();
 
         assert_eq!(request.tools.len(), 1);
         assert_eq!(request.tools[0].r#type, ChatToolType::Function);
         assert_eq!(request.tools[0].function.name, "apply_patch");
+        assert_eq!(request.tools[0].function.strict, Some(false));
         let ChatMessage::Assistant { tool_calls, .. } = &request.messages[2] else {
             panic!("expected assistant tool call message");
         };
@@ -683,6 +926,51 @@ mod tests {
             serde_json::json!({ "input": patch })
         );
         assert!(matches!(&request.messages[3], ChatMessage::Tool { .. }));
+    }
+
+    #[test]
+    fn preserves_strict_apply_patch_for_non_deepseek_chat_provider() {
+        let prompt = Prompt {
+            tools: vec![apply_patch_tool()],
+            ..Prompt::default()
+        };
+
+        let request = build_chat_completions_request(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap();
+
+        assert_eq!(request.tools[0].function.name, "apply_patch");
+        assert_eq!(request.tools[0].function.strict, Some(true));
+    }
+
+    #[test]
+    fn enables_strict_apply_patch_for_deepseek_beta() {
+        let prompt = Prompt {
+            tools: vec![apply_patch_tool()],
+            ..Prompt::default()
+        };
+
+        let request = build_chat_completions_request(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::Enabled,
+        )
+        .unwrap();
+        let parameters = request.tools[0]
+            .function
+            .parameters
+            .as_ref()
+            .expect("function parameters");
+
+        assert_eq!(request.tools[0].function.name, "apply_patch");
+        assert_eq!(request.tools[0].function.strict, Some(true));
+        assert_eq!(parameters["required"], serde_json::json!(["input"]));
+        assert_eq!(parameters["additionalProperties"], serde_json::json!(false));
     }
 
     #[test]
@@ -698,9 +986,14 @@ mod tests {
             ..Prompt::default()
         };
 
-        let err = build_chat_completions_request(&prompt, &model_info(), None)
-            .unwrap_err()
-            .to_string();
+        let err = build_chat_completions_request(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+        )
+        .unwrap_err()
+        .to_string();
 
         assert!(err.contains("web_search"));
     }

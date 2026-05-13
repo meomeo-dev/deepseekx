@@ -111,6 +111,7 @@ use tracing::warn;
 use crate::attestation::AttestationContext;
 use crate::attestation::AttestationProvider;
 use crate::attestation::X_OAI_ATTESTATION_HEADER;
+use crate::chat_completions::ChatToolStrictMode;
 use crate::chat_completions::build_chat_completions_request;
 use crate::client_common::Prompt;
 use crate::client_common::ResponseEvent;
@@ -125,6 +126,7 @@ use codex_login::auth_env_telemetry::AuthEnvTelemetry;
 use codex_login::auth_env_telemetry::collect_auth_env_telemetry;
 use codex_model_provider::SharedModelProvider;
 use codex_model_provider::create_model_provider_for_id;
+use codex_model_provider_info::DEEPSEEK_PROVIDER_ID;
 #[cfg(test)]
 use codex_model_provider_info::DEFAULT_WEBSOCKET_CONNECT_TIMEOUT_MS;
 use codex_model_provider_info::ModelProviderInfo;
@@ -173,6 +175,7 @@ struct ModelClientState {
     thread_id: ThreadId,
     window_generation: AtomicU64,
     installation_id: String,
+    is_deepseek_provider: bool,
     provider: SharedModelProvider,
     auth_env_telemetry: AuthEnvTelemetry,
     session_source: SessionSource,
@@ -194,6 +197,37 @@ struct CurrentClientSetup {
     auth: Option<CodexAuth>,
     api_provider: ApiProvider,
     api_auth: SharedAuthProvider,
+}
+
+fn is_deepseek_provider_id(provider_id: &str) -> bool {
+    provider_id == DEEPSEEK_PROVIDER_ID
+        || provider_id
+            .strip_prefix(DEEPSEEK_PROVIDER_ID)
+            .is_some_and(|suffix| suffix.starts_with('-'))
+}
+
+fn tool_strict_mode(is_deepseek_provider: bool, base_url: &str) -> ChatToolStrictMode {
+    if !is_deepseek_provider {
+        return ChatToolStrictMode::PreserveToolSetting;
+    }
+
+    let Ok(url) = url::Url::parse(base_url) else {
+        return ChatToolStrictMode::Disabled;
+    };
+    let host = url.host_str().unwrap_or_default();
+    if !host.eq_ignore_ascii_case("api.deepseek.com") {
+        return ChatToolStrictMode::Disabled;
+    }
+
+    if url
+        .path()
+        .trim_end_matches('/')
+        .eq_ignore_ascii_case("/beta")
+    {
+        ChatToolStrictMode::Enabled
+    } else {
+        ChatToolStrictMode::Disabled
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -329,6 +363,7 @@ impl ModelClient {
         beta_features_header: Option<String>,
         attestation_provider: Option<Arc<dyn AttestationProvider>>,
     ) -> Self {
+        let is_deepseek_provider = is_deepseek_provider_id(&provider_id);
         let model_provider =
             create_model_provider_for_id(&provider_id, provider_info, auth_manager);
         let codex_api_key_env_enabled = model_provider
@@ -344,6 +379,7 @@ impl ModelClient {
                 thread_id,
                 window_generation: AtomicU64::new(0),
                 installation_id,
+                is_deepseek_provider,
                 provider: model_provider,
                 auth_env_telemetry,
                 session_source,
@@ -1261,7 +1297,12 @@ impl ModelClientSession {
                 RequestRouteTelemetry::for_endpoint(CHAT_COMPLETIONS_ENDPOINT),
                 self.client.state.auth_env_telemetry.clone(),
             );
-            let request = build_chat_completions_request(prompt, model_info, effort)?;
+            let strict_mode = tool_strict_mode(
+                self.client.state.is_deepseek_provider,
+                &client_setup.api_provider.base_url,
+            );
+            let build_request = build_chat_completions_request;
+            let request = build_request(prompt, model_info, effort, strict_mode)?;
             let options = self.build_chat_completions_options(turn_metadata_header);
             let inference_trace_attempt = inference_trace.start_attempt();
             inference_trace_attempt.record_started(&request);

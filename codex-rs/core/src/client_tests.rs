@@ -1,4 +1,5 @@
 use super::AuthRequestTelemetryContext;
+use super::ChatToolStrictMode;
 use super::ModelClient;
 use super::PendingUnauthorizedRetry;
 use super::UnauthorizedRecoveryExecution;
@@ -244,6 +245,42 @@ impl futures::Stream for NotifyAfterEventStream {
         }
         Poll::Ready(Some(Ok(event)))
     }
+}
+
+#[test]
+fn chat_tool_strict_mode_only_uses_official_deepseek_beta_url() {
+    assert_eq!(
+        super::tool_strict_mode(true, "https://api.deepseek.com/beta"),
+        ChatToolStrictMode::Enabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(true, "https://api.deepseek.com/beta/"),
+        ChatToolStrictMode::Enabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(true, "https://API.DEEPSEEK.COM/beta"),
+        ChatToolStrictMode::Enabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(true, "https://api.deepseek.com"),
+        ChatToolStrictMode::Disabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(true, "https://api.deepseek.com/v1"),
+        ChatToolStrictMode::Disabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(true, "https://proxy.example/beta"),
+        ChatToolStrictMode::Disabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(true, "not-a-url"),
+        ChatToolStrictMode::Disabled
+    );
+    assert_eq!(
+        super::tool_strict_mode(false, "https://api.deepseek.com/beta"),
+        ChatToolStrictMode::PreserveToolSetting
+    );
 }
 
 #[test]
