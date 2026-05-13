@@ -2,12 +2,18 @@
 set -euo pipefail
 
 target_branch="${1:-deepseekx/main}"
-upstream_ref="${2:-upstream/main}"
+upstream_ref="${2:-}"
 expected_origin="https://github.com/meomeo-dev/deepseekx.git"
 expected_upstream="https://github.com/openai/codex.git"
 
 echo "== branch sync preflight =="
 echo "target_branch=${target_branch}"
+if [[ -z "${upstream_ref}" ]]; then
+  echo "upstream_ref=missing"
+  echo "ERROR: pass an explicit Codex version tag or commit SHA"
+  echo "example: $0 deepseekx/main rust-v0.131.0"
+  exit 2
+fi
 echo "upstream_ref=${upstream_ref}"
 echo
 
@@ -48,7 +54,19 @@ echo "== upstream ref =="
 if git rev-parse --verify --quiet "${upstream_ref}^{commit}" >/dev/null; then
   git rev-parse --short "${upstream_ref}"
 else
-  echo "missing upstream ref: ${upstream_ref}"
+  echo "missing local ref: ${upstream_ref}"
+fi
+echo
+
+echo "== upstream remote candidate =="
+if git ls-remote --exit-code --tags upstream "${upstream_ref}" >/dev/null 2>&1; then
+  echo "found upstream tag: ${upstream_ref}"
+elif git ls-remote --exit-code --heads upstream "${upstream_ref}" >/dev/null 2>&1; then
+  echo "found upstream branch: ${upstream_ref}"
+elif [[ "${upstream_ref}" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+  echo "commit SHA candidate; verify with git fetch upstream ${upstream_ref}"
+else
+  echo "not found as upstream tag or branch"
 fi
 echo
 
@@ -56,7 +74,7 @@ echo "== ahead behind =="
 if git rev-parse --verify --quiet "${upstream_ref}^{commit}" >/dev/null \
   && git show-ref --verify --quiet "refs/heads/${target_branch}"; then
   git rev-list --left-right --count "${target_branch}...${upstream_ref}"
-  echo "left=target-only commits, right=upstream-only commits"
+  echo "left=target-only commits, right=version-ref-only commits"
 else
   echo "skipped"
 fi

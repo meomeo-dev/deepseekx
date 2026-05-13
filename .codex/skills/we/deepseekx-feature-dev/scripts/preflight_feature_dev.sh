@@ -106,11 +106,12 @@ else
 fi
 echo
 
-echo "== deepseekx/main vs upstream/main =="
+echo "== deepseekx/main vs upstream/main drift visibility =="
 if git rev-parse --verify --quiet "${upstream_ref}^{commit}" >/dev/null \
   && git show-ref --verify --quiet "refs/heads/${main_branch}"; then
   git rev-list --left-right --count "${main_branch}...${upstream_ref}"
   echo "left=deepseekx-main-only, right=upstream-main-only"
+  echo "note=feature branches still start from deepseekx/main"
 else
   echo "skipped"
 fi

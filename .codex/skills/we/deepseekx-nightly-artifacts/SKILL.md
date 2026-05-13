@@ -54,16 +54,18 @@ description: Use when discussing, planning, triggering, or debugging the
 
 推荐分支：
 
-- `deepseekx/main`：下游集成主干。
+- `deepseekx/main`：下游集成主干，应等于最新已同步 Codex 版本加
+  DeepSeekX 自有补丁。
 - `deepseekx/<feature-slug>`：普通功能开发分支。
 - `deepseekx/nightly`：手动 nightly artifact 构建分支。
 
 推荐流程：
 
-1. 功能先合并到 `deepseekx/main`。
-2. 快进或重建 `deepseekx/nightly` 到要发布验证的提交。
-3. 在 `deepseekx/nightly` 手动触发 nightly workflow。
-4. 先跑单目标，修复后再跑 `all`。
+1. 先用 `$we:deepseek-branch-sync` 完成需要的 Codex 版本同步。
+2. 功能先合并到 `deepseekx/main`。
+3. 快进或重建 `deepseekx/nightly` 到要发布验证的提交。
+4. 在 `deepseekx/nightly` 手动触发 nightly workflow。
+5. 先跑单目标，修复后再跑 `all`。
 
 首次使用前，`deepseekx-nightly-artifacts.yml` 需要先进入仓库默认分支。
 GitHub 识别到 workflow 后，后续才用 `--ref deepseekx/nightly` 指定源码 ref。

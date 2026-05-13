@@ -15,8 +15,8 @@ daily development from branch confusion in a stateless LLM session.
 
 - Develop from `deepseekx/main` into `deepseekx/<feature-slug>`.
 - Prepare changes for PR back into `deepseekx/main`.
-- Do not synchronize upstream OpenAI mainline here. Use
-  `$we:deepseek-branch-sync` for `upstream/main -> deepseekx/main`.
+- Do not synchronize upstream OpenAI mainline or version tags here. Use
+  `$we:deepseek-branch-sync` for Codex version-aligned sync work.
 - Do not publish releases or tags here.
 
 ## Required Branch Model
@@ -42,7 +42,8 @@ Review:
 - untracked files
 - secret-like untracked paths
 - relation to `origin/deepseekx/main`
-- relation between `deepseekx/main` and `upstream/main`
+- relation between `deepseekx/main` and `upstream/main`, only as drift
+  visibility. Feature work still starts from the downstream trunk.
 
 If only `DEEPSEEK_API_KEY.env` is untracked, continue but state that it will
 not be staged or committed.
@@ -57,7 +58,8 @@ not be staged or committed.
 - Do not switch branches with tracked dirty files unless the user approves.
 - Do not stash, drop, reset, clean, or force push user work.
 
-Create a feature branch from `deepseekx/main`:
+Create a feature branch from `deepseekx/main`, which should represent the
+latest synced Codex version plus DeepSeekX downstream patches:
 
 ```bash
 git switch deepseekx/main

@@ -1,29 +1,87 @@
 ---
 name: we:deepseek-branch-sync
 description: Safely synchronize a long-lived DeepSeek integration branch with
-  upstream openai/codex main using GitHub Flow style guardrails, preflight
-  checks, non-destructive merge defaults, and explicit verification before
-  commits or pushes.
+  an upstream openai/codex version ref using version-aligned sync branches,
+  preflight checks, non-destructive merge defaults, and explicit verification.
 ---
 
 # DeepSeek Branch Sync
 
 Use this skill when maintaining the DeepSeek downstream trunk
-`deepseekx/main` and merging the latest upstream `openai/codex` mainline into
-it. The goal is safe synchronization, not speed.
+`deepseekx/main` and aligning it with a specific upstream `openai/codex`
+version. The goal is version-aligned downstream integration, not tracking
+arbitrary upstream mainline head.
 
 ## Remote And Branch Model
 
 - `origin`: fork remote, `https://github.com/meomeo-dev/deepseekx.git`.
 - `upstream`: source remote, `https://github.com/openai/codex.git`.
-- `upstream/main`: upstream OpenAI Codex mainline.
+- `upstream/main`: upstream OpenAI Codex mainline, used only to discover or
+  inspect candidates.
+- `rust-v<version>`: preferred upstream Codex Rust release tag.
 - `deepseekx/main`: long-lived DeepSeek downstream trunk.
+- `deepseekx/sync/<version>`: short-lived version sync branch.
 - `deepseekx/<feature>`: short-lived downstream feature branch.
-- Prefer merge from `upstream/main` into `deepseekx/main`.
+- Prefer merge from a concrete upstream release tag or commit into
+  `deepseekx/sync/<version>`, then integrate that branch into
+  `deepseekx/main`.
 - Do not use this skill for ordinary feature development. Use
   `$we:deepseekx-feature-dev` for feature work.
 - Do not rebase a shared DeepSeek branch unless the user explicitly requests
   history rewrite and accepts the risk.
+
+## Version Alignment Policy
+
+- Default source is an upstream release tag, for example `rust-v0.131.0`.
+- If no suitable release tag exists, use an explicit upstream commit SHA.
+- Do not silently use `upstream/main` as the sync source.
+- Record the chosen upstream ref in the sync branch name and merge message.
+- Branch name format:
+  `deepseekx/sync/rust-v0.131.0` or
+  `deepseekx/sync/<short-sha>`.
+- Create sync branches from `origin/deepseekx/main`, not from stale local
+  `deepseekx/main`, unless the user explicitly says the local trunk is the
+  source of truth.
+- Keep sync branches temporary. Delete them after they are integrated and the
+  user confirms cleanup.
+
+## Branch Timeline Model
+
+Use this model when explaining sync work to the user:
+
+```text
+time --->
+
+upstream/openai-codex:
+  U0 ---- U1 ---- U2 ---- U3 ---- U4
+                  |             |
+                  |             rust-v0.132.0
+                  rust-v0.131.0
+
+origin/deepseekx:
+  deepseekx/main:
+  D0 ---- D1 ---- D2 ---------------- M131 ---- F3 ---- M132
+          |                           /                 /
+          |                          /                 /
+  feature branches:                 /                 /
+    F1 ---- F2 --------------------'                 /
+                                                     /
+  sync branches:                                    /
+    deepseekx/sync/rust-v0.131.0:  S131 -----------'
+    deepseekx/sync/rust-v0.132.0:                S132
+```
+
+Meanings:
+
+- `U*`: upstream OpenAI Codex commits.
+- `rust-v*`: chosen upstream version tags.
+- `D*`: DeepSeekX downstream trunk commits.
+- `F*`: DeepSeekX feature commits.
+- `S*`: temporary version sync branches.
+- `M*`: merge commits that integrate a sync branch into `deepseekx/main`.
+
+Downstream features and upstream version syncs should meet only through
+`deepseekx/main`. Do not develop features directly on a sync branch.
 
 ## Hard Safety Rules
 
@@ -35,8 +93,10 @@ it. The goal is safe synchronization, not speed.
   and harmless, or the user has approved.
 - If conflicts occur, stop after reporting conflicted files unless the user
   asked to resolve them.
-- Prefer `git fetch upstream` plus `git merge --no-ff upstream/main` while on
-  `deepseekx/main`.
+- Prefer `git fetch upstream tag <version>` plus a merge into
+  `deepseekx/sync/<version>`.
+- Do not merge upstream code directly into `deepseekx/main` unless the user
+  has explicitly chosen direct local integration.
 
 ## Preflight
 
@@ -44,7 +104,7 @@ Run the read-only preflight script before any sync operation:
 
 ```bash
 .codex/skills/we/deepseek-branch-sync/scripts/preflight_branch_sync.sh \
-  deepseekx/main upstream/main
+  deepseekx/main rust-v0.131.0
 ```
 
 Review:
@@ -53,33 +113,75 @@ Review:
 - dirty tracked files
 - untracked files
 - ahead/behind counts
-- merge-base with `upstream/main`
+- merge-base with the selected upstream version ref
 - whether the target branch exists locally
 - whether `origin` and `upstream` match the expected repositories
 
 If `DEEPSEEK_API_KEY.env` or other secret-like files are present, leave them
 untracked and mention that they were intentionally not touched.
 
-## Safe Sync Procedure
+## Safe Version Sync Procedure
 
-Use this when the user asks to bring the DeepSeek branch up to date.
+Use this when the user asks to align DeepSeekX with a Codex version.
 
 ```bash
-git fetch upstream
+version=rust-v0.131.0
+sync_branch=deepseekx/sync/$version
+
+git fetch origin deepseekx/main
+git fetch upstream tag "$version"
+git switch -c "$sync_branch" origin/deepseekx/main
+git merge --no-ff "$version"
+```
+
+If using a commit SHA instead of a tag:
+
+```bash
+upstream_ref=<sha>
+sync_branch=deepseekx/sync/${upstream_ref:0:12}
+
+git fetch origin deepseekx/main
+git fetch upstream "$upstream_ref"
+git switch -c "$sync_branch" origin/deepseekx/main
+git merge --no-ff "$upstream_ref"
+```
+
+If `origin/deepseekx/main` does not exist, stop and ask. Do not recreate shared
+branch topology implicitly.
+
+## Integrating The Sync Branch
+
+After checks pass, choose one path explicitly with the user.
+
+Solo developer default:
+
+- Direct local merge into `deepseekx/main` is acceptable when the user wants
+  speed and accepts local review discipline.
+- Still keep a sync branch first, because it provides a rollback point and a
+  clear place to resolve conflicts.
+- Push `deepseekx/main` only after checks pass and the user confirms.
+
+GitHub Flow option:
+
+- Push `deepseekx/sync/<version>` and open a PR into `deepseekx/main`.
+- Use PR when CI must run before trunk changes, when release artifacts are
+  involved, or when the user wants a reviewable audit trail.
+- For a solo developer, PR is recommended for high-risk upstream version jumps,
+  but not mandatory for small or already locally verified syncs.
+
+Direct local integration:
+
+```bash
 git switch deepseekx/main
-git merge --no-ff upstream/main
+git merge --no-ff deepseekx/sync/rust-v0.131.0
 ```
 
-If the branch does not exist locally:
+PR integration:
 
 ```bash
-git fetch origin
-git switch -c deepseekx/main origin/deepseekx/main
+git push -u origin deepseekx/sync/rust-v0.131.0
+gh pr create --base deepseekx/main --head deepseekx/sync/rust-v0.131.0
 ```
-
-If neither local nor remote `deepseekx/main` exists, stop and ask before
-creating a new downstream trunk. Do not recreate shared branch topology
-implicitly.
 
 ## Conflict Handling
 
@@ -114,7 +216,7 @@ Commit only the intended merge or sync changes.
 Recommended merge commit message:
 
 ```text
-Merge upstream/main into deepseekx/main
+Merge upstream rust-v0.131.0 into deepseekx sync branch
 ```
 
 If only creating the skill or documentation, use a normal feature commit.
