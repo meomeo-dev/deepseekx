@@ -1,0 +1,141 @@
+{
+  "caseId": "20260513-095109-real-guided-dashboard-cache",
+  "model": "deepseek-v4-pro",
+  "modelProvider": "deepseek",
+  "threadId": "019e1c56-c186-7bc2-a1c2-f1bb8bdf4e91",
+  "previewPort": 5173,
+  "reasoningEfforts": [
+    "high"
+  ],
+  "modelContextWindow": 364800,
+  "lineCount": {
+    "lineCount": 10433,
+    "fileCount": 84,
+    "topFiles": [
+      [
+        422,
+        "src/app.js"
+      ],
+      [
+        341,
+        "data/fixtures.js"
+      ],
+      [
+        272,
+        "data/fixtures-cs.js"
+      ],
+      [
+        271,
+        "data/seed.js"
+      ],
+      [
+        256,
+        "scripts/render-billing.js"
+      ],
+      [
+        255,
+        "scripts/validate.cjs"
+      ],
+      [
+        236,
+        "scripts/render-forecasts.js"
+      ],
+      [
+        236,
+        "scripts/render-command.js"
+      ],
+      [
+        233,
+        "data/fixtures-billing.js"
+      ],
+      [
+        225,
+        "tests/run.mjs"
+      ],
+      [
+        224,
+        "scripts/render-usage.js"
+      ],
+      [
+        216,
+        "scripts/render-renewals.js"
+      ],
+      [
+        214,
+        "scripts/render-account-detail.js"
+      ],
+      [
+        200,
+        "data/fixtures-command.js"
+      ],
+      [
+        199,
+        "tests/test-command.mjs"
+      ],
+      [
+        198,
+        "data/store.js"
+      ],
+      [
+        194,
+        "data/fixtures-usage.js"
+      ],
+      [
+        193,
+        "scripts/command-center/runbook-recommendation.js"
+      ],
+      [
+        187,
+        "tests/test-module-structure.mjs"
+      ],
+      [
+        184,
+        "tests/test-cs.mjs"
+      ],
+      [
+        181,
+        "scripts/render-portfolio.js"
+      ],
+      [
+        178,
+        "scripts/ui-controls.js"
+      ],
+      [
+        175,
+        "styles/main.css"
+      ],
+      [
+        173,
+        "scripts/renewals/playbook-matching.js"
+      ],
+      [
+        156,
+        "tests/test-billing.mjs"
+      ],
+      [
+        134,
+        "scripts/command-center/postmortem-actions.js"
+      ],
+      [
+        129,
+        "data/filters.js"
+      ],
+      [
+        128,
+        "scripts/command-center/escalation-routing.js"
+      ],
+      [
+        127,
+        "scripts/portfolio/next-action.js"
+      ],
+      [
+        126,
+        "scripts/usage/adoption-playbooks.js"
+      ]
+    ]
+  },
+  "workspaceSource": "/private/tmp/deepseek-cache-bench-export-20260513-095109-real-guided-dashboard-cache/workspace",
+  "reportSource": "/private/tmp/deepseek-cache-bench-export-20260513-095109-real-guided-dashboard-cache/experiment",
+  "startCommand": "python3 -m http.server 5173 --bind 0.0.0.0 --directory .",
+  "notes": "Real guided 10-turn DeepSeek cache benchmark stopped at user request after 10,433 first-party lines."
+}

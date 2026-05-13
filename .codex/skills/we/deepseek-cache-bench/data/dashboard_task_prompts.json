@@ -1,0 +1,44 @@
+[
+  {
+    "name": "build-dashboard",
+    "prompt": [
+      "You are inside a disposable Docker benchmark workspace.",
+      "Build a runnable production-style React + TypeScript analytics",
+      "dashboard in the current directory.",
+      "Write real first-party source, config, tests, fixtures, scripts,",
+      "styles, and docs.",
+      "Produce at least 10,000 meaningful first-party lines, excluding",
+      "dependencies and lockfiles.",
+      "Use shell commands and small scripts where efficient, but create or",
+      "edit those scripts during this turn.",
+      "Do not fetch dependencies from the network unless the workspace already",
+      "contains an offline package cache.",
+      "End by running a concise line-count validation."
+    ]
+  },
+  {
+    "name": "make-runnable",
+    "prompt": [
+      "Continue in the same workspace.",
+      "Make the dashboard runnable in the container.",
+      "Add or fix package scripts, local mock-data wiring, preview",
+      "instructions, accessibility notes, and validation checks.",
+      "Run concise commands proving the artifact still has at least 10,000",
+      "first-party lines and has a start or preview command."
+    ]
+  },
+  {
+    "name": "preview-and-qa",
+    "prompt": [
+      "Continue in the same workspace.",
+      "Perform final QA using shell commands.",
+      "Fix obvious broken imports, malformed generated code, or missing",
+      "runtime entry points.",
+      "Start the preview server in the background, bound to",
+      "0.0.0.0:${preview_port}.",
+      "Keep the process alive after the turn, for example with nohup.",
+      "Finish with the line count, file count, validation status, and preview",
+      "URL."
+    ]
+  }
+]

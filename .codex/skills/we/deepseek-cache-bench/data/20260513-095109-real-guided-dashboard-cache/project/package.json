@@ -1,0 +1,21 @@
+{
+  "name": "northstar-ops-console",
+  "version": "1.0.0",
+  "description": "Northstar Ops Console — SaaS operations dashboard for B2B subscription businesses",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "python3 -m http.server 3000 --directory .",
+    "validate": "node scripts/validate.cjs",
+    "test": "node tests/run.mjs",
+    "test-cs": "node tests/test-cs.mjs",
+    "test-html": "node tests/test-html.mjs",
+    "test-command": "node tests/test-command.mjs",
+    "test-module": "node tests/test-module-structure.mjs",
+    "test-billing": "node tests/test-billing.mjs",
+    "test-forecast": "node tests/test-forecast.mjs",
+    "test-forecasting": "node tests/test-forecast.mjs",
+    "test-usage": "node tests/test-usage.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

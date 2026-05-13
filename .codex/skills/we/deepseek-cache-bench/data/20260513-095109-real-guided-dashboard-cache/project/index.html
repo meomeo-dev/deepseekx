@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northstar Ops Console</title>
+<link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><h1>✦ Northstar</h1><span>Ops Console</span></div>
+  <nav class="sidebar-nav">
+    <a href="#summary" class="active" data-section="summary"><span class="nav-icon">📊</span> Summary</a>
+    <a href="#revenue" data-section="revenue"><span class="nav-icon">💰</span> Revenue</a>
+    <a href="#funnel" data-section="funnel"><span class="nav-icon">🔻</span> Funnel</a>
+    <a href="#retention" data-section="retention"><span class="nav-icon">🔄</span> Retention</a>
+    <a href="#health" data-section="health"><span class="nav-icon">💚</span> Customer Health</a>
+    <a href="#support" data-section="support"><span class="nav-icon">🎫</span> Support<span class="nav-badge" id="support-badge">0</span></a>
+    <a href="#incidents" data-section="incidents"><span class="nav-icon">🚨</span> Incidents<span class="nav-badge" id="incident-badge">0</span></a>
+    <a href="#experiments" data-section="experiments"><span class="nav-icon">🧪</span> Experiments</a>
+    <a href="#deployments" data-section="deployments"><span class="nav-icon">🚀</span> Deployments</a>
+    <a href="#billing" data-section="billing"><span class="nav-icon">💳</span> Billing Ops</a>
+    <a href="#forecasts" data-section="forecasts"><span class="nav-icon">📈</span> Forecasts</a>
+    <a href="#usage" data-section="usage"><span class="nav-icon">📱</span> Usage Ops</a>
+    <a href="#portfolio" data-section="portfolio"><span class="nav-icon">📋</span> Portfolio</a>
+    <a href="#renewals" data-section="renewals"><span class="nav-icon">📅</span> Renewals<span class="nav-badge" id="renewals-badge">0</span></a>
+    <a href="#command" data-section="command"><span class="nav-icon">🎯</span> Command Center<span class="nav-badge" id="command-badge">0</span></a>
+  </nav>
+</aside>
+<main class="main">
+  <div class="topbar"><div style="display:flex;align-items:center;gap:16px"><h2 id="section-title">Summary</h2><div id="filter-bar-container" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"></div></div><div class="topbar-right"><span id="clock"></span><span class="live">Live</span></div></div>
+  <section class="content active" id="section-summary"><div class="card-grid" id="kpi-cards"></div><div class="two-col"><div class="panel" id="summary-revenue-mini"></div><div class="panel" id="summary-health-mini"></div></div></section>
+  <section class="content" id="section-revenue"><div class="card-grid" id="revenue-kpi-cards"></div><div class="panel" id="revenue-chart-panel"></div><div class="panel" id="revenue-plan-panel"></div></section>
+  <section class="content" id="section-funnel"><div class="panel" id="funnel-rates"></div><div class="panel" id="funnel-table"></div></section>
+  <section class="content" id="section-retention"><div class="panel" id="retention-grid"></div></section>
+  <section class="content" id="section-health"><div class="two-col"><div class="panel" id="health-distribution"></div><div class="panel" id="health-by-plan"></div></div><div class="panel" id="health-at-risk"></div></section>
+  <section class="content" id="section-support"><div class="card-grid" id="support-kpi-cards"></div><div class="panel" id="support-table"></div></section>
+  <section class="content" id="section-incidents"><div class="card-grid" id="incident-kpi-cards"></div><div class="panel" id="incident-table"></div></section>
+  <section class="content" id="section-experiments"><div class="panel" id="experiment-table"></div></section>
+  <section class="content" id="section-deployments"><div class="card-grid" id="deploy-kpi-cards"></div><div class="panel" id="deploy-table"></div></section>
+  <section class="content" id="section-billing"><div id="billing-content"></div></section>
+  <section class="content" id="section-forecasts"><div id="forecasts-content"></div></section>
+  <section class="content" id="section-usage"><div id="usage-content"></div></section>
+  <section class="content" id="section-account"><div id="account-detail-panel"></div></section>
+  <section class="content" id="section-portfolio"><div id="portfolio-content"></div></section>
+  <section class="content" id="section-renewals"><div id="renewals-content"></div></section>
+  <section class="content" id="section-command"><div id="command-content"></div></section>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

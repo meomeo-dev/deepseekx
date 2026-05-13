@@ -1,0 +1,6 @@
+model_provider = "deepseek"
+model = "deepseek-v4-pro"
+model_reasoning_effort = "high"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+model_context_window = 384000
