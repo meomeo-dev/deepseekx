@@ -1,0 +1,438 @@
+name: deepseekx-nightly-artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Artifact target to build."
+        required: true
+        default: "mac-x64"
+        type: choice
+        options:
+          - mac-x64
+          - mac-arm64
+          - mac-universal
+          - win-x64
+          - win-arm64
+          - win-bundle
+          - all
+      confirm_run:
+        description: "Type RUN_NIGHTLY to spend Actions minutes."
+        required: true
+        default: ""
+        type: string
+      artifact_retention_days:
+        description: "Artifact retention days, from 1 to 30."
+        required: true
+        default: "7"
+        type: string
+
+run-name: nightly artifacts (${{ inputs.target }}) on ${{ github.ref_name }}
+
+concurrency:
+  group: deepseekx-nightly-${{ github.ref }}-${{ inputs.target }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_PROFILE_RELEASE_LTO: thin
+  RUST_BACKTRACE: short
+
+jobs:
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    outputs:
+      retention_days: ${{ steps.retention.outputs.days }}
+      macos_matrix: ${{ steps.matrix.outputs.macos_matrix }}
+      windows_matrix: ${{ steps.matrix.outputs.windows_matrix }}
+      run_macos: ${{ steps.matrix.outputs.run_macos }}
+      run_windows: ${{ steps.matrix.outputs.run_windows }}
+    steps:
+      - name: Confirm paid runner intent
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ inputs.confirm_run }}" != "RUN_NIGHTLY" ]]; then
+            echo "Type RUN_NIGHTLY in confirm_run before running nightly builds."
+            exit 1
+          fi
+          echo "target=${{ inputs.target }}"
+          echo "ref=${{ github.ref_name }}"
+          echo "sha=${{ github.sha }}"
+
+      - name: Validate artifact retention
+        id: retention
+        shell: bash
+        run: |
+          set -euo pipefail
+          days="${{ inputs.artifact_retention_days }}"
+          if [[ ! "$days" =~ ^[0-9]+$ ]]; then
+            echo "artifact_retention_days must be an integer."
+            exit 1
+          fi
+          if (( days < 1 || days > 30 )); then
+            echo "artifact_retention_days must be between 1 and 30."
+            exit 1
+          fi
+          echo "days=$days" >> "$GITHUB_OUTPUT"
+
+      - name: Cost guardrail note
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat <<'EOF'
+          This workflow is manual-only and unsigned.
+          Prefer single targets first, then run all only after failures are fixed.
+          Public repositories use standard hosted runners at no charge.
+          Private repositories consume included minutes or billable minutes.
+          EOF
+
+      - name: Build target matrix
+        id: matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ inputs.target }}"
+
+          mac_x64='{"package":"mac-x64","target":"x86_64-apple-darwin",'
+          mac_x64+='"runner":"macos-15-intel"}'
+          mac_arm='{"package":"mac-arm64","target":"aarch64-apple-darwin",'
+          mac_arm+='"runner":"macos-latest"}'
+          win_x64='{"package":"win-x64","target":"x86_64-pc-windows-msvc",'
+          win_x64+='"runner":"windows-latest"}'
+          win_arm='{"package":"win-arm64","target":"aarch64-pc-windows-msvc",'
+          win_arm+='"runner":"windows-11-arm"}'
+
+          case "$target" in
+            mac-x64)
+              macos_matrix="{\"include\":[$mac_x64]}"
+              windows_matrix="{\"include\":[]}"
+              ;;
+            mac-arm64)
+              macos_matrix="{\"include\":[$mac_arm]}"
+              windows_matrix="{\"include\":[]}"
+              ;;
+            mac-universal)
+              macos_matrix="{\"include\":[$mac_x64,$mac_arm]}"
+              windows_matrix="{\"include\":[]}"
+              ;;
+            win-x64)
+              macos_matrix="{\"include\":[]}"
+              windows_matrix="{\"include\":[$win_x64]}"
+              ;;
+            win-arm64)
+              macos_matrix="{\"include\":[]}"
+              windows_matrix="{\"include\":[$win_arm]}"
+              ;;
+            win-bundle)
+              macos_matrix="{\"include\":[]}"
+              windows_matrix="{\"include\":[$win_x64,$win_arm]}"
+              ;;
+            all)
+              macos_matrix="{\"include\":[$mac_x64,$mac_arm]}"
+              windows_matrix="{\"include\":[$win_x64,$win_arm]}"
+              ;;
+            *)
+              echo "Unknown target: $target"
+              exit 1
+              ;;
+          esac
+
+          run_macos=false
+          run_windows=false
+          [[ "$macos_matrix" != '{"include":[]}' ]] && run_macos=true
+          [[ "$windows_matrix" != '{"include":[]}' ]] && run_windows=true
+          {
+            echo "macos_matrix=$macos_matrix"
+            echo "windows_matrix=$windows_matrix"
+            echo "run_macos=$run_macos"
+            echo "run_windows=$run_windows"
+          } >> "$GITHUB_OUTPUT"
+
+  macos:
+    name: macOS ${{ matrix.package }}
+    needs: preflight
+    if: ${{ needs.preflight.outputs.run_macos == 'true' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: codex-rs
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.preflight.outputs.macos_matrix) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Print runner specs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "OS: $(sw_vers -productName) $(sw_vers -productVersion)"
+          echo "Hardware model: $(sysctl -n hw.model)"
+          echo "CPU architecture: $(uname -m)"
+          echo "Logical CPUs: $(sysctl -n hw.logicalcpu)"
+          df -h .
+
+      - uses: dtolnay/rust-toolchain@a0b273b48ed29de4470960879e8381ff45632f26 # 1.93.0
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cargo build
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          cargo build \
+            --target "$target" \
+            --release \
+            --timings \
+            --bin codex \
+            --bin codex-responses-api-proxy
+
+      - name: Stage macOS package
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="deepseekx-${{ matrix.package }}"
+          target="${{ matrix.target }}"
+          root="dist/$package"
+          mkdir -p "$root/bin"
+          cp "target/$target/release/codex" "$root/bin/codex"
+          cp \
+            "target/$target/release/codex-responses-api-proxy" \
+            "$root/bin/codex-responses-api-proxy"
+          chmod 0755 "$root/bin/codex" "$root/bin/codex-responses-api-proxy"
+
+          dmg="dist/$package.dmg"
+          hdiutil create \
+            -volname "$package" \
+            -srcfolder "$root" \
+            -format UDZO \
+            -ov \
+            "$dmg"
+          tar -C dist -czf "dist/$package.tar.gz" "$package"
+          shasum -a 256 "dist/$package.dmg" "dist/$package.tar.gz" \
+            > "dist/$package.sha256"
+
+      - name: Upload macOS package
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: deepseekx-${{ matrix.package }}
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: |
+            codex-rs/dist/deepseekx-${{ matrix.package }}/**
+            codex-rs/dist/deepseekx-${{ matrix.package }}.dmg
+            codex-rs/dist/deepseekx-${{ matrix.package }}.tar.gz
+            codex-rs/dist/deepseekx-${{ matrix.package }}.sha256
+
+      - name: Upload Cargo timings
+        if: ${{ always() }}
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: cargo-timings-${{ matrix.package }}
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: codex-rs/target/**/cargo-timings/cargo-timing.html
+          if-no-files-found: warn
+
+  macos-universal:
+    name: macOS universal
+    needs:
+      - preflight
+      - macos
+    if: ${{ always() &&
+      needs.preflight.result == 'success' &&
+      needs.macos.result == 'success' &&
+      (inputs.target == 'all' || inputs.target == 'mac-universal') }}
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Download macOS x64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-mac-x64
+          path: artifacts/mac-x64
+
+      - name: Download macOS arm64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-mac-arm64
+          path: artifacts/mac-arm64
+
+      - name: Build universal macOS package
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="deepseekx-mac-universal"
+          root="dist/$package"
+          mkdir -p "$root/bin"
+          for binary in codex codex-responses-api-proxy; do
+            lipo -create \
+              "artifacts/mac-x64/deepseekx-mac-x64/bin/$binary" \
+              "artifacts/mac-arm64/deepseekx-mac-arm64/bin/$binary" \
+              -output "$root/bin/$binary"
+            chmod 0755 "$root/bin/$binary"
+            lipo -info "$root/bin/$binary"
+          done
+
+          dmg="dist/$package.dmg"
+          hdiutil create \
+            -volname "$package" \
+            -srcfolder "$root" \
+            -format UDZO \
+            -ov \
+            "$dmg"
+          tar -C dist -czf "dist/$package.tar.gz" "$package"
+          shasum -a 256 "dist/$package.dmg" "dist/$package.tar.gz" \
+            > "dist/$package.sha256"
+
+      - name: Upload universal macOS package
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: deepseekx-mac-universal
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: |
+            dist/deepseekx-mac-universal/**
+            dist/deepseekx-mac-universal.dmg
+            dist/deepseekx-mac-universal.tar.gz
+            dist/deepseekx-mac-universal.sha256
+
+  windows:
+    name: Windows ${{ matrix.package }}
+    needs: preflight
+    if: ${{ needs.preflight.outputs.run_windows == 'true' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: codex-rs
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.preflight.outputs.windows_matrix) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Print runner specs
+        shell: pwsh
+        run: |
+          $computer = Get-CimInstance Win32_ComputerSystem
+          $cpu = Get-CimInstance Win32_Processor | Select-Object -First 1
+          Write-Host "OS: $([System.Environment]::OSVersion.VersionString)"
+          Write-Host "CPU: $($cpu.Name)"
+          Write-Host "Logical CPUs: $($computer.NumberOfLogicalProcessors)"
+
+      - uses: dtolnay/rust-toolchain@a0b273b48ed29de4470960879e8381ff45632f26 # 1.93.0
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cargo build
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          cargo build \
+            --target "$target" \
+            --release \
+            --timings \
+            --bin codex \
+            --bin codex-responses-api-proxy \
+            --bin codex-windows-sandbox-setup \
+            --bin codex-command-runner
+
+      - name: Stage Windows package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $package = "deepseekx-${{ matrix.package }}"
+          $target = "${{ matrix.target }}"
+          $root = "dist/$package"
+          New-Item -ItemType Directory -Force "$root/bin" | Out-Null
+
+          $binaries = @(
+            "codex",
+            "codex-responses-api-proxy",
+            "codex-windows-sandbox-setup",
+            "codex-command-runner"
+          )
+          foreach ($binary in $binaries) {
+            Copy-Item `
+              "target/$target/release/$binary.exe" `
+              "$root/bin/$binary.exe"
+          }
+
+          Compress-Archive -Path "$root/*" -DestinationPath "dist/$package.zip"
+          Get-FileHash -Algorithm SHA256 "dist/$package.zip" |
+            ForEach-Object { "$($_.Hash.ToLower())  $package.zip" } |
+            Set-Content "dist/$package.sha256"
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: deepseekx-${{ matrix.package }}
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: |
+            codex-rs/dist/deepseekx-${{ matrix.package }}/**
+            codex-rs/dist/deepseekx-${{ matrix.package }}.zip
+            codex-rs/dist/deepseekx-${{ matrix.package }}.sha256
+
+      - name: Upload Cargo timings
+        if: ${{ always() }}
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: cargo-timings-${{ matrix.package }}
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: codex-rs/target/**/cargo-timings/cargo-timing.html
+          if-no-files-found: warn
+
+  windows-bundle:
+    name: Windows architecture bundle
+    needs:
+      - preflight
+      - windows
+    if: ${{ always() &&
+      needs.preflight.result == 'success' &&
+      needs.windows.result == 'success' &&
+      (inputs.target == 'all' || inputs.target == 'win-bundle') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download Windows x64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-win-x64
+          path: artifacts/win-x64
+
+      - name: Download Windows arm64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-win-arm64
+          path: artifacts/win-arm64
+
+      - name: Build Windows bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="deepseekx-win-bundle"
+          root="dist/$package"
+          mkdir -p "$root/x64" "$root/arm64"
+          cp -R artifacts/win-x64/deepseekx-win-x64/bin "$root/x64/bin"
+          cp -R artifacts/win-arm64/deepseekx-win-arm64/bin "$root/arm64/bin"
+          (cd dist && zip -r "$package.zip" "$package")
+          sha256sum "dist/$package.zip" > "dist/$package.sha256"
+
+      - name: Upload Windows bundle
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: deepseekx-win-bundle
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: |
+            dist/deepseekx-win-bundle/**
+            dist/deepseekx-win-bundle.zip
+            dist/deepseekx-win-bundle.sha256
