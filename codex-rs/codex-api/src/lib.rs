@@ -93,7 +93,6 @@ pub use crate::provider::RetryConfig;
 pub use crate::provider::is_azure_responses_provider;
 pub use crate::requests::Compression;
 pub use crate::sse::spawn_chat_completions_stream;
-pub use crate::sse::stream_from_fixture;
 pub use crate::telemetry::SseTelemetry;
 pub use crate::telemetry::WebsocketTelemetry;
 pub use codex_protocol::protocol::RealtimeAudioFrame;
