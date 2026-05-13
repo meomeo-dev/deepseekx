@@ -31,6 +31,7 @@ use codex_tools::ToolSpec;
 use std::collections::BTreeMap;
 
 use crate::client_common::Prompt;
+use crate::deepseek_json_output::deepseek_json_output_instructions;
 
 pub(crate) const APPLY_PATCH_CHAT_COMPLETIONS_INPUT_FIELD: &str = "input";
 pub(crate) const APPLY_PATCH_TOOL_NAME: &str = "apply_patch";
@@ -47,16 +48,47 @@ pub(crate) enum ChatToolStrictMode {
     Enabled,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum ChatJsonOutputMode {
+    Generic,
+    DeepSeek,
+}
+
+#[cfg(test)]
 pub(crate) fn build_chat_completions_request(
     prompt: &Prompt,
     model_info: &ModelInfo,
     effort: Option<ReasoningEffort>,
     strict_mode: ChatToolStrictMode,
 ) -> Result<ChatCompletionsRequest> {
+    build_chat_completions_request_with_json_mode(
+        prompt,
+        model_info,
+        effort,
+        strict_mode,
+        ChatJsonOutputMode::Generic,
+    )
+}
+
+pub(crate) fn build_chat_completions_request_with_json_mode(
+    prompt: &Prompt,
+    model_info: &ModelInfo,
+    effort: Option<ReasoningEffort>,
+    strict_mode: ChatToolStrictMode,
+    json_output_mode: ChatJsonOutputMode,
+) -> Result<ChatCompletionsRequest> {
     let mut messages = Vec::new();
     if !prompt.base_instructions.text.is_empty() {
         messages.push(ChatMessage::System {
             content: prompt.base_instructions.text.clone(),
+            name: None,
+        });
+    }
+    if let (ChatJsonOutputMode::DeepSeek, Some(schema)) =
+        (json_output_mode, prompt.output_schema.as_ref())
+    {
+        messages.push(ChatMessage::System {
+            content: deepseek_json_output_instructions(schema),
             name: None,
         });
     }
@@ -570,6 +602,42 @@ mod tests {
         assert_eq!(request.reasoning_effort, Some(ChatReasoningEffort::Max));
         assert_eq!(request.thinking.unwrap().r#type, ChatThinkingType::Enabled);
         assert!(request.stream_options.unwrap().include_usage);
+    }
+
+    #[test]
+    fn deepseek_json_output_adds_json_system_instructions() {
+        let schema = serde_json::json!({
+            "type": "object",
+            "properties": { "answer": { "type": "string" } },
+            "required": ["answer"],
+            "additionalProperties": false
+        });
+        let prompt = Prompt {
+            base_instructions: BaseInstructions {
+                text: "You are concise.".to_string(),
+            },
+            input: vec![text_message("user", "Return JSON")],
+            output_schema: Some(schema),
+            ..Prompt::default()
+        };
+
+        let request = build_chat_completions_request_with_json_mode(
+            &prompt,
+            &model_info(),
+            None,
+            ChatToolStrictMode::PreserveToolSetting,
+            ChatJsonOutputMode::DeepSeek,
+        )
+        .unwrap();
+
+        assert_eq!(request.messages.len(), 3);
+        let ChatMessage::System { content, .. } = &request.messages[1] else {
+            panic!("expected DeepSeek JSON system message");
+        };
+        assert!(content.contains("valid json"));
+        assert!(content.contains("JSON Schema"));
+        assert!(content.contains("Example JSON output"));
+        assert!(content.contains("\"answer\""));
     }
 
     #[test]

@@ -1227,6 +1227,385 @@ async fn deepseek_provider_replays_reasoning_tool_history() -> anyhow::Result<()
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn deepseek_json_output_allows_tool_call_before_final_json() -> anyhow::Result<()> {
+    skip_if_no_network!(Ok(()));
+
+    let server = MockServer::start().await;
+    let first_response = concat!(
+        "data: {\"id\":\"chatcmpl-tool\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"reasoning_content\":\"need sync\"},\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: {\"id\":\"chatcmpl-tool\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"tool_calls\":[{\"index\":0,\"id\":\"call-sync\",\"type\":\"function\",",
+        "\"function\":{\"name\":\"test_sync_tool\",\"arguments\":\"{}\"}}]},",
+        "\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    )
+    .to_string();
+    let second_response = concat!(
+        "data: {\"id\":\"chatcmpl-final\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"content\":\"{\\\"answer\\\":\\\"ok\\\"}\"},\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345014,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    )
+    .to_string();
+    let chat_mock = mount_chat_seq(&server, vec![first_response, second_response]).await;
+
+    let provider_base_url = server.uri();
+    let TestCodex { codex, .. } = test_codex()
+        .with_model("deepseek-v4-pro")
+        .with_config(move |config| {
+            let mut provider = ModelProviderInfo::create_deepseek_provider();
+            provider.base_url = Some(provider_base_url);
+            provider.env_key = None;
+            provider.request_max_retries = Some(0);
+            provider.stream_max_retries = Some(0);
+            provider.stream_idle_timeout_ms = Some(5_000);
+            config.model_provider_id = "deepseek".to_string();
+            config.model_provider = provider;
+            config.model = Some("deepseek-v4-pro".to_string());
+            config.include_apply_patch_tool = false;
+            let mut model = model_info_from_slug("deepseek-v4-pro");
+            model.experimental_supported_tools = vec!["test_sync_tool".to_string()];
+            config.model_catalog = Some(ModelsResponse {
+                models: vec![model],
+            });
+        })
+        .build(&server)
+        .await?;
+    let schema = json!({
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+            "answer": { "type": "string" }
+        },
+        "required": ["answer"]
+    });
+
+    codex
+        .submit(Op::UserInput {
+            environments: None,
+            items: vec![UserInput::Text {
+                text: "run sync, then return strict json".into(),
+                text_elements: Vec::new(),
+            }],
+            final_output_json_schema: Some(schema),
+            responsesapi_client_metadata: None,
+        })
+        .await?;
+
+    loop {
+        let event = codex.next_event().await?;
+        match event.msg {
+            EventMsg::TurnComplete(event) => {
+                assert_eq!(
+                    event.last_agent_message.as_deref(),
+                    Some("{\"answer\":\"ok\"}")
+                );
+                break;
+            }
+            EventMsg::Error(error) => {
+                panic!("unexpected error: {}", error.message);
+            }
+            _ => {}
+        }
+    }
+
+    let requests = chat_mock.requests();
+    assert_eq!(requests.len(), 2);
+    assert_eq!(
+        requests[0].body_json()["response_format"]["type"],
+        "json_object"
+    );
+    assert_eq!(
+        requests[1].body_json()["response_format"]["type"],
+        "json_object"
+    );
+    let first_tools = requests[0].body_json()["tools"]
+        .as_array()
+        .expect("first request tools array")
+        .clone();
+    assert!(
+        first_tools
+            .iter()
+            .any(|tool| tool["function"]["name"].as_str() == Some("test_sync_tool"))
+    );
+
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn deepseek_json_output_repairs_invalid_final_json() -> anyhow::Result<()> {
+    skip_if_no_network!(Ok(()));
+
+    let server = MockServer::start().await;
+    let first_response = concat!(
+        "data: {\"id\":\"chatcmpl-json\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"content\":\"{\\\"answer\\\":1}\"},\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    )
+    .to_string();
+    let patch = concat!(
+        "*** Begin Patch\n",
+        "*** Update File: response.json\n",
+        "@@\n",
+        "-{\"answer\":1}\n",
+        "+{\"answer\":\"ok\"}\n",
+        "*** End Patch"
+    );
+    let repair_arguments = serde_json::to_string(&json!({ "input": patch }))?;
+    let repair_response = format!(
+        concat!(
+            "data: {{\"id\":\"chatcmpl-repair\",\"choices\":[{{\"index\":0,",
+            "\"delta\":{{\"tool_calls\":[{{\"index\":0,\"id\":\"call-repair\",",
+            "\"type\":\"function\",\"function\":{{\"name\":",
+            "\"apply_json_output_patch\",\"arguments\":{arguments}}}}}]}},",
+            "\"finish_reason\":null,\"logprobs\":null}}],\"created\":1718345014,",
+            "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+            "\"usage\":null}}\n\n",
+            "data: [DONE]\n\n"
+        ),
+        arguments = serde_json::to_string(&repair_arguments)?,
+    );
+    let response_bodies = vec![first_response, repair_response];
+    let chat_mock = mount_chat_seq(&server, response_bodies).await;
+
+    let provider_base_url = server.uri();
+    let TestCodex { codex, .. } = test_codex()
+        .with_model("deepseek-v4-pro")
+        .with_config(move |config| {
+            let mut provider = ModelProviderInfo::create_deepseek_provider();
+            provider.base_url = Some(provider_base_url);
+            provider.env_key = None;
+            provider.request_max_retries = Some(0);
+            provider.stream_max_retries = Some(0);
+            provider.stream_idle_timeout_ms = Some(5_000);
+            config.model_provider_id = "deepseek".to_string();
+            config.model_provider = provider;
+            config.model = Some("deepseek-v4-pro".to_string());
+            config.include_apply_patch_tool = false;
+            let model = model_info_from_slug("deepseek-v4-pro");
+            config.model_catalog = Some(ModelsResponse {
+                models: vec![model],
+            });
+        })
+        .build(&server)
+        .await?;
+    let schema = json!({
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+            "answer": { "type": "string" }
+        },
+        "required": ["answer"]
+    });
+
+    codex
+        .submit(Op::UserInput {
+            environments: None,
+            items: vec![UserInput::Text {
+                text: "return strict json".into(),
+                text_elements: Vec::new(),
+            }],
+            final_output_json_schema: Some(schema),
+            responsesapi_client_metadata: None,
+        })
+        .await?;
+
+    let mut saw_bad_delta = false;
+    let mut final_message = None;
+    loop {
+        let event = codex.next_event().await?;
+        match event.msg {
+            EventMsg::AgentMessageContentDelta(event) => {
+                if event.delta.contains("{\"answer\":1}") {
+                    saw_bad_delta = true;
+                }
+            }
+            EventMsg::AgentMessage(event) => {
+                final_message = Some(event.message);
+            }
+            EventMsg::TurnComplete(event) => {
+                assert_eq!(
+                    event.last_agent_message.as_deref(),
+                    Some("{\"answer\":\"ok\"}")
+                );
+                break;
+            }
+            EventMsg::Error(error) => {
+                panic!("unexpected error: {}", error.message);
+            }
+            _ => {}
+        }
+    }
+    assert!(!saw_bad_delta);
+    assert_eq!(final_message.as_deref(), Some("{\"answer\":\"ok\"}"));
+
+    let requests = chat_mock.requests();
+    assert_eq!(requests.len(), 2);
+    let first_body = requests[0].body_json();
+    assert_eq!(first_body["response_format"]["type"], "json_object");
+    let messages = first_body["messages"].as_array().expect("messages array");
+    let json_prompt = messages
+        .iter()
+        .find(|message| {
+            message["role"].as_str() == Some("system")
+                && message["content"]
+                    .as_str()
+                    .is_some_and(|content| content.contains("valid json"))
+        })
+        .expect("DeepSeek JSON prompt is injected");
+    assert!(
+        json_prompt["content"]
+            .as_str()
+            .expect("content string")
+            .contains("Example JSON output")
+    );
+
+    let repair_body = requests[1].body_json();
+    assert_eq!(
+        repair_body["tool_choice"]["function"]["name"],
+        "apply_json_output_patch"
+    );
+    let saw_repair_tool = repair_body["tools"]
+        .as_array()
+        .expect("repair tools array")
+        .iter()
+        .any(|tool| tool["function"]["name"].as_str() == Some("apply_json_output_patch"));
+    assert!(saw_repair_tool);
+
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn deepseek_json_output_non_strict_does_not_repair() -> anyhow::Result<()> {
+    skip_if_no_network!(Ok(()));
+
+    let server = MockServer::start().await;
+    let first_response = concat!(
+        "data: {\"id\":\"chatcmpl-json\",\"choices\":[{\"index\":0,\"delta\":",
+        "{\"content\":\"{\\\"answer\\\":1}\"},\"finish_reason\":null,",
+        "\"logprobs\":null}],\"created\":1718345013,",
+        "\"model\":\"deepseek-v4-pro\",\"object\":\"chat.completion.chunk\",",
+        "\"usage\":null}\n\n",
+        "data: [DONE]\n\n",
+    )
+    .to_string();
+    let chat_mock = mount_chat_seq(&server, vec![first_response]).await;
+
+    let provider_base_url = server.uri();
+    let mut provider = ModelProviderInfo::create_deepseek_provider();
+    provider.base_url = Some(provider_base_url);
+    provider.env_key = None;
+    provider.request_max_retries = Some(0);
+    provider.stream_max_retries = Some(0);
+    provider.stream_idle_timeout_ms = Some(5_000);
+    let model = model_info_from_slug("deepseek-v4-pro");
+
+    let thread_id = ThreadId::new();
+    let session_telemetry = SessionTelemetry::new(
+        thread_id,
+        "deepseek-v4-pro",
+        model.slug.as_str(),
+        /*account_id*/ None,
+        Some("test@test.com".to_string()),
+        /*auth_mode*/ None,
+        "test_originator".to_string(),
+        /*log_user_prompts*/ false,
+        "test".to_string(),
+        SessionSource::Exec,
+    );
+    let client = ModelClient::new(
+        Some(AuthManager::from_auth_for_testing(CodexAuth::from_api_key(
+            "unused-api-key",
+        ))),
+        thread_id.into(),
+        thread_id,
+        /*installation_id*/ "11111111-1111-4111-8111-111111111111".to_string(),
+        /*provider_id*/ "deepseek".to_string(),
+        provider,
+        SessionSource::Exec,
+        /*model_verbosity*/ None,
+        /*enable_request_compression*/ false,
+        /*include_timing_metrics*/ false,
+        /*beta_features_header*/ None,
+        /*attestation_provider*/ None,
+    );
+    let mut client_session = client.new_session();
+    let schema = json!({
+        "type": "object",
+        "properties": {
+            "answer": { "type": "string" }
+        },
+        "required": ["answer"]
+    });
+    let mut prompt = Prompt::default();
+    prompt.input.push(ResponseItem::Message {
+        id: None,
+        role: "user".to_string(),
+        content: vec![ContentItem::InputText {
+            text: "return loose json".to_string(),
+        }],
+        phase: None,
+    });
+    prompt.output_schema = Some(schema);
+    prompt.output_schema_strict = false;
+
+    let mut stream = client_session
+        .stream(
+            &prompt,
+            &model,
+            &session_telemetry,
+            /*effort*/ None,
+            ReasoningSummary::Auto,
+            /*service_tier*/ None,
+            /*turn_metadata_header*/ None,
+            &codex_rollout_trace::InferenceTraceContext::disabled(),
+        )
+        .await?;
+
+    let mut saw_delta = false;
+    while let Some(event) = stream.next().await {
+        match event? {
+            ResponseEvent::OutputTextDelta(delta) => {
+                if delta == "{\"answer\":1}" {
+                    saw_delta = true;
+                }
+            }
+            ResponseEvent::Completed { .. } => break,
+            _ => {}
+        }
+    }
+    assert!(saw_delta);
+
+    let requests = chat_mock.requests();
+    assert_eq!(requests.len(), 1);
+    let body = requests[0].body_json();
+    assert_eq!(body["response_format"]["type"], "json_object");
+    assert!(
+        body["messages"]
+            .as_array()
+            .expect("messages array")
+            .iter()
+            .any(|message| message["content"]
+                .as_str()
+                .is_some_and(|content| content.contains("valid json")))
+    );
+
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn chatgpt_auth_sends_correct_request() {
     skip_if_no_network!();
 

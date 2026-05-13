@@ -11,6 +11,7 @@ mod arc_monitor;
 mod chat_completions;
 mod client;
 mod client_common;
+mod deepseek_json_output;
 mod realtime_context;
 mod realtime_conversation;
 mod realtime_prompt;
