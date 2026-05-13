@@ -5,6 +5,8 @@ target_branch="${1:-deepseekx/main}"
 upstream_ref="${2:-}"
 expected_origin="https://github.com/meomeo-dev/deepseekx.git"
 expected_upstream="https://github.com/openai/codex.git"
+clean_script=".codex/skills/we/deepseekx-worktree-clean/scripts"
+clean_script="${clean_script}/preflight_worktree_clean.sh"
 
 echo "== branch sync preflight =="
 echo "target_branch=${target_branch}"
@@ -15,6 +17,13 @@ if [[ -z "${upstream_ref}" ]]; then
   exit 2
 fi
 echo "upstream_ref=${upstream_ref}"
+echo
+
+echo "== clean worktree gate =="
+if ! "${clean_script}" --require-clean; then
+  echo "ERROR: route to we:deepseekx-worktree-clean before sync."
+  exit 3
+fi
 echo
 
 echo "== current branch =="

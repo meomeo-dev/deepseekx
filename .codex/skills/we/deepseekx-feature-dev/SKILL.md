@@ -28,7 +28,18 @@ daily development from branch confusion in a stateless LLM session.
 
 ## Hard Entry Gate
 
-Before reading code for implementation or editing files, run:
+Before reading code for implementation or editing files, require a clean
+worktree:
+
+```bash
+.codex/skills/we/deepseekx-worktree-clean/scripts/preflight_worktree_clean.sh \
+  --require-clean
+```
+
+If this fails, stop feature development and use `$we:deepseekx-worktree-clean`.
+After the worktree is clean, restart this skill from the beginning.
+
+Then run:
 
 ```bash
 .codex/skills/we/deepseekx-feature-dev/scripts/preflight_feature_dev.sh
@@ -40,13 +51,13 @@ Review:
 - remote URLs
 - tracked dirty files
 - untracked files
-- secret-like untracked paths
+- secret-like untracked paths, which must route to worktree cleanup
 - relation to `origin/deepseekx/main`
 - relation between `deepseekx/main` and `upstream/main`, only as drift
   visibility. Feature work still starts from the downstream trunk.
 
-If only `DEEPSEEK_API_KEY.env` is untracked, continue but state that it will
-not be staged or committed.
+If `DEEPSEEK_API_KEY.env` is visible as untracked, route to
+`$we:deepseekx-worktree-clean` and maintain ignore rules before continuing.
 
 ## Branch Rules
 

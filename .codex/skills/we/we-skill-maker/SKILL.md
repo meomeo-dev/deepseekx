@@ -21,6 +21,7 @@ plugins.
 - Use a short lowercase kebab-case name.
 - Prefer names that describe the repeated operation:
   `deepseek-cache-bench`, `deepseek-branch-sync`,
+  `deepseekx-worktree-clean`, `deepseekx-bug-fix`,
   `deepseekx-feature-dev`.
 - Avoid vague names such as `helper`, `tool`, `workflow`, or `misc`.
 - Directory must be `.codex/skills/we/<short_name>/`.

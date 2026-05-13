@@ -98,6 +98,19 @@ Downstream features and upstream version syncs should meet only through
 - Do not merge upstream code directly into `deepseekx/main` unless the user
   has explicitly chosen direct local integration.
 
+## Clean Worktree Gate
+
+Before fetching, merging, or analyzing an upstream version sync, require a
+clean worktree:
+
+```bash
+.codex/skills/we/deepseekx-worktree-clean/scripts/preflight_worktree_clean.sh \
+  --require-clean
+```
+
+If this fails, stop the sync workflow and use `$we:deepseekx-worktree-clean`.
+After the worktree is clean, restart this skill from the beginning.
+
 ## Preflight
 
 Run the read-only preflight script before any sync operation:

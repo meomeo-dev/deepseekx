@@ -6,11 +6,20 @@ expected_upstream="https://github.com/openai/codex.git"
 main_branch="deepseekx/main"
 main_remote="origin/deepseekx/main"
 upstream_ref="upstream/main"
+clean_script=".codex/skills/we/deepseekx-worktree-clean/scripts"
+clean_script="${clean_script}/preflight_worktree_clean.sh"
 
 echo "== feature development preflight =="
 echo "main_branch=${main_branch}"
 echo "main_remote=${main_remote}"
 echo "upstream_ref=${upstream_ref}"
+echo
+
+echo "== clean worktree gate =="
+if ! "${clean_script}" --require-clean; then
+  echo "ERROR: route to we:deepseekx-worktree-clean before feature work."
+  exit 3
+fi
 echo
 
 echo "== current branch =="
