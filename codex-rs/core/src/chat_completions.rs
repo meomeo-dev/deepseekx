@@ -741,7 +741,9 @@ mod tests {
     }
 
     fn apply_patch_tool() -> ToolSpec {
-        crate::tools::handlers::apply_patch_spec::create_apply_patch_freeform_tool()
+        crate::tools::handlers::apply_patch_spec::create_apply_patch_freeform_tool(
+            /*include_environment_id*/ false,
+        )
     }
 
     fn model_info() -> ModelInfo {

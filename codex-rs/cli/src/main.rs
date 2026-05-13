@@ -129,7 +129,7 @@ enum Subcommand {
     /// [experimental] Run the app server or related tooling.
     AppServer(AppServerCommand),
 
-    /// [experimental] Start a headless app-server with remote control enabled.
+    /// [experimental] Ensure the app-server daemon is running with remote control enabled.
     RemoteControl,
 
     /// Launch the Codex desktop app (opens the app installer if missing).
@@ -420,13 +420,17 @@ struct AppServerCommand {
     subcommand: Option<AppServerSubcommand>,
 
     /// Transport endpoint URL. Supported values: `stdio://` (default),
-    /// `unix://`, `unix://PATH`, `off`.
+    /// `unix://`, `unix://PATH`, `ws://IP:PORT`, `off`.
     #[arg(
         long = "listen",
         value_name = "URL",
         default_value = codex_app_server::AppServerTransport::DEFAULT_LISTEN_URL
     )]
     listen: codex_app_server::AppServerTransport,
+
+    /// Enable remote control for this app-server process.
+    #[arg(long = "remote-control", hide = true)]
+    remote_control: bool,
 
     /// Controls whether analytics are enabled by default.
     ///
@@ -445,6 +449,9 @@ struct AppServerCommand {
     /// See https://developers.openai.com/codex/config-advanced/#metrics for more details.
     #[arg(long = "analytics-default-enabled")]
     analytics_default_enabled: bool,
+
+    #[command(flatten)]
+    auth: codex_app_server::AppServerWebsocketAuthArgs,
 }
 
 #[derive(Debug, Parser)]
@@ -503,10 +510,10 @@ enum AppServerDaemonSubcommand {
     /// Restart the local app server daemon.
     Restart,
 
-    /// Enable remote_control for future starts and a currently running managed daemon.
+    /// Enable remote control for future starts and a currently running managed daemon.
     EnableRemoteControl,
 
-    /// Disable remote_control for future starts and a currently running managed daemon.
+    /// Disable remote control for future starts and a currently running managed daemon.
     DisableRemoteControl,
 
     /// Stop the local app server daemon.
@@ -529,7 +536,7 @@ struct AppServerProxyCommand {
 
 #[derive(Debug, Args)]
 struct AppServerBootstrapCommand {
-    /// Launch the managed app-server with remote_control enabled.
+    /// Launch the managed app-server with remote control enabled.
     #[arg(long = "remote-control")]
     remote_control: bool,
 }
@@ -772,14 +779,6 @@ struct FeatureSetArgs {
     feature: String,
 }
 
-const REMOTE_CONTROL_FEATURE_OVERRIDE: &str = "features.remote_control=true";
-
-fn enable_remote_control_for_invocation(config_overrides: &mut CliConfigOverrides) {
-    config_overrides
-        .raw_overrides
-        .push(REMOTE_CONTROL_FEATURE_OVERRIDE.to_string());
-}
-
 fn stage_str(stage: Stage) -> &'static str {
     match stage {
         Stage::UnderDevelopment => "under development",
@@ -896,7 +895,9 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
             let AppServerCommand {
                 subcommand,
                 listen,
+                remote_control,
                 analytics_default_enabled,
+                auth,
             } = app_server_cli;
             reject_remote_mode_for_app_server_subcommand(
                 root_remote.as_deref(),
@@ -906,13 +907,20 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
             match subcommand {
                 None => {
                     let transport = listen;
-                    codex_app_server::run_main_with_transport(
+                    let auth = auth.try_into_settings()?;
+                    let runtime_options = codex_app_server::AppServerRuntimeOptions {
+                        remote_control_enabled: remote_control,
+                        ..Default::default()
+                    };
+                    codex_app_server::run_main_with_transport_options(
                         arg0_paths.clone(),
                         root_config_overrides,
                         codex_config::LoaderOverrides::default(),
                         analytics_default_enabled,
                         transport,
                         codex_protocol::protocol::SessionSource::VSCode,
+                        auth,
+                        runtime_options,
                     )
                     .await?;
                 }
@@ -989,16 +997,8 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
                 root_remote_auth_token_env.as_deref(),
                 "remote-control",
             )?;
-            enable_remote_control_for_invocation(&mut root_config_overrides);
-            codex_app_server::run_main_with_transport(
-                arg0_paths.clone(),
-                root_config_overrides,
-                codex_config::LoaderOverrides::default(),
-                /*default_analytics_enabled*/ false,
-                codex_app_server::AppServerTransport::Off,
-                codex_protocol::protocol::SessionSource::Cli,
-            )
-            .await?;
+            let output = codex_app_server_daemon::ensure_remote_control_started().await?;
+            println!("{}", serde_json::to_string(&output)?);
         }
         #[cfg(any(target_os = "macos", target_os = "windows"))]
         Some(Subcommand::App(app_cli)) => {
@@ -2395,6 +2395,7 @@ mod tests {
     fn app_server_analytics_default_disabled_without_flag() {
         let app_server = app_server_from_args(["codex", "app-server"].as_ref());
         assert!(!app_server.analytics_default_enabled);
+        assert!(!app_server.remote_control);
         assert_eq!(
             app_server.listen,
             codex_app_server::AppServerTransport::Stdio
@@ -2406,24 +2407,6 @@ mod tests {
         let app_server =
             app_server_from_args(["codex", "app-server", "--analytics-default-enabled"].as_ref());
         assert!(app_server.analytics_default_enabled);
-    }
-
-    #[test]
-    fn remote_control_override_is_appended_after_root_toggles() {
-        let mut config_overrides = CliConfigOverrides::default();
-        config_overrides
-            .raw_overrides
-            .push("features.remote_control=false".to_string());
-
-        enable_remote_control_for_invocation(&mut config_overrides);
-
-        assert_eq!(
-            config_overrides.raw_overrides,
-            vec![
-                "features.remote_control=false".to_string(),
-                REMOTE_CONTROL_FEATURE_OVERRIDE.to_string(),
-            ]
-        );
     }
 
     #[test]
@@ -2555,14 +2538,16 @@ mod tests {
     }
 
     #[test]
-    fn app_server_listen_websocket_url_fails_to_parse() {
-        let parse_result = MultitoolCli::try_parse_from([
-            "codex",
-            "app-server",
-            "--listen",
-            "ws://127.0.0.1:4500",
-        ]);
-        assert!(parse_result.is_err());
+    fn app_server_listen_websocket_url_parses() {
+        let app_server = app_server_from_args(
+            ["codex", "app-server", "--listen", "ws://127.0.0.1:4500"].as_ref(),
+        );
+        assert_eq!(
+            app_server.listen,
+            codex_app_server::AppServerTransport::WebSocket {
+                bind_address: "127.0.0.1:4500".parse().expect("valid socket address"),
+            }
+        );
     }
 
     #[test]
@@ -2729,6 +2714,61 @@ mod tests {
         )
         .expect_err("app-server daemon version should reject --remote-auth-token-env");
         assert!(err.to_string().contains("app-server daemon version"));
+    }
+
+    #[test]
+    fn app_server_capability_token_flags_parse() {
+        let app_server = app_server_from_args(
+            [
+                "codex",
+                "app-server",
+                "--ws-auth",
+                "capability-token",
+                "--ws-token-file",
+                "/tmp/codex-token",
+            ]
+            .as_ref(),
+        );
+        assert_eq!(
+            app_server.auth.ws_auth,
+            Some(codex_app_server::WebsocketAuthCliMode::CapabilityToken)
+        );
+        assert_eq!(
+            app_server.auth.ws_token_file,
+            Some(PathBuf::from("/tmp/codex-token"))
+        );
+    }
+
+    #[test]
+    fn app_server_signed_bearer_flags_parse() {
+        let app_server = app_server_from_args(
+            [
+                "codex",
+                "app-server",
+                "--ws-auth",
+                "signed-bearer-token",
+                "--ws-shared-secret-file",
+                "/tmp/codex-secret",
+                "--ws-issuer",
+                "issuer",
+                "--ws-audience",
+                "audience",
+                "--ws-max-clock-skew-seconds",
+                "9",
+            ]
+            .as_ref(),
+        );
+        assert_eq!(
+            app_server.auth.ws_auth,
+            Some(codex_app_server::WebsocketAuthCliMode::SignedBearerToken)
+        );
+        assert_eq!(
+            app_server.auth.ws_shared_secret_file,
+            Some(PathBuf::from("/tmp/codex-secret"))
+        );
+        assert_eq!(app_server.auth.ws_issuer.as_deref(), Some("issuer"));
+        assert_eq!(app_server.auth.ws_audience.as_deref(), Some("audience"));
+        assert_eq!(app_server.auth.ws_max_clock_skew_seconds, Some(9));
     }
 
     #[test]

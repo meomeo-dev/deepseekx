@@ -6,14 +6,16 @@ use crate::tools::context::ToolInvocation;
 use crate::tools::context::ToolPayload;
 use crate::tools::handlers::parse_arguments;
 use crate::tools::registry::ToolHandler;
-use crate::tools::registry::ToolKind;
 use crate::turn_timing::now_unix_timestamp_ms;
 use codex_protocol::dynamic_tools::DynamicToolCallRequest;
 use codex_protocol::dynamic_tools::DynamicToolResponse;
+use codex_protocol::dynamic_tools::DynamicToolSpec;
 use codex_protocol::models::FunctionCallOutputContentItem;
 use codex_protocol::protocol::DynamicToolCallResponseEvent;
 use codex_protocol::protocol::EventMsg;
 use codex_tools::ToolName;
+use codex_tools::ToolSpec;
+use codex_tools::dynamic_tool_to_loadable_tool_spec;
 use serde_json::Value;
 use std::time::Instant;
 use tokio::sync::oneshot;
@@ -21,11 +23,17 @@ use tracing::warn;
 
 pub struct DynamicToolHandler {
     tool_name: ToolName,
+    spec: Option<ToolSpec>,
 }
 
 impl DynamicToolHandler {
-    pub fn new(tool_name: ToolName) -> Self {
-        Self { tool_name }
+    pub fn new(tool: &DynamicToolSpec) -> Option<Self> {
+        let tool_name = ToolName::new(tool.namespace.clone(), tool.name.clone());
+        let spec = dynamic_tool_to_loadable_tool_spec(tool).ok()?.into();
+        Some(Self {
+            tool_name,
+            spec: Some(spec),
+        })
     }
 }
 
@@ -36,12 +44,8 @@ impl ToolHandler for DynamicToolHandler {
         self.tool_name.clone()
     }
 
-    fn kind(&self) -> ToolKind {
-        ToolKind::Function
-    }
-
-    async fn is_mutating(&self, _invocation: &ToolInvocation) -> bool {
-        true
+    fn spec(&self) -> Option<ToolSpec> {
+        self.spec.clone()
     }
 
     async fn handle(&self, invocation: ToolInvocation) -> Result<Self::Output, FunctionCallError> {
