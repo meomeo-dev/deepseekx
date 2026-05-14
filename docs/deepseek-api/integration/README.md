@@ -16,6 +16,9 @@
   配置形状、`/model` 列表来源，以及 DeepSeek provider ID 命名空间。
 - `deepseekx-user-facing-surface.md`：记录 DeepSeekX 换皮的用户感知面、
   兼容边界、内部命名保留策略和分阶段实施顺序。
+- `deepseekx-mlflow-observability.md`：记录如何用本地 MLflow +
+  OpenTelemetry 作为 DeepSeekX 可观测性服务，并说明与 rollout trace
+  一起诊断提示词 `messages[]` 的边界。
 
 ## 相关快照
 
