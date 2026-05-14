@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install Codex native binaries (Rust CLI, bwrap, and ripgrep helpers)."""
+"""Install DeepSeekX native binaries (Rust CLI, bwrap, and ripgrep helpers)."""
 
 import argparse
 from contextlib import contextmanager
@@ -20,7 +20,6 @@ from urllib.request import urlopen
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 CODEX_CLI_ROOT = SCRIPT_DIR.parent
-DEFAULT_WORKFLOW_URL = "https://github.com/openai/codex/actions/runs/17952349351"  # rust-v0.40.0
 VENDOR_DIR_NAME = "vendor"
 RG_MANIFEST = CODEX_CLI_ROOT / "bin" / "rg"
 BINARY_TARGETS = (
@@ -51,10 +50,10 @@ BINARY_COMPONENTS = {
         binary_basename="bwrap",
         targets=LINUX_TARGETS,
     ),
-    "codex": BinaryComponent(
-        artifact_prefix="codex",
-        dest_dir="codex",
-        binary_basename="codex",
+    "deepseekx": BinaryComponent(
+        artifact_prefix="deepseekx",
+        dest_dir="deepseekx",
+        binary_basename="deepseekx",
     ),
     "codex-responses-api-proxy": BinaryComponent(
         artifact_prefix="codex-responses-api-proxy",
@@ -63,13 +62,13 @@ BINARY_COMPONENTS = {
     ),
     "codex-windows-sandbox-setup": BinaryComponent(
         artifact_prefix="codex-windows-sandbox-setup",
-        dest_dir="codex",
+        dest_dir="deepseekx",
         binary_basename="codex-windows-sandbox-setup",
         targets=WINDOWS_TARGETS,
     ),
     "codex-command-runner": BinaryComponent(
         artifact_prefix="codex-command-runner",
-        dest_dir="codex",
+        dest_dir="deepseekx",
         binary_basename="codex-command-runner",
         targets=WINDOWS_TARGETS,
     ),
@@ -127,12 +126,13 @@ def _gha_group(title: str):
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Install native Codex binaries.")
+    parser = argparse.ArgumentParser(description="Install native DeepSeekX binaries.")
     parser.add_argument(
         "--workflow-url",
+        required=True,
         help=(
-            "GitHub Actions workflow URL that produced the artifacts. Defaults to a "
-            "known good run when omitted."
+            "GitHub Actions workflow URL from meomeo-dev/deepseekx that produced "
+            "the DeepSeekX native artifacts."
         ),
     )
     parser.add_argument(
@@ -142,7 +142,7 @@ def parse_args() -> argparse.Namespace:
         choices=tuple(list(BINARY_COMPONENTS) + ["rg"]),
         help=(
             "Limit installation to the specified components."
-            " May be repeated. Defaults to bwrap, codex, codex-windows-sandbox-setup,"
+            " May be repeated. Defaults to bwrap, deepseekx, codex-windows-sandbox-setup,"
             " codex-command-runner, and rg."
         ),
     )
@@ -167,15 +167,21 @@ def main() -> int:
 
     components = args.components or [
         "bwrap",
-        "codex",
+        "deepseekx",
         "codex-windows-sandbox-setup",
         "codex-command-runner",
         "rg",
     ]
 
-    workflow_url = (args.workflow_url or DEFAULT_WORKFLOW_URL).strip()
+    workflow_url = args.workflow_url.strip()
     if not workflow_url:
-        workflow_url = DEFAULT_WORKFLOW_URL
+        raise RuntimeError("--workflow-url is required.")
+    repo = _repo_from_workflow_url(workflow_url)
+    if repo != "meomeo-dev/deepseekx":
+        raise RuntimeError(
+            "--workflow-url must point at meomeo-dev/deepseekx so DeepSeekX "
+            "packages never vendor OpenAI Codex artifacts."
+        )
 
     workflow_id = workflow_url.rstrip("/").split("/")[-1]
     print(f"Downloading native artifacts from workflow {workflow_id}...")
@@ -275,10 +281,18 @@ def _download_artifacts(workflow_id: str, dest_dir: Path) -> None:
         "--dir",
         str(dest_dir),
         "--repo",
-        "openai/codex",
+        "meomeo-dev/deepseekx",
         workflow_id,
     ]
     subprocess.check_call(cmd)
+
+
+def _repo_from_workflow_url(workflow_url: str) -> str | None:
+    parsed = urlparse(workflow_url)
+    parts = [part for part in parsed.path.split("/") if part]
+    if parsed.netloc != "github.com" or len(parts) < 2:
+        return None
+    return f"{parts[0]}/{parts[1]}"
 
 
 def install_binary_components(

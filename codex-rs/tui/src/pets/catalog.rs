@@ -1,4 +1,4 @@
-//! Built-in pet catalog ported from the Codex App avatar catalog.
+//! Built-in pet catalog ported from the upstream avatar catalog.
 
 pub(super) const DEFAULT_FRAME_WIDTH: u32 = 192;
 pub(super) const DEFAULT_FRAME_HEIGHT: u32 = 208;
@@ -18,8 +18,8 @@ pub(super) struct BuiltinPet {
 pub(super) const BUILTIN_PETS: &[BuiltinPet] = &[
     BuiltinPet {
         id: "codex",
-        display_name: "Codex",
-        description: "The original Codex companion",
+        display_name: "DeepSeekX",
+        description: "The default DeepSeekX companion",
         spritesheet_file: "codex-spritesheet-v4.webp",
     },
     BuiltinPet {

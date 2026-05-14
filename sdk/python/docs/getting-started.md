@@ -18,19 +18,19 @@ Requirements:
 
 - Python `>=3.10`
 - uv
-- installed `openai-codex-cli-bin` runtime package, or an explicit `codex_bin` override
-- local Codex auth/session configured
+- installed `deepseekx-cli-bin` runtime package, or an explicit `deepseekx_bin` override
+- local DeepSeekX auth/session configured
 
 ## 2) Run your first turn (sync)
 
 ```python
-from openai_codex import Codex
+from deepseekx import DeepSeekX
 
-with Codex() as codex:
-    server = codex.metadata.serverInfo
+with DeepSeekX() as deepseekx:
+    server = deepseekx.metadata.serverInfo
     print("Server:", None if server is None else server.name, None if server is None else server.version)
 
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
     result = thread.run("Say hello in one sentence.")
 
     print("Thread:", thread.id)
@@ -40,7 +40,7 @@ with Codex() as codex:
 
 What happened:
 
-- `Codex()` started and initialized `codex app-server`.
+- `DeepSeekX()` started and initialized `deepseekx app-server`.
 - `thread_start(...)` created a thread.
 - `thread.run("...")` started a turn, consumed events until completion, and returned the final assistant response plus collected items and usage.
 - `result.final_response` is `None` when no final-answer or phase-less assistant message item completes for the turn.
@@ -50,10 +50,10 @@ What happened:
 ## 3) Continue the same thread (multi-turn)
 
 ```python
-from openai_codex import Codex
+from deepseekx import DeepSeekX
 
-with Codex() as codex:
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+with DeepSeekX() as deepseekx:
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
 
     first = thread.run("Summarize Rust ownership in 2 bullets.")
     second = thread.run("Now explain it to a Python developer.")
@@ -64,17 +64,17 @@ with Codex() as codex:
 
 ## 4) Async parity
 
-Use `async with AsyncCodex()` as the normal async entrypoint. `AsyncCodex`
+Use `async with AsyncDeepSeekX()` as the normal async entrypoint. `AsyncDeepSeekX`
 initializes lazily, and context entry makes startup/shutdown explicit.
 
 ```python
 import asyncio
-from openai_codex import AsyncCodex
+from deepseekx import AsyncDeepSeekX
 
 
 async def main() -> None:
-    async with AsyncCodex() as codex:
-        thread = await codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+    async with AsyncDeepSeekX() as deepseekx:
+        thread = await deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
         result = await thread.run("Continue where we left off.")
         print(result.final_response)
 
@@ -85,12 +85,12 @@ asyncio.run(main())
 ## 5) Resume an existing thread
 
 ```python
-from openai_codex import Codex
+from deepseekx import DeepSeekX
 
 THREAD_ID = "thr_123"  # replace with a real id
 
-with Codex() as codex:
-    thread = codex.thread_resume(THREAD_ID)
+with DeepSeekX() as deepseekx:
+    thread = deepseekx.thread_resume(THREAD_ID)
     result = thread.run("Continue where we left off.")
     print(result.final_response)
 ```
@@ -101,7 +101,7 @@ The convenience wrappers live at the package root. Public app-server value and
 event types live under:
 
 ```python
-from openai_codex.types import ThreadReadResponse, Turn, TurnStatus
+from deepseekx.types import ThreadReadResponse, Turn, TurnStatus
 ```
 
 ## 7) Next stops

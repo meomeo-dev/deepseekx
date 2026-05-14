@@ -15,12 +15,12 @@ from _bootstrap import (
 
 ensure_local_sdk_src()
 
-from openai_codex import Codex, TextInput
+from deepseekx import DeepSeekX, TextInput
 
-with Codex(config=runtime_config()) as codex:
-    print("Server:", server_label(codex.metadata))
+with DeepSeekX(config=runtime_config()) as deepseekx:
+    print("Server:", server_label(deepseekx.metadata))
 
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
     turn = thread.turn(TextInput("Say hello in one sentence."))
     result = turn.run()
     persisted = thread.read(include_turns=True)

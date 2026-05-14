@@ -14,17 +14,17 @@ from _bootstrap import (
 
 ensure_local_sdk_src()
 
-from openai_codex import (
-    Codex,
+from deepseekx import (
+    DeepSeekX,
     JsonRpcError,
     ServerBusyError,
     TextInput,
     retry_on_overload,
 )
-from openai_codex.types import TurnStatus
+from deepseekx.types import TurnStatus
 
-with Codex(config=runtime_config()) as codex:
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+with DeepSeekX(config=runtime_config()) as deepseekx:
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
 
     try:
         result = retry_on_overload(

@@ -1,12 +1,12 @@
 #!/usr/bin/env -S NODE_NO_WARNINGS=1 pnpm ts-node-esm --files
 
-import { Codex } from "@openai/codex-sdk";
+import { DeepSeekX } from "@meomeo/deepseekx-sdk";
 
-import { codexPathOverride } from "./helpers.ts";
+import { deepseekxPathOverride } from "./helpers.ts";
 
-const codex = new Codex({ codexPathOverride: codexPathOverride() });
+const deepseekx = new DeepSeekX({ deepseekxPathOverride: deepseekxPathOverride() });
 
-const thread = codex.startThread();
+const thread = deepseekx.startThread();
 
 const schema = {
   type: "object",

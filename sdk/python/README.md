@@ -1,12 +1,12 @@
-# OpenAI Codex Python SDK (Experimental)
+# DeepSeekX Python SDK (Experimental)
 
-Experimental Python SDK for `codex app-server` JSON-RPC v2 over stdio, with a small default surface optimized for real scripts and apps.
+Experimental Python SDK for `deepseekx app-server` JSON-RPC v2 over stdio, with a small default surface optimized for real scripts and apps.
 
-The generated wire-model layer is sourced from the pinned `openai-codex-cli-bin`
+The generated wire-model layer is sourced from the pinned `deepseekx-cli-bin`
 runtime package and exposed as Pydantic models with snake_case Python fields
 that serialize back to the app-server’s camelCase wire format.
 The package root exports the ergonomic client API; public app-server value and
-event types live in `openai_codex.types`.
+event types live in `deepseekx.types`.
 
 ## Install
 
@@ -16,19 +16,19 @@ uv sync
 source .venv/bin/activate
 ```
 
-Published SDK builds pin an exact `openai-codex-cli-bin` runtime dependency
+Published SDK builds pin an exact `deepseekx-cli-bin` runtime dependency
 with the same version as the SDK. For local repo development, either pass
-`AppServerConfig(codex_bin=...)` to point at a local build explicitly, or use
+`AppServerConfig(deepseekx_bin=...)` to point at a local build explicitly, or use
 the repo examples/notebook bootstrap which installs the pinned runtime package
 automatically.
 
 ## Quickstart
 
 ```python
-from openai_codex import Codex
+from deepseekx import DeepSeekX
 
-with Codex() as codex:
-    thread = codex.thread_start(model="gpt-5")
+with DeepSeekX() as deepseekx:
+    thread = deepseekx.thread_start(model="deepseek-v4-pro")
     result = thread.run("Say hello in one sentence.")
     print(result.final_response)
     print(len(result.items))
@@ -57,15 +57,15 @@ python examples/01_quickstart_constructor/async.py
 
 ## Runtime packaging
 
-The repo no longer checks `codex` binaries into `sdk/python`.
+The repo no longer checks DeepSeekX binaries into `sdk/python`.
 
-Published SDK builds are pinned to an exact `openai-codex-cli-bin` package
+Published SDK builds are pinned to an exact `deepseekx-cli-bin` package
 version, and that runtime package carries the platform-specific binary for the
 target wheel. The SDK package version and runtime package version must match.
 
 For local repo development, the checked-in `sdk/python-runtime` package is only
 a template for staged release artifacts. Editable installs should use an
-explicit `codex_bin` override for manual SDK usage; the repo examples and
+explicit `deepseekx_bin` override for manual SDK usage; the repo examples and
 notebook bootstrap the pinned runtime package automatically.
 
 ## Maintainer workflow
@@ -76,13 +76,13 @@ uv sync
 python scripts/update_sdk_artifacts.py generate-types
 python scripts/update_sdk_artifacts.py \
   stage-sdk \
-  /tmp/codex-python-release/openai-codex \
-  --codex-version <codex-release-tag-or-pep440-version>
+  /tmp/deepseekx-python-release/deepseekx \
+  --deepseekx-version <deepseekx-release-tag-or-pep440-version>
 python scripts/update_sdk_artifacts.py \
   stage-runtime \
-  /tmp/codex-python-release/openai-codex-cli-bin \
-  /path/to/codex \
-  --codex-version <codex-release-tag-or-pep440-version>
+  /tmp/deepseekx-python-release/deepseekx-cli-bin \
+  /path/to/deepseekx \
+  --deepseekx-version <deepseekx-release-tag-or-pep440-version>
 ```
 
 Pass `--platform-tag ...` to `stage-runtime` when the wheel should be tagged for
@@ -94,22 +94,22 @@ matrix is `macosx_11_0_arm64`, `macosx_10_9_x86_64`,
 This supports the CI release flow:
 
 - run `generate-types` before packaging
-- stage `openai-codex` once with an exact `openai-codex-cli-bin==...` dependency
-- stage `openai-codex-cli-bin` on each supported platform runner with the same pinned runtime version
-- build and publish `openai-codex-cli-bin` as platform wheels only through PyPI trusted publishing; do not publish an sdist
+- stage `deepseekx` once with an exact `deepseekx-cli-bin==...` dependency
+- stage `deepseekx-cli-bin` on each supported platform runner with the same pinned runtime version
+- build and publish `deepseekx-cli-bin` as platform wheels only through PyPI trusted publishing; do not publish an sdist
 
 ## Compatibility and versioning
 
-- Package: `openai-codex`
-- Runtime package: `openai-codex-cli-bin`
+- Package: `deepseekx`
+- Runtime package: `deepseekx-cli-bin`
 - Python: `>=3.10`
-- Target protocol: Codex `app-server` JSON-RPC v2
-- Versioning rule: the SDK package version is the underlying Codex runtime version
+- Target protocol: DeepSeekX `app-server` JSON-RPC v2
+- Versioning rule: the SDK package version is the underlying DeepSeekX runtime version
 
 ## Notes
 
-- `Codex()` is eager and performs startup + `initialize` in the constructor.
-- Use context managers (`with Codex() as codex:`) to ensure shutdown.
+- `DeepSeekX()` is eager and performs startup + `initialize` in the constructor.
+- Use context managers (`with DeepSeekX() as deepseekx:`) to ensure shutdown.
 - Prefer `thread.run("...")` for the common case. Use `thread.turn(...)` when
   you need streaming, steering, or interrupt control.
 - For transient overload, use `retry_on_overload` from the package root.

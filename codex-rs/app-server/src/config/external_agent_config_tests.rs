@@ -260,7 +260,7 @@ async fn detect_repo_still_reports_non_plugin_items_when_home_config_is_invalid(
                         .join(EXTERNAL_AGENT_DIR)
                         .join("settings.json")
                         .display(),
-                    repo_root.join(".codex").join("config.toml").display()
+                    repo_root.join(".deepseekx").join("config.toml").display()
                 ),
                 cwd: Some(repo_root.clone()),
                 details: None,
@@ -352,7 +352,7 @@ async fn detect_repo_lists_mcp_hooks_commands_and_subagents() {
                 description: format!(
                     "Migrate MCP servers from {} into {}",
                     repo_root.display(),
-                    repo_root.join(".codex").join("config.toml").display()
+                    repo_root.join(".deepseekx").join("config.toml").display()
                 ),
                 cwd: Some(repo_root.clone()),
                 details: Some(MigrationDetails {
@@ -367,7 +367,7 @@ async fn detect_repo_lists_mcp_hooks_commands_and_subagents() {
                 description: format!(
                     "Migrate hooks from {} to {}",
                     repo_root.join(EXTERNAL_AGENT_DIR).display(),
-                    repo_root.join(".codex").join("hooks.json").display()
+                    repo_root.join(".deepseekx").join("hooks.json").display()
                 ),
                 cwd: Some(repo_root.clone()),
                 details: Some(MigrationDetails {
@@ -400,7 +400,7 @@ async fn detect_repo_lists_mcp_hooks_commands_and_subagents() {
                 description: format!(
                     "Migrate subagents from {} to {}",
                     repo_root.join(EXTERNAL_AGENT_DIR).join("agents").display(),
-                    repo_root.join(".codex").join("agents").display()
+                    repo_root.join(".deepseekx").join("agents").display()
                 ),
                 cwd: Some(repo_root),
                 details: Some(MigrationDetails {
@@ -533,7 +533,7 @@ async fn import_repo_migrates_mcp_hooks_commands_and_subagents() {
     .expect("import");
 
     let config: TomlValue = toml::from_str(
-        &fs::read_to_string(repo_root.join(".codex").join("config.toml")).expect("read config"),
+        &fs::read_to_string(repo_root.join(".deepseekx").join("config.toml")).expect("read config"),
     )
     .expect("parse config");
     let expected_config: TomlValue = toml::from_str(
@@ -569,7 +569,7 @@ STATIC = "yes"
         .expect("migrated MCP config should be supported");
 
     let hooks: JsonValue = serde_json::from_str(
-        &fs::read_to_string(repo_root.join(".codex").join("hooks.json")).expect("read hooks"),
+        &fs::read_to_string(repo_root.join(".deepseekx").join("hooks.json")).expect("read hooks"),
     )
     .expect("parse hooks");
     let _supported_hooks: codex_config::HooksFile =
@@ -617,7 +617,7 @@ STATIC = "yes"
     let agent: TomlValue = toml::from_str(
         &fs::read_to_string(
             repo_root
-                .join(".codex")
+                .join(".deepseekx")
                 .join("agents")
                 .join("researcher.toml"),
         )
@@ -1106,14 +1106,14 @@ async fn import_repo_hooks_preserves_disabled_codex_hooks_feature() {
     let repo_root = root.path().join("repo");
     fs::create_dir_all(repo_root.join(".git")).expect("create git dir");
     fs::create_dir_all(repo_root.join(EXTERNAL_AGENT_DIR)).expect("create external agent dir");
-    fs::create_dir_all(repo_root.join(".codex")).expect("create codex dir");
+    fs::create_dir_all(repo_root.join(".deepseekx")).expect("create deepseekx dir");
     fs::write(
         repo_root.join(EXTERNAL_AGENT_DIR).join("settings.json"),
         r#"{"hooks":{"Stop":[{"hooks":[{"command":"echo done"}]}]}}"#,
     )
     .expect("write hooks");
     fs::write(
-        repo_root.join(".codex").join("config.toml"),
+        repo_root.join(".deepseekx").join("config.toml"),
         "[features]\ncodex_hooks = false\n",
     )
     .expect("write config");
@@ -1132,11 +1132,11 @@ async fn import_repo_hooks_preserves_disabled_codex_hooks_feature() {
     .expect("import");
 
     assert_eq!(
-        fs::read_to_string(repo_root.join(".codex").join("config.toml")).expect("read config"),
+        fs::read_to_string(repo_root.join(".deepseekx").join("config.toml")).expect("read config"),
         "[features]\ncodex_hooks = false\n"
     );
     let hooks: JsonValue = serde_json::from_str(
-        &fs::read_to_string(repo_root.join(".codex").join("hooks.json")).expect("read hooks"),
+        &fs::read_to_string(repo_root.join(".deepseekx").join("hooks.json")).expect("read hooks"),
     )
     .expect("parse hooks");
     assert_eq!(
@@ -1193,7 +1193,7 @@ async fn import_repo_mcp_uses_home_settings_toggles_when_repo_settings_missing()
         .expect("import");
 
     let config: TomlValue = toml::from_str(
-        &fs::read_to_string(repo_root.join(".codex").join("config.toml")).expect("read config"),
+        &fs::read_to_string(repo_root.join(".deepseekx").join("config.toml")).expect("read config"),
     )
     .expect("parse config");
     let expected: TomlValue = toml::from_str(
@@ -1254,7 +1254,7 @@ async fn import_repo_mcp_uses_local_settings_toggles_over_project_settings() {
         .expect("import");
 
     let config: TomlValue = toml::from_str(
-        &fs::read_to_string(repo_root.join(".codex").join("config.toml")).expect("read config"),
+        &fs::read_to_string(repo_root.join(".deepseekx").join("config.toml")).expect("read config"),
     )
     .expect("parse config");
     let expected: TomlValue = toml::from_str(
@@ -1302,7 +1302,7 @@ async fn import_repo_mcp_ignores_invalid_home_settings_when_repo_settings_missin
         .expect("import");
 
     let config: TomlValue = toml::from_str(
-        &fs::read_to_string(repo_root.join(".codex").join("config.toml")).expect("read config"),
+        &fs::read_to_string(repo_root.join(".deepseekx").join("config.toml")).expect("read config"),
     )
     .expect("parse config");
     let expected: TomlValue = toml::from_str(
@@ -1637,7 +1637,7 @@ async fn detect_repo_does_not_skip_plugins_only_configured_in_project_codex() {
     let repo_root = root.path().join("repo");
     fs::create_dir_all(repo_root.join(".git")).expect("create git dir");
     fs::create_dir_all(repo_root.join(EXTERNAL_AGENT_DIR)).expect("create repo external agent dir");
-    fs::create_dir_all(repo_root.join(".codex")).expect("create repo codex dir");
+    fs::create_dir_all(repo_root.join(".deepseekx")).expect("create repo deepseekx dir");
     fs::create_dir_all(&codex_home).expect("create codex home");
     fs::write(
         repo_root.join(EXTERNAL_AGENT_DIR).join("settings.json"),
@@ -1654,7 +1654,7 @@ async fn detect_repo_does_not_skip_plugins_only_configured_in_project_codex() {
     )
     .expect("write repo settings");
     fs::write(
-        repo_root.join(".codex").join("config.toml"),
+        repo_root.join(".deepseekx").join("config.toml"),
         r#"
 [plugins."formatter@acme-tools"]
 enabled = true

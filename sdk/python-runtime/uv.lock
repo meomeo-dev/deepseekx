@@ -3,10 +3,10 @@ revision = 3
 requires-python = ">=3.10"
 
 [options]
-exclude-newer = "2026-04-16T16:29:01.518541933Z"
+exclude-newer = "2026-05-07T08:48:37.03257Z"
 exclude-newer-span = "P7D"
 
 [[package]]
-name = "openai-codex-cli-bin"
+name = "deepseekx-cli-bin"
 version = "0.0.0.dev0"
 source = { editable = "." }

@@ -101,6 +101,17 @@ macro_rules! assert_app_snapshot {
     };
 }
 
+fn app_test_runtime() -> Result<tokio::runtime::Runtime> {
+    const WORKER_THREADS: usize = 1;
+    const TEST_STACK_SIZE_BYTES: usize = 8 * 1024 * 1024;
+
+    Ok(tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(WORKER_THREADS)
+        .thread_stack_size(TEST_STACK_SIZE_BYTES)
+        .enable_all()
+        .build()?)
+}
+
 fn test_absolute_path(path: &str) -> AbsolutePathBuf {
     AbsolutePathBuf::try_from(PathBuf::from(path)).expect("absolute test path")
 }
@@ -1448,15 +1459,7 @@ async fn open_agent_picker_marks_terminal_read_errors_closed() -> Result<()> {
 
 #[test]
 fn open_agent_picker_marks_loaded_threads_open() -> Result<()> {
-    const WORKER_THREADS: usize = 1;
-    const TEST_STACK_SIZE_BYTES: usize = 8 * 1024 * 1024;
-
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(WORKER_THREADS)
-        .thread_stack_size(TEST_STACK_SIZE_BYTES)
-        .enable_all()
-        .build()?;
-
+    let runtime = app_test_runtime()?;
     runtime.block_on(async {
         let mut app = Box::pin(make_test_app()).await;
         let mut app_server = Box::pin(crate::start_embedded_app_server_for_picker(
@@ -1487,15 +1490,7 @@ fn open_agent_picker_marks_loaded_threads_open() -> Result<()> {
 
 #[test]
 fn attach_live_thread_for_selection_rejects_empty_non_ephemeral_fallback_threads() -> Result<()> {
-    const WORKER_THREADS: usize = 1;
-    const TEST_STACK_SIZE_BYTES: usize = 8 * 1024 * 1024;
-
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(WORKER_THREADS)
-        .thread_stack_size(TEST_STACK_SIZE_BYTES)
-        .enable_all()
-        .build()?;
-
+    let runtime = app_test_runtime()?;
     runtime.block_on(async {
         let config = {
             let app = make_test_app().await;
@@ -1530,15 +1525,7 @@ fn attach_live_thread_for_selection_rejects_empty_non_ephemeral_fallback_threads
 
 #[test]
 fn attach_live_thread_for_selection_rejects_unmaterialized_fallback_threads() -> Result<()> {
-    const WORKER_THREADS: usize = 1;
-    const TEST_STACK_SIZE_BYTES: usize = 8 * 1024 * 1024;
-
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(WORKER_THREADS)
-        .thread_stack_size(TEST_STACK_SIZE_BYTES)
-        .enable_all()
-        .build()?;
-
+    let runtime = app_test_runtime()?;
     runtime.block_on(async {
         let mut app = make_test_app().await;
         let mut app_server =
@@ -1696,15 +1683,7 @@ async fn update_memory_settings_persists_and_updates_widget_config() -> Result<(
 
 #[test]
 fn update_memory_settings_updates_current_thread_memory_mode() -> Result<()> {
-    const WORKER_THREADS: usize = 1;
-    const TEST_STACK_SIZE_BYTES: usize = 8 * 1024 * 1024;
-
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(WORKER_THREADS)
-        .thread_stack_size(TEST_STACK_SIZE_BYTES)
-        .enable_all()
-        .build()?;
-
+    let runtime = app_test_runtime()?;
     runtime.block_on(async {
         let (mut app, _app_event_rx, _op_rx) = Box::pin(make_test_app_with_channels()).await;
         let codex_home = tempdir()?;
@@ -1743,9 +1722,10 @@ fn update_memory_settings_updates_current_thread_memory_mode() -> Result<()> {
     })
 }
 
-#[tokio::test]
-async fn reset_memories_clears_local_memory_directories() -> Result<()> {
-    Box::pin(async {
+#[test]
+fn reset_memories_clears_local_memory_directories() -> Result<()> {
+    let runtime = app_test_runtime()?;
+    runtime.block_on(async {
         let (mut app, _app_event_rx, _op_rx) = Box::pin(make_test_app_with_channels()).await;
         let codex_home = tempdir()?;
         app.config.codex_home = codex_home.path().to_path_buf().abs();
@@ -1772,7 +1752,6 @@ async fn reset_memories_clears_local_memory_directories() -> Result<()> {
         app_server.shutdown().await?;
         Ok(())
     })
-    .await
 }
 
 #[tokio::test]
@@ -2303,27 +2282,30 @@ async fn update_feature_flags_disabling_guardian_in_profile_keeps_inherited_non_
     Ok(())
 }
 
-#[tokio::test]
-async fn open_agent_picker_allows_existing_agent_threads_when_feature_is_disabled() -> Result<()> {
-    let (mut app, mut app_event_rx, _op_rx) = Box::pin(make_test_app_with_channels()).await;
-    let mut app_server = Box::pin(crate::start_embedded_app_server_for_picker(
-        app.chat_widget.config_ref(),
-    ))
-    .await
-    .expect("embedded app server");
-    let thread_id = ThreadId::new();
-    app.thread_event_channels
-        .insert(thread_id, ThreadEventChannel::new(/*capacity*/ 1));
+#[test]
+fn open_agent_picker_allows_existing_agent_threads_when_feature_is_disabled() -> Result<()> {
+    let runtime = app_test_runtime()?;
+    runtime.block_on(async {
+        let (mut app, mut app_event_rx, _op_rx) = Box::pin(make_test_app_with_channels()).await;
+        let mut app_server = Box::pin(crate::start_embedded_app_server_for_picker(
+            app.chat_widget.config_ref(),
+        ))
+        .await
+        .expect("embedded app server");
+        let thread_id = ThreadId::new();
+        app.thread_event_channels
+            .insert(thread_id, ThreadEventChannel::new(/*capacity*/ 1));
 
-    Box::pin(app.open_agent_picker(&mut app_server)).await;
-    app.chat_widget
-        .handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+        Box::pin(app.open_agent_picker(&mut app_server)).await;
+        app.chat_widget
+            .handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
 
-    assert_matches!(
-        app_event_rx.try_recv(),
-        Ok(AppEvent::SelectAgentThread(selected_thread_id)) if selected_thread_id == thread_id
-    );
-    Ok(())
+        assert_matches!(
+            app_event_rx.try_recv(),
+            Ok(AppEvent::SelectAgentThread(selected_thread_id)) if selected_thread_id == thread_id
+        );
+        Ok(())
+    })
 }
 
 #[tokio::test]
@@ -3631,9 +3613,10 @@ async fn side_discard_selection_keeps_current_side_thread() {
     );
 }
 
-#[tokio::test]
-async fn discard_side_thread_removes_agent_navigation_entry() -> Result<()> {
-    Box::pin(async {
+#[test]
+fn discard_side_thread_removes_agent_navigation_entry() -> Result<()> {
+    let runtime = app_test_runtime()?;
+    runtime.block_on(async {
         let mut app = make_test_app().await;
         let mut app_server =
             crate::start_embedded_app_server_for_picker(app.chat_widget.config_ref()).await?;
@@ -3659,7 +3642,6 @@ async fn discard_side_thread_removes_agent_navigation_entry() -> Result<()> {
         assert!(!app.side_threads.contains_key(&side_thread_id));
         Ok(())
     })
-    .await
 }
 
 #[tokio::test]
@@ -5213,9 +5195,10 @@ async fn thread_rollback_response_discards_queued_active_thread_events() {
     assert!(matches!(rx.try_recv(), Err(TryRecvError::Empty)));
 }
 
-#[tokio::test]
-async fn new_session_requests_shutdown_for_previous_conversation() {
-    Box::pin(async {
+#[test]
+fn new_session_requests_shutdown_for_previous_conversation() -> Result<()> {
+    let runtime = app_test_runtime()?;
+    runtime.block_on(async {
         let (mut app, mut app_event_rx, mut op_rx) = Box::pin(make_test_app_with_channels()).await;
 
         let thread_id = ThreadId::new();
@@ -5255,8 +5238,8 @@ async fn new_session_requests_shutdown_for_previous_conversation() {
             op_rx.try_recv().is_err(),
             "shutdown should not submit Op::Shutdown"
         );
+        Ok(())
     })
-    .await;
 }
 
 #[tokio::test]
@@ -5303,9 +5286,10 @@ async fn shutdown_first_exit_uses_app_server_shutdown_without_submitting_op() {
     );
 }
 
-#[tokio::test]
-async fn interrupt_without_active_turn_is_treated_as_handled() {
-    Box::pin(async {
+#[test]
+fn interrupt_without_active_turn_is_treated_as_handled() -> Result<()> {
+    let runtime = app_test_runtime()?;
+    runtime.block_on(async {
         let mut app = make_test_app().await;
         let mut app_server = Box::pin(crate::start_embedded_app_server_for_picker(
             app.chat_widget.config_ref(),
@@ -5331,8 +5315,8 @@ async fn interrupt_without_active_turn_is_treated_as_handled() {
         .expect("interrupt submission should not fail");
 
         assert_eq!(handled, true);
+        Ok(())
     })
-    .await;
 }
 
 #[tokio::test]
@@ -5475,7 +5459,7 @@ async fn session_summary_includes_resume_hint_for_persisted_rollout() {
     );
     assert_eq!(
         summary.resume_command,
-        Some("codex resume 123e4567-e89b-12d3-a456-426614174000".to_string())
+        Some("deepseekx resume 123e4567-e89b-12d3-a456-426614174000".to_string())
     );
 }
 
@@ -5501,6 +5485,6 @@ async fn session_summary_uses_id_even_when_thread_has_name() {
     .expect("summary");
     assert_eq!(
         summary.resume_command,
-        Some("codex resume 123e4567-e89b-12d3-a456-426614174000".to_string())
+        Some("deepseekx resume 123e4567-e89b-12d3-a456-426614174000".to_string())
     );
 }

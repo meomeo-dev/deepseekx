@@ -3,14 +3,14 @@ requires = ["hatchling>=1.24.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "openai-codex"
+name = "deepseekx"
 version = "0.131.0a4"
-description = "Python SDK for Codex app-server v2"
+description = "Python SDK for DeepSeekX app-server v2"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
-authors = [{ name = "OpenAI" }]
-keywords = ["codex", "json-rpc", "sdk", "llm", "app-server"]
+authors = [{ name = "DeepSeekX" }]
+keywords = ["deepseekx", "json-rpc", "sdk", "llm", "app-server"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
@@ -22,12 +22,12 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = ["pydantic>=2.12", "openai-codex-cli-bin==0.131.0a4"]
+dependencies = ["pydantic>=2.12", "deepseekx-cli-bin==0.131.0a4"]
 
 [project.urls]
-Homepage = "https://github.com/openai/codex"
-Repository = "https://github.com/openai/codex"
-Issues = "https://github.com/openai/codex/issues"
+Homepage = "https://github.com/meomeo-dev/deepseekx"
+Repository = "https://github.com/meomeo-dev/deepseekx"
+Issues = "https://github.com/meomeo-dev/deepseekx/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "datamodel-code-generator==0.31.2", "ruff>=0.15.8"]
@@ -42,14 +42,14 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/openai_codex"]
+packages = ["src/deepseekx"]
 include = [
-  "src/openai_codex/py.typed",
+  "src/deepseekx/py.typed",
 ]
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "src/openai_codex/**",
+  "src/deepseekx/**",
   "README.md",
   "CHANGELOG.md",
   "CONTRIBUTING.md",
@@ -67,7 +67,7 @@ required-version = ">=0.15.8"
 line-length = 100
 extend-exclude = [
   "notebooks/**",
-  "src/openai_codex/generated/**",
+  "src/deepseekx/generated/**",
 ]
 
 [tool.ruff.lint]
@@ -86,10 +86,10 @@ combine-as-imports = true
 
 [tool.uv]
 exclude-newer = "7 days"
-exclude-newer-package = { openai-codex-cli-bin = "2026-05-10T00:00:00Z" }
+exclude-newer-package = { deepseekx-cli-bin = "2026-05-10T00:00:00Z" }
 index-strategy = "first-index"
 
 [tool.uv.pip]
 exclude-newer = "7 days"
-exclude-newer-package = { openai-codex-cli-bin = "2026-05-10T00:00:00Z" }
+exclude-newer-package = { deepseekx-cli-bin = "2026-05-10T00:00:00Z" }
 index-strategy = "first-index"

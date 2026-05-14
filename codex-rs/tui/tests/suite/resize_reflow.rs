@@ -14,7 +14,7 @@ use tempfile::tempdir;
 use wiremock::MockServer;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-#[ignore = "requires tmux and a locally built codex binary; run with --ignored for manual resize smoke"]
+#[ignore = "requires tmux and a locally built deepseekx binary; run with --ignored for manual resize smoke"]
 async fn tmux_split_preserves_fresh_session_composer_row_after_resize_reflow() -> Result<()> {
     if cfg!(windows) {
         return Ok(());
@@ -59,7 +59,7 @@ async fn tmux_split_preserves_fresh_session_composer_row_after_resize_reflow() -
             .arg(&session_name)
             .arg("--")
             .arg("env")
-            .arg(format!("CODEX_HOME={}", codex_home.path().display()))
+            .arg(format!("DEEPSEEKX_HOME={}", codex_home.path().display()))
             .arg("OPENAI_API_KEY=dummy")
             .arg(codex)
             .arg("-c")
@@ -168,7 +168,7 @@ async fn tmux_split_preserves_fresh_session_composer_row_after_resize_reflow() -
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-#[ignore = "requires tmux and a locally built codex binary; run with --ignored for manual resize smoke"]
+#[ignore = "requires tmux and a locally built deepseekx binary; run with --ignored for manual resize smoke"]
 async fn tmux_repeated_resizes_do_not_push_composer_down() -> Result<()> {
     if cfg!(windows) {
         return Ok(());
@@ -186,7 +186,7 @@ async fn tmux_repeated_resizes_do_not_push_composer_down() -> Result<()> {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-#[ignore = "requires tmux and a locally built codex binary; run with --ignored for manual resize smoke"]
+#[ignore = "requires tmux and a locally built deepseekx binary; run with --ignored for manual resize smoke"]
 async fn tmux_width_resize_restore_keeps_visible_content_anchored() -> Result<()> {
     if cfg!(windows) {
         return Ok(());
@@ -231,7 +231,7 @@ async fn tmux_width_resize_restore_keeps_visible_content_anchored() -> Result<()
             .arg(&session_name)
             .arg("--")
             .arg("env")
-            .arg(format!("CODEX_HOME={}", codex_home.path().display()))
+            .arg(format!("DEEPSEEKX_HOME={}", codex_home.path().display()))
             .arg("OPENAI_API_KEY=dummy")
             .arg(codex)
             .arg("-c")
@@ -360,7 +360,7 @@ async fn run_repeated_resize_smoke(terminal_resize_reflow_enabled: bool) -> Resu
             .arg(&session_name)
             .arg("--")
             .arg("env")
-            .arg(format!("CODEX_HOME={}", codex_home.path().display()))
+            .arg(format!("DEEPSEEKX_HOME={}", codex_home.path().display()))
             .arg("OPENAI_API_KEY=dummy")
             .arg(codex)
             .arg("-c")
@@ -477,14 +477,14 @@ impl Drop for TmuxSession {
 }
 
 fn codex_binary(repo_root: &Path) -> Result<PathBuf> {
-    if let Ok(path) = codex_utils_cargo_bin::cargo_bin("codex") {
+    if let Ok(path) = codex_utils_cargo_bin::cargo_bin("deepseekx") {
         return Ok(path);
     }
 
-    let fallback = repo_root.join("codex-rs/target/debug/codex");
+    let fallback = repo_root.join("codex-rs/target/debug/deepseekx");
     anyhow::ensure!(
         fallback.is_file(),
-        "codex binary is unavailable; run `cargo build -p codex-cli` first"
+        "deepseekx binary is unavailable; run `cargo build -p codex-cli` first"
     );
     Ok(fallback)
 }

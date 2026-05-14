@@ -4,12 +4,13 @@ use clap::Parser;
 use clap::ValueEnum;
 use codex_utils_cli::CliConfigOverrides;
 use codex_utils_cli::SharedCliOptions;
+use codex_utils_cli::exec_usage;
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(
     version,
-    override_usage = "codex exec [OPTIONS] [PROMPT]\n       codex exec [OPTIONS] <COMMAND> [ARGS]"
+    override_usage = exec_usage()
 )]
 pub struct Cli {
     /// Action to perform. If omitted, runs a new non-interactive session.
@@ -19,7 +20,7 @@ pub struct Cli {
     #[clap(flatten)]
     pub shared: ExecSharedCliOptions,
 
-    /// Allow running Codex outside a Git repository.
+    /// Allow running DeepSeekX outside a Git repository.
     #[arg(long = "skip-git-repo-check", global = true, default_value_t = false)]
     pub skip_git_repo_check: bool,
 
@@ -27,7 +28,7 @@ pub struct Cli {
     #[arg(long = "ephemeral", global = true, default_value_t = false)]
     pub ephemeral: bool,
 
-    /// Do not load `$CODEX_HOME/config.toml`; auth still uses `CODEX_HOME`.
+    /// Do not load user config; auth still uses the configured home.
     #[arg(long = "ignore-user-config", global = true, default_value_t = false)]
     pub ignore_user_config: bool,
 

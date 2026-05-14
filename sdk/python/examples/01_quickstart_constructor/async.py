@@ -15,15 +15,15 @@ ensure_local_sdk_src()
 
 import asyncio
 
-from openai_codex import AsyncCodex
+from deepseekx import AsyncDeepSeekX
 
 
 async def main() -> None:
-    async with AsyncCodex(config=runtime_config()) as codex:
-        print("Server:", server_label(codex.metadata))
+    async with AsyncDeepSeekX(config=runtime_config()) as deepseekx:
+        print("Server:", server_label(deepseekx.metadata))
 
-        thread = await codex.thread_start(
-            model="gpt-5.4", config={"model_reasoning_effort": "high"}
+        thread = await deepseekx.thread_start(
+            model="deepseek-v4-pro", config={"model_reasoning_effort": "high"}
         )
         result = await thread.run("Say hello in one sentence.")
         print("Items:", len(result.items))

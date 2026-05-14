@@ -4,6 +4,7 @@
 //! entry, Ctrl-L clear, external editor launch, and agent navigation shortcuts.
 
 use super::*;
+use codex_utils_cli::PRODUCT_NAME;
 
 impl App {
     pub(super) async fn launch_external_editor(&mut self, tui: &mut tui::Tui) {
@@ -12,9 +13,10 @@ impl App {
             Err(external_editor::EditorError::MissingEditor) => {
                 self.chat_widget
                     .add_to_history(history_cell::new_error_event(
-                    "Cannot open external editor: set $VISUAL or $EDITOR before starting Codex."
-                        .to_string(),
-                ));
+                        format!(
+                            "Cannot open external editor: set $VISUAL or $EDITOR before starting {PRODUCT_NAME}."
+                        ),
+                    ));
                 self.reset_external_editor_state(tui);
                 return;
             }

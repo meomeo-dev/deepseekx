@@ -9,16 +9,16 @@ from _bootstrap import ensure_local_sdk_src, runtime_config
 
 ensure_local_sdk_src()
 
-from openai_codex import (
-    Codex,
+from deepseekx import (
+    DeepSeekX,
     TextInput,
 )
-from openai_codex.types import (
+from deepseekx.types import (
     ThreadTokenUsageUpdatedNotification,
     TurnCompletedNotification,
 )
 
-print("Codex mini CLI. Type /exit to quit.")
+print("DeepSeekX mini CLI. Type /exit to quit.")
 
 
 def _status_value(status: object | None) -> str:
@@ -41,8 +41,8 @@ def _format_usage(usage: object | None) -> str:
     )
 
 
-with Codex(config=runtime_config()) as codex:
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+with DeepSeekX(config=runtime_config()) as deepseekx:
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
     print("Thread:", thread.id)
 
     while True:

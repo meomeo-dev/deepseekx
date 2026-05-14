@@ -20,14 +20,14 @@ const IDE_CONTEXT_REQUEST_TIMEOUT: Duration = Duration::from_secs(5);
 #[cfg(any(unix, windows))]
 const MAX_IPC_FRAME_BYTES: usize = 256 * 1024 * 1024;
 #[cfg(any(unix, windows))]
-const TUI_SOURCE_CLIENT_ID: &str = "codex-tui";
+const TUI_SOURCE_CLIENT_ID: &str = "deepseekx-tui";
 #[cfg(any(unix, windows))]
 const OPEN_IDE_HINT: &str =
-    "Open this project in VS Code or Cursor with the Codex extension active.";
+    "Open this project in VS Code or Cursor with the DeepSeekX extension active.";
 #[cfg(any(unix, windows))]
 const IDE_DID_NOT_PROVIDE_CONTEXT_HINT: &str = "The IDE extension did not provide context.";
 #[cfg(any(unix, windows))]
-const KEEP_TRYING_HINT: &str = "Codex will keep trying on future messages.";
+const KEEP_TRYING_HINT: &str = "DeepSeekX will keep trying on future messages.";
 
 #[derive(Debug, Error)]
 pub(crate) enum IdeContextError {
@@ -69,10 +69,10 @@ impl IdeContextError {
                 "The selected IDE context is too large. Clear any large selection in your IDE and try /ide again.".to_string()
             }
             IdeContextError::Send(_) => {
-                "Codex could not request IDE context. Try /ide again.".to_string()
+                "DeepSeekX could not request IDE context. Try /ide again.".to_string()
             }
             IdeContextError::Read(_) | IdeContextError::InvalidResponse(_) => {
-                "Codex could not read IDE context. Try /ide again.".to_string()
+                "DeepSeekX could not read IDE context. Try /ide again.".to_string()
             }
         }
     }
@@ -89,11 +89,13 @@ impl IdeContextError {
                 OPEN_IDE_HINT.to_string()
             }
             IdeContextError::Read(error) if error.kind() == std::io::ErrorKind::TimedOut => {
-                "Codex timed out waiting for IDE context. It will keep trying on future messages."
+                "DeepSeekX timed out waiting for IDE context. It will keep trying on future messages."
                     .to_string()
             }
             IdeContextError::RequestFailed(error) if error == "client-disconnected" => {
-                hint_with_retry("The IDE connection changed while Codex was requesting context.")
+                hint_with_retry(
+                    "The IDE connection changed while DeepSeekX was requesting context.",
+                )
             }
             IdeContextError::RequestFailed(error) if error == "request-timeout" => {
                 hint_with_retry("The IDE extension did not answer in time.")
@@ -106,13 +108,13 @@ impl IdeContextError {
                 "The connected IDE client does not support IDE context requests.".to_string()
             }
             IdeContextError::Send(_) => {
-                hint_with_retry("Codex lost the IDE connection while requesting context.")
+                hint_with_retry("DeepSeekX lost the IDE connection while requesting context.")
             }
             IdeContextError::InvalidResponse(_) => {
-                hint_with_retry("Codex received an unexpected IDE context response.")
+                hint_with_retry("DeepSeekX received an unexpected IDE context response.")
             }
             IdeContextError::RequestFailed(_) => hint_with_retry(IDE_DID_NOT_PROVIDE_CONTEXT_HINT),
-            IdeContextError::Read(_) => hint_with_retry("Codex could not read IDE context."),
+            IdeContextError::Read(_) => hint_with_retry("DeepSeekX could not read IDE context."),
         }
     }
 
@@ -156,13 +158,13 @@ pub(crate) fn fetch_ide_context(_workspace_root: &Path) -> Result<IdeContext, Id
 fn default_ipc_socket_path() -> PathBuf {
     let uid = unsafe { libc::getuid() };
     std::env::temp_dir()
-        .join("codex-ipc")
+        .join("deepseekx-ipc")
         .join(format!("ipc-{uid}.sock"))
 }
 
 #[cfg(windows)]
 fn default_ipc_socket_path() -> PathBuf {
-    PathBuf::from(r"\\.\pipe\codex-ipc")
+    PathBuf::from(r"\\.\pipe\deepseekx-ipc")
 }
 
 #[cfg(not(any(unix, windows)))]
@@ -888,7 +890,7 @@ mod tests {
         let tempdir = tempfile::tempdir().expect("tempdir");
         std::fs::set_permissions(tempdir.path(), std::fs::Permissions::from_mode(0o777))
             .expect("set unsafe permissions");
-        let socket_path = tempdir.path().join("codex-ipc.sock");
+        let socket_path = tempdir.path().join("deepseekx-ipc.sock");
         let _listener = UnixListener::bind(&socket_path).expect("bind socket");
 
         let err = validate_unix_socket_path(&socket_path)
@@ -904,7 +906,7 @@ mod tests {
         use std::thread;
 
         let tempdir = tempfile::tempdir().expect("tempdir");
-        let socket_path = tempdir.path().join("codex-ipc.sock");
+        let socket_path = tempdir.path().join("deepseekx-ipc.sock");
         let listener = UnixListener::bind(&socket_path).expect("bind socket");
 
         let server = thread::spawn(move || {

@@ -16,6 +16,7 @@ use codex_protocol::num_format::format_with_separators;
 use codex_protocol::permissions::NetworkSandboxPolicy;
 use codex_protocol::protocol::SessionConfiguredEvent;
 use codex_utils_absolute_path::canonicalize_preserving_symlinks;
+use codex_utils_cli::PRODUCT_NAME;
 use owo_colors::OwoColorize;
 use owo_colors::Style;
 
@@ -103,7 +104,7 @@ impl EventProcessorWithHumanOutput {
             ThreadItem::AgentMessage { text, .. } => {
                 eprintln!(
                     "{}\n{}",
-                    "codex".style(self.italic).style(self.magenta),
+                    PRODUCT_NAME.style(self.italic).style(self.magenta),
                     text
                 );
                 self.final_message = Some(text);
@@ -219,7 +220,7 @@ impl EventProcessor for EventProcessorWithHumanOutput {
         session_configured_event: &SessionConfiguredEvent,
     ) {
         const VERSION: &str = env!("CARGO_PKG_VERSION");
-        eprintln!("OpenAI Codex v{VERSION}\n--------");
+        eprintln!("{PRODUCT_NAME} v{VERSION}\n--------");
         for (key, value) in config_summary_entries(config, session_configured_event) {
             eprintln!("{} {}", format!("{key}:").style(self.bold), value);
         }
@@ -412,7 +413,7 @@ impl EventProcessor for EventProcessorWithHumanOutput {
         {
             eprintln!(
                 "{}\n{}",
-                "codex".style(self.italic).style(self.magenta),
+                PRODUCT_NAME.style(self.italic).style(self.magenta),
                 message
             );
         }

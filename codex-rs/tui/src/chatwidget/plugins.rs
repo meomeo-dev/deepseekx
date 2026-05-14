@@ -36,6 +36,7 @@ use codex_app_server_protocol::PluginUninstallResponse;
 use codex_core_plugins::OPENAI_CURATED_MARKETPLACE_NAME;
 use codex_features::Feature;
 use codex_utils_absolute_path::AbsolutePathBuf;
+use codex_utils_cli::PRODUCT_NAME;
 use crossterm::event::KeyCode;
 use crossterm::event::KeyEvent;
 use crossterm::event::KeyEventKind;
@@ -1075,7 +1076,7 @@ impl ChatWidget {
             format!("Remove {marketplace_display_name} marketplace?").dim(),
         ));
         header.push(Line::from(
-            "This removes the configured marketplace from Codex.".dim(),
+            format!("This removes the configured marketplace from {PRODUCT_NAME}.").dim(),
         ));
 
         let cwd_for_remove = self.config.cwd.to_path_buf();

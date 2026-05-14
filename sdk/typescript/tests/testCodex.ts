@@ -1,23 +1,23 @@
 import path from "node:path";
 
-import { Codex } from "../src/codex";
-import type { CodexConfigObject } from "../src/codexOptions";
+import { DeepSeekX } from "../src/codex";
+import type { DeepSeekXConfigObject } from "../src/codexOptions";
 
-export const codexExecPath =
-  process.env.CODEX_EXEC_PATH ??
-  path.join(process.cwd(), "..", "..", "codex-rs", "target", "debug", "codex");
+export const deepseekxExecPath =
+  process.env.DEEPSEEKX_EXEC_PATH ??
+  path.join(process.cwd(), "..", "..", "codex-rs", "target", "debug", "deepseekx");
 
 type CreateTestClientOptions = {
   apiKey?: string;
   baseUrl?: string;
-  config?: CodexConfigObject;
+  config?: DeepSeekXConfigObject;
   env?: Record<string, string>;
   inheritEnv?: boolean;
 };
 
 export type TestClient = {
   cleanup: () => void;
-  client: Codex;
+  client: DeepSeekX;
 };
 
 export function createMockClient(url: string): TestClient {
@@ -42,8 +42,8 @@ export function createTestClient(options: CreateTestClientOptions = {}): TestCli
 
   return {
     cleanup: () => {},
-    client: new Codex({
-      codexPathOverride: codexExecPath,
+    client: new DeepSeekX({
+      deepseekxPathOverride: deepseekxExecPath,
       baseUrl: options.baseUrl,
       apiKey: options.apiKey,
       config: mergeTestConfig(options.baseUrl, options.config),
@@ -54,9 +54,9 @@ export function createTestClient(options: CreateTestClientOptions = {}): TestCli
 
 function mergeTestConfig(
   baseUrl: string | undefined,
-  config: CodexConfigObject | undefined,
-): CodexConfigObject | undefined {
-  const mergedConfig: CodexConfigObject | undefined =
+  config: DeepSeekXConfigObject | undefined,
+): DeepSeekXConfigObject | undefined {
+  const mergedConfig: DeepSeekXConfigObject | undefined =
     !baseUrl || hasExplicitProviderConfig(config)
       ? config
       : {
@@ -78,7 +78,7 @@ function mergeTestConfig(
   return {
     ...mergedConfig,
     // Disable plugins in SDK integration tests so background curated-plugin
-    // sync does not race temp CODEX_HOME cleanup.
+    // sync does not race temp DEEPSEEKX_HOME cleanup.
     features:
       featureOverrides && typeof featureOverrides === "object" && !Array.isArray(featureOverrides)
         ? { ...featureOverrides, plugins: false }
@@ -86,15 +86,25 @@ function mergeTestConfig(
   };
 }
 
-function hasExplicitProviderConfig(config: CodexConfigObject | undefined): boolean {
+function hasExplicitProviderConfig(config: DeepSeekXConfigObject | undefined): boolean {
   return config?.model_provider !== undefined || config?.model_providers !== undefined;
 }
 
 function getCurrentEnv(): Record<string, string> {
   const env: Record<string, string> = {};
+  const codexEnvKeysToDrop = new Set([
+    "CODEX_API_KEY",
+    "CODEX_ACCESS_TOKEN",
+    "CODEX_EXEC_PATH",
+    "CODEX_EXEC_SERVER_REMOTE_BEARER_TOKEN",
+    "CODEX_EXEC_SERVER_URL",
+    "CODEX_HOME",
+    "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+    "CODEX_SQLITE_HOME",
+  ]);
 
   for (const [key, value] of Object.entries(process.env)) {
-    if (key === "CODEX_INTERNAL_ORIGINATOR_OVERRIDE") {
+    if (codexEnvKeysToDrop.has(key) || key === "DEEPSEEKX_INTERNAL_ORIGINATOR_OVERRIDE") {
       continue;
     }
     if (value !== undefined) {

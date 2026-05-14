@@ -4,25 +4,25 @@ import path from "node:path";
 
 import { afterEach, beforeEach } from "@jest/globals";
 
-const originalCodexHome = process.env.CODEX_HOME;
-let currentCodexHome: string | undefined;
+const originalDeepSeekXHome = process.env.DEEPSEEKX_HOME;
+let currentDeepSeekXHome: string | undefined;
 
 beforeEach(async () => {
-  currentCodexHome = await fs.mkdtemp(path.join(os.tmpdir(), "codex-sdk-test-"));
-  process.env.CODEX_HOME = currentCodexHome;
+  currentDeepSeekXHome = await fs.mkdtemp(path.join(os.tmpdir(), "deepseekx-sdk-test-"));
+  process.env.DEEPSEEKX_HOME = currentDeepSeekXHome;
 });
 
 afterEach(async () => {
-  const codexHomeToDelete = currentCodexHome;
-  currentCodexHome = undefined;
+  const deepseekxHomeToDelete = currentDeepSeekXHome;
+  currentDeepSeekXHome = undefined;
 
-  if (originalCodexHome === undefined) {
-    delete process.env.CODEX_HOME;
+  if (originalDeepSeekXHome === undefined) {
+    delete process.env.DEEPSEEKX_HOME;
   } else {
-    process.env.CODEX_HOME = originalCodexHome;
+    process.env.DEEPSEEKX_HOME = originalDeepSeekXHome;
   }
 
-  if (codexHomeToDelete) {
-    await fs.rm(codexHomeToDelete, { recursive: true, force: true });
+  if (deepseekxHomeToDelete) {
+    await fs.rm(deepseekxHomeToDelete, { recursive: true, force: true });
   }
 });

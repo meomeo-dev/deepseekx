@@ -718,7 +718,11 @@ fn mcp_init_error_display(
         )
     } else if is_mcp_client_auth_required_error(err) {
         format!(
-            "The {server_name} MCP server is not logged in. Run `codex mcp login {server_name}`."
+            concat!(
+                "The {server_name} MCP server is not logged in. ",
+                "Run `deepseekx mcp login {server_name}`."
+            ),
+            server_name = server_name
         )
     } else if is_mcp_client_startup_timeout_error(err) {
         let startup_timeout_secs = match entry {

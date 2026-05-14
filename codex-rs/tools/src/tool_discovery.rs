@@ -2,7 +2,7 @@ use codex_app_server_protocol::AppInfo;
 use serde::Deserialize;
 use serde::Serialize;
 
-const TUI_CLIENT_NAME: &str = "codex-tui";
+const TUI_CLIENT_NAME: &str = "deepseekx-tui";
 pub const TOOL_SEARCH_TOOL_NAME: &str = "tool_search";
 pub const TOOL_SEARCH_DEFAULT_LIMIT: usize = 8;
 pub const REQUEST_PLUGIN_INSTALL_TOOL_NAME: &str = "request_plugin_install";

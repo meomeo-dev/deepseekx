@@ -1,30 +1,30 @@
 {
   "outputs": {
-    "codex": {
+    "deepseekx": {
       "platforms": {
         "macos-aarch64": {
-          "regex": "^codex-aarch64-apple-darwin\\.zst$",
-          "path": "codex"
+          "regex": "^deepseekx-aarch64-apple-darwin\\.zst$",
+          "path": "deepseekx"
         },
         "macos-x86_64": {
-          "regex": "^codex-x86_64-apple-darwin\\.zst$",
-          "path": "codex"
+          "regex": "^deepseekx-x86_64-apple-darwin\\.zst$",
+          "path": "deepseekx"
         },
         "linux-x86_64": {
-          "regex": "^codex-x86_64-unknown-linux-musl-bundle\\.tar\\.zst$",
-          "path": "codex"
+          "regex": "^deepseekx-x86_64-unknown-linux-musl-bundle\\.tar\\.zst$",
+          "path": "deepseekx"
         },
         "linux-aarch64": {
-          "regex": "^codex-aarch64-unknown-linux-musl-bundle\\.tar\\.zst$",
-          "path": "codex"
+          "regex": "^deepseekx-aarch64-unknown-linux-musl-bundle\\.tar\\.zst$",
+          "path": "deepseekx"
         },
         "windows-x86_64": {
-          "regex": "^codex-x86_64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex.exe"
+          "regex": "^deepseekx-x86_64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "deepseekx.exe"
         },
         "windows-aarch64": {
-          "regex": "^codex-aarch64-pc-windows-msvc\\.exe\\.zst$",
-          "path": "codex.exe"
+          "regex": "^deepseekx-aarch64-pc-windows-msvc\\.exe\\.zst$",
+          "path": "deepseekx.exe"
         }
       }
     },

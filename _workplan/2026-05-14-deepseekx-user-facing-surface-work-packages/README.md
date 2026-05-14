@@ -2,7 +2,8 @@
 
 ## Purpose
 
-本目录将 DeepSeekX 用户感知面改造拆分为可独立审查的工作包。
+本目录将 DeepSeekX 用户感知面和原版 Codex 隔离改造拆分为
+可独立审查的工作包。
 执行时一次只推进一个 package。发生上下文压缩后，先阅读本
 README、work breakdown 和目标 package，再继续执行。
 
@@ -18,7 +19,7 @@ README、work breakdown 和目标 package，再继续执行。
 1. `00-cli-launcher-help`
 2. `01-tui-branding-snapshots`
 3. `02-default-provider-auth`
-4. `03-config-home-compat`
+4. `03-config-home-isolation`
 5. `04-packaging-artifacts`
 6. `05-sdk-app-server-surface`
 7. `06-compatibility-verification`
@@ -28,7 +29,7 @@ README、work breakdown 和目标 package，再继续执行。
 - `00-cli-launcher-help` has no package dependency.
 - `01-tui-branding-snapshots` depends on `00-cli-launcher-help`.
 - `02-default-provider-auth` depends on `00-cli-launcher-help`.
-- `03-config-home-compat` depends on `02-default-provider-auth`.
+- `03-config-home-isolation` depends on `02-default-provider-auth`.
 - `04-packaging-artifacts` depends on `00-cli-launcher-help`.
 - `05-sdk-app-server-surface` depends on `00-cli-launcher-help`.
 - `06-compatibility-verification` depends on all prior packages.
@@ -54,10 +55,10 @@ README、work breakdown 和目标 package，再继续执行。
 
 ## Status
 
-- `00-cli-launcher-help`: planned
-- `01-tui-branding-snapshots`: planned
-- `02-default-provider-auth`: planned
-- `03-config-home-compat`: planned
-- `04-packaging-artifacts`: planned
-- `05-sdk-app-server-surface`: planned
-- `06-compatibility-verification`: planned
+- `00-cli-launcher-help`: completed
+- `01-tui-branding-snapshots`: completed
+- `02-default-provider-auth`: completed
+- `03-config-home-isolation`: completed
+- `04-packaging-artifacts`: completed
+- `05-sdk-app-server-surface`: completed
+- `06-compatibility-verification`: completed

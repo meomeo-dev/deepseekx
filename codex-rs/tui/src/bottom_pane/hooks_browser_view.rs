@@ -737,7 +737,7 @@ fn event_description(event_name: HookEventName) -> &'static str {
         HookEventName::PostCompact => "After context compaction",
         HookEventName::SessionStart => "When a new session starts",
         HookEventName::UserPromptSubmit => "When the user submits a prompt",
-        HookEventName::Stop => "Right before Codex ends its turn",
+        HookEventName::Stop => "Right before DeepSeekX ends its turn",
     }
 }
 

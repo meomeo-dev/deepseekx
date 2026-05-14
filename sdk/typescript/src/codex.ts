@@ -1,20 +1,20 @@
-import { CodexOptions } from "./codexOptions";
-import { CodexExec } from "./exec";
+import { DeepSeekXOptions } from "./codexOptions";
+import { DeepSeekXExec } from "./exec";
 import { Thread } from "./thread";
 import { ThreadOptions } from "./threadOptions";
 
 /**
- * Codex is the main class for interacting with the Codex agent.
+ * DeepSeekX is the main class for interacting with the DeepSeekX agent.
  *
  * Use the `startThread()` method to start a new thread or `resumeThread()` to resume a previously started thread.
  */
-export class Codex {
-  private exec: CodexExec;
-  private options: CodexOptions;
+export class DeepSeekX {
+  private exec: DeepSeekXExec;
+  private options: DeepSeekXOptions;
 
-  constructor(options: CodexOptions = {}) {
-    const { codexPathOverride, env, config } = options;
-    this.exec = new CodexExec(codexPathOverride, env, config);
+  constructor(options: DeepSeekXOptions = {}) {
+    const { deepseekxPathOverride, env, config } = options;
+    this.exec = new DeepSeekXExec(deepseekxPathOverride, env, config);
     this.options = options;
   }
 
@@ -28,7 +28,7 @@ export class Codex {
 
   /**
    * Resumes a conversation with an agent based on the thread id.
-   * Threads are persisted in ~/.codex/sessions.
+   * Threads are persisted in ~/.deepseekx/sessions.
    *
    * @param id The id of the thread to resume.
    * @returns A new thread instance.

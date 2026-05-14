@@ -3,7 +3,7 @@
 ## Metadata
 
 - id: `01-tui-branding-snapshots`
-- status: `planned`
+- status: `completed`
 - source: `2026-05-14-deepseekx-user-facing-surface-work-breakdown.yaml`
 - depends_on: `00-cli-launcher-help`
 - owner: DeepSeekX
@@ -63,4 +63,16 @@ Out of scope:
 
 ## Completion Evidence
 
-- Package `01-tui-branding-snapshots` not started.
+- Completed in current branch.
+- Evidence files:
+  - `codex-rs/tui/src/history_cell.rs`
+  - `codex-rs/tui/src/status/card.rs`
+  - `codex-rs/tui/src/bottom_pane/mod.rs`
+  - `codex-rs/tui/src/bottom_pane/chat_composer.rs`
+  - `codex-rs/tui/src/bottom_pane/approval_overlay.rs`
+  - `codex-rs/tui/src/ide_context/ipc.rs`
+  - `codex-rs/tui/src/pets/catalog.rs`
+  - `codex-rs/tui/src/pets/picker.rs`
+  - TUI snapshot files under `codex-rs/tui/src/**/snapshots`.
+- `INSTA_UPDATE=always CARGO_BUILD_JOBS=4 cargo test -p codex-tui` passed:
+  2497 lib tests passed, 1 ignored; integration tests passed with 4 ignored.

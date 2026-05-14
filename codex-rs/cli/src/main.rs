@@ -13,15 +13,6 @@ use codex_chatgpt::apply_command::run_apply_command;
 use codex_cli::LandlockCommand;
 use codex_cli::SeatbeltCommand;
 use codex_cli::WindowsCommand;
-use codex_cli::read_access_token_from_stdin;
-use codex_cli::read_api_key_from_stdin;
-use codex_cli::run_login_status;
-use codex_cli::run_login_with_access_token;
-use codex_cli::run_login_with_api_key;
-use codex_cli::run_login_with_chatgpt;
-use codex_cli::run_login_with_device_code;
-use codex_cli::run_logout;
-use codex_cloud_tasks::Cli as CloudTasksCli;
 use codex_exec::Cli as ExecCli;
 use codex_exec::Command as ExecCommand;
 use codex_exec::ReviewArgs;
@@ -37,15 +28,15 @@ use codex_tui::ExitReason;
 use codex_tui::UpdateAction;
 use codex_utils_absolute_path::AbsolutePathBuf;
 use codex_utils_cli::CliConfigOverrides;
+use codex_utils_cli::PRIMARY_COMMAND;
+use codex_utils_cli::PRODUCT_NAME;
+use codex_utils_cli::root_usage;
 use owo_colors::OwoColorize;
 use std::io::IsTerminal;
+use std::path::Path;
 use std::path::PathBuf;
 use supports_color::Stream;
 
-#[cfg(any(target_os = "macos", target_os = "windows"))]
-mod app_cmd;
-#[cfg(any(target_os = "macos", target_os = "windows"))]
-mod desktop_app;
 mod marketplace_cmd;
 mod mcp_cmd;
 #[cfg(not(windows))]
@@ -70,20 +61,22 @@ use codex_protocol::protocol::AskForApproval;
 use codex_protocol::user_input::UserInput;
 use codex_terminal_detection::TerminalName;
 
-/// Codex CLI
+const DEEPSEEKX_VERSION: &str = env!("CARGO_PKG_VERSION");
+
+/// DeepSeekX CLI
 ///
 /// If no subcommand is specified, options will be forwarded to the interactive CLI.
 #[derive(Debug, Parser)]
 #[clap(
     author,
-    version,
+    name = PRODUCT_NAME,
+    version = DEEPSEEKX_VERSION,
     // If a sub‑command is given, ignore requirements of the default args.
     subcommand_negates_reqs = true,
-    // The executable is sometimes invoked via a platform‑specific name like
-    // `codex-x86_64-unknown-linux-musl`, but the help output should always use
-    // the generic `codex` command name that users run.
-    bin_name = "codex",
-    override_usage = "codex [OPTIONS] [PROMPT]\n       codex [OPTIONS] <COMMAND> [ARGS]"
+    // The executable is sometimes invoked via a platform-specific name, but
+    // help output should always use the primary DeepSeekX command.
+    bin_name = PRIMARY_COMMAND,
+    override_usage = root_usage()
 )]
 struct MultitoolCli {
     #[clap(flatten)]
@@ -104,26 +97,28 @@ struct MultitoolCli {
 
 #[derive(Debug, clap::Subcommand)]
 enum Subcommand {
-    /// Run Codex non-interactively.
+    /// Run DeepSeekX non-interactively.
     #[clap(visible_alias = "e")]
     Exec(ExecCli),
 
     /// Run a code review non-interactively.
     Review(ReviewArgs),
 
-    /// Manage login.
-    Login(LoginCommand),
+    /// [disabled] DeepSeekX CLI login is not configured in this build.
+    #[clap(hide = true)]
+    Login(DisabledLoginCli),
 
-    /// Remove stored authentication credentials.
-    Logout(LogoutCommand),
+    /// [disabled] DeepSeekX CLI logout is not configured in this build.
+    #[clap(hide = true)]
+    Logout(DisabledLoginCli),
 
-    /// Manage external MCP servers for Codex.
+    /// Manage external MCP servers for DeepSeekX.
     Mcp(McpCli),
 
-    /// Manage Codex plugins.
+    /// Manage DeepSeekX plugins.
     Plugin(PluginCli),
 
-    /// Start Codex as an MCP server (stdio).
+    /// Start DeepSeekX as an MCP server (stdio).
     McpServer,
 
     /// [experimental] Run the app server or related tooling.
@@ -132,17 +127,17 @@ enum Subcommand {
     /// [experimental] Ensure the app-server daemon is running with remote control enabled.
     RemoteControl,
 
-    /// Launch the Codex desktop app (opens the app installer if missing).
-    #[cfg(any(target_os = "macos", target_os = "windows"))]
-    App(app_cmd::AppCommand),
+    /// [disabled] DeepSeekX desktop app integration is not configured in this build.
+    #[clap(hide = true)]
+    App(DisabledAppCli),
 
     /// Generate shell completion scripts.
     Completion(CompletionCommand),
 
-    /// Update Codex to the latest version.
+    /// Update DeepSeekX to the latest version.
     Update,
 
-    /// Run commands within a Codex-provided sandbox.
+    /// Run commands within a DeepSeekX-provided sandbox.
     Sandbox(SandboxArgs),
 
     /// Debugging tools.
@@ -152,7 +147,7 @@ enum Subcommand {
     #[clap(hide = true)]
     Execpolicy(ExecpolicyCommand),
 
-    /// Apply the latest diff produced by Codex agent as a `git apply` to your local working tree.
+    /// Apply the latest diff produced by DeepSeekX as a `git apply`.
     #[clap(visible_alias = "a")]
     Apply(ApplyCommand),
 
@@ -162,9 +157,9 @@ enum Subcommand {
     /// Fork a previous interactive session (picker by default; use --last to fork the most recent).
     Fork(ForkCommand),
 
-    /// [EXPERIMENTAL] Browse tasks from Codex Cloud and apply changes locally.
-    #[clap(name = "cloud", alias = "cloud-tasks")]
-    Cloud(CloudTasksCli),
+    /// [disabled] DeepSeekX Cloud tasks are not configured in this build.
+    #[clap(name = "cloud", alias = "cloud-tasks", hide = true)]
+    Cloud(DisabledCloudCli),
 
     /// Internal: run the responses API proxy.
     #[clap(hide = true)]
@@ -182,7 +177,7 @@ enum Subcommand {
 }
 
 #[derive(Debug, Parser)]
-#[command(bin_name = "codex plugin")]
+#[command(bin_name = "deepseekx plugin")]
 struct PluginCli {
     #[clap(flatten)]
     pub config_overrides: CliConfigOverrides,
@@ -193,7 +188,7 @@ struct PluginCli {
 
 #[derive(Debug, clap::Subcommand)]
 enum PluginSubcommand {
-    /// Manage plugin marketplaces for Codex.
+    /// Manage plugin marketplaces for DeepSeekX.
     Marketplace(MarketplaceCli),
 }
 
@@ -202,6 +197,13 @@ struct CompletionCommand {
     /// Shell to generate completions for
     #[clap(value_enum, default_value_t = Shell::Bash)]
     shell: Shell,
+}
+
+#[derive(Debug, Parser)]
+#[command(name = "DeepSeekX Cloud", version = DEEPSEEKX_VERSION)]
+struct DisabledCloudCli {
+    #[clap(flatten)]
+    pub config_overrides: CliConfigOverrides,
 }
 
 #[derive(Debug, Parser)]
@@ -359,58 +361,17 @@ enum ExecpolicySubcommand {
 }
 
 #[derive(Debug, Parser)]
-struct LoginCommand {
-    #[clap(skip)]
-    config_overrides: CliConfigOverrides,
-
-    #[arg(
-        long = "with-api-key",
-        help = "Read the API key from stdin (e.g. `printenv OPENAI_API_KEY | codex login --with-api-key`)"
-    )]
-    with_api_key: bool,
-
-    #[arg(
-        long = "with-access-token",
-        help = "Read the access token from stdin (e.g. `printenv CODEX_ACCESS_TOKEN | codex login --with-access-token`)"
-    )]
-    with_access_token: bool,
-
-    #[arg(
-        long = "api-key",
-        num_args = 0..=1,
-        default_missing_value = "",
-        value_name = "API_KEY",
-        help = "(deprecated) Previously accepted the API key directly; now exits with guidance to use --with-api-key",
-        hide = true
-    )]
-    api_key: Option<String>,
-
-    #[arg(long = "device-auth")]
-    use_device_code: bool,
-
-    /// EXPERIMENTAL: Use custom OAuth issuer base URL (advanced)
-    /// Override the OAuth issuer base URL (advanced)
-    #[arg(long = "experimental_issuer", value_name = "URL", hide = true)]
-    issuer_base_url: Option<String>,
-
-    /// EXPERIMENTAL: Use custom OAuth client ID (advanced)
-    #[arg(long = "experimental_client-id", value_name = "CLIENT_ID", hide = true)]
-    client_id: Option<String>,
-
-    #[command(subcommand)]
-    action: Option<LoginSubcommand>,
-}
-
-#[derive(Debug, clap::Subcommand)]
-enum LoginSubcommand {
-    /// Show login status.
-    Status,
+#[command(name = "DeepSeekX Login", version = DEEPSEEKX_VERSION)]
+struct DisabledLoginCli {
+    #[clap(flatten)]
+    pub config_overrides: CliConfigOverrides,
 }
 
 #[derive(Debug, Parser)]
-struct LogoutCommand {
-    #[clap(skip)]
-    config_overrides: CliConfigOverrides,
+#[command(name = "DeepSeekX App", version = DEEPSEEKX_VERSION)]
+struct DisabledAppCli {
+    #[clap(flatten)]
+    pub config_overrides: CliConfigOverrides,
 }
 
 #[derive(Debug, Parser)]
@@ -488,7 +449,7 @@ enum AppServerSubcommand {
     /// [experimental] Generate JSON Schema for the app server protocol.
     GenerateJsonSchema(GenerateJsonSchemaCommand),
 
-    /// [internal] Generate internal JSON Schema artifacts for Codex tooling.
+    /// [internal] Generate internal JSON Schema artifacts for DeepSeekX tooling.
     #[clap(hide = true)]
     GenerateInternalJsonSchema(GenerateInternalJsonSchemaCommand),
 }
@@ -637,7 +598,7 @@ fn handle_app_exit(exit_info: AppExitInfo) -> anyhow::Result<()> {
 fn run_update_action(action: UpdateAction) -> anyhow::Result<()> {
     println!();
     let cmd_str = action.command_str();
-    println!("Updating Codex via `{cmd_str}`...");
+    println!("Updating {PRODUCT_NAME} via `{cmd_str}`...");
 
     let status = {
         #[cfg(windows)]
@@ -672,7 +633,7 @@ fn run_update_action(action: UpdateAction) -> anyhow::Result<()> {
     if !status.success() {
         anyhow::bail!("`{cmd_str}` failed with status {status}");
     }
-    println!("\n🎉 Update ran successfully! Please restart Codex.");
+    println!("\nUpdate ran successfully. Please restart {PRODUCT_NAME}.");
     Ok(())
 }
 
@@ -680,7 +641,7 @@ fn run_update_command() -> anyhow::Result<()> {
     #[cfg(debug_assertions)]
     {
         anyhow::bail!(
-            "`codex update` is not available in debug builds. Install a release build of Codex to use this command."
+            "`deepseekx update` is not available in debug builds. Install a release build of DeepSeekX to use this command."
         );
     }
 
@@ -688,7 +649,7 @@ fn run_update_command() -> anyhow::Result<()> {
     {
         let Some(action) = codex_tui::get_update_action() else {
             anyhow::bail!(
-                "Could not detect the Codex installation method. Please update manually: https://developers.openai.com/codex/cli/"
+                "Could not detect the DeepSeekX installation method. Please update DeepSeekX using the package manager or artifact you installed it from."
             );
         };
         run_update_action(action)
@@ -790,10 +751,30 @@ fn stage_str(stage: Stage) -> &'static str {
 }
 
 fn main() -> anyhow::Result<()> {
+    reject_legacy_codex_argv0();
     arg0_dispatch_or_else(|arg0_paths: Arg0DispatchPaths| async move {
         cli_main(arg0_paths).await?;
         Ok(())
     })
+}
+
+fn reject_legacy_codex_argv0() {
+    let argv0 = std::env::args_os().next().unwrap_or_default();
+    let exe_name = Path::new(&argv0)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or_default();
+
+    if is_legacy_codex_argv0(exe_name) {
+        eprintln!(
+            "This is a DeepSeekX build and does not provide the `codex` command. Run `deepseekx` instead."
+        );
+        std::process::exit(2);
+    }
+}
+
+fn is_legacy_codex_argv0(exe_name: &str) -> bool {
+    exe_name == "codex" || exe_name == "codex.exe"
 }
 
 async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
@@ -1000,14 +981,16 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
             let output = codex_app_server_daemon::ensure_remote_control_started().await?;
             println!("{}", serde_json::to_string(&output)?);
         }
-        #[cfg(any(target_os = "macos", target_os = "windows"))]
         Some(Subcommand::App(app_cli)) => {
+            let _ = app_cli;
             reject_remote_mode_for_subcommand(
                 root_remote.as_deref(),
                 root_remote_auth_token_env.as_deref(),
                 "app",
             )?;
-            app_cmd::run_app(app_cli).await?;
+            anyhow::bail!(
+                "DeepSeekX desktop app integration is not configured. This build will not open or install external desktop apps."
+            );
         }
         Some(Subcommand::Resume(ResumeCommand {
             session_id,
@@ -1064,60 +1047,26 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
             handle_app_exit(exit_info)?;
         }
         Some(Subcommand::Login(mut login_cli)) => {
+            let _ = &mut login_cli;
             reject_remote_mode_for_subcommand(
                 root_remote.as_deref(),
                 root_remote_auth_token_env.as_deref(),
                 "login",
             )?;
-            prepend_config_flags(
-                &mut login_cli.config_overrides,
-                root_config_overrides.clone(),
+            anyhow::bail!(
+                "DeepSeekX CLI login is not configured. Configure DeepSeek API credentials in ~/.deepseekx/config.toml or environment variables instead."
             );
-            match login_cli.action {
-                Some(LoginSubcommand::Status) => {
-                    run_login_status(login_cli.config_overrides).await;
-                }
-                None => {
-                    if login_cli.with_api_key && login_cli.with_access_token {
-                        eprintln!(
-                            "Choose one login credential source: --with-api-key or --with-access-token."
-                        );
-                        std::process::exit(1);
-                    } else if login_cli.use_device_code {
-                        run_login_with_device_code(
-                            login_cli.config_overrides,
-                            login_cli.issuer_base_url,
-                            login_cli.client_id,
-                        )
-                        .await;
-                    } else if login_cli.api_key.is_some() {
-                        eprintln!(
-                            "The --api-key flag is no longer supported. Pipe the key instead, e.g. `printenv OPENAI_API_KEY | codex login --with-api-key`."
-                        );
-                        std::process::exit(1);
-                    } else if login_cli.with_api_key {
-                        let api_key = read_api_key_from_stdin();
-                        run_login_with_api_key(login_cli.config_overrides, api_key).await;
-                    } else if login_cli.with_access_token {
-                        let access_token = read_access_token_from_stdin();
-                        run_login_with_access_token(login_cli.config_overrides, access_token).await;
-                    } else {
-                        run_login_with_chatgpt(login_cli.config_overrides).await;
-                    }
-                }
-            }
         }
         Some(Subcommand::Logout(mut logout_cli)) => {
+            let _ = &mut logout_cli;
             reject_remote_mode_for_subcommand(
                 root_remote.as_deref(),
                 root_remote_auth_token_env.as_deref(),
                 "logout",
             )?;
-            prepend_config_flags(
-                &mut logout_cli.config_overrides,
-                root_config_overrides.clone(),
+            anyhow::bail!(
+                "DeepSeekX CLI logout is not configured because this build does not manage interactive login sessions."
             );
-            run_logout(logout_cli.config_overrides).await;
         }
         Some(Subcommand::Completion(completion_cli)) => {
             reject_remote_mode_for_subcommand(
@@ -1136,17 +1085,15 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
             run_update_command()?;
         }
         Some(Subcommand::Cloud(mut cloud_cli)) => {
+            let _ = &mut cloud_cli;
             reject_remote_mode_for_subcommand(
                 root_remote.as_deref(),
                 root_remote_auth_token_env.as_deref(),
                 "cloud",
             )?;
-            prepend_config_flags(
-                &mut cloud_cli.config_overrides,
-                root_config_overrides.clone(),
+            anyhow::bail!(
+                "DeepSeekX Cloud tasks are not configured. This build will not connect to OpenAI-hosted cloud task services."
             );
-            codex_cloud_tasks::run_main(cloud_cli, arg0_paths.codex_linux_sandbox_exe.clone())
-                .await?;
         }
         Some(Subcommand::Sandbox(sandbox_args)) => match sandbox_args.cmd {
             SandboxCommand::Macos(mut seatbelt_cli) => {
@@ -1371,7 +1318,7 @@ async fn run_exec_server_command(
     let codex_self_exe = arg0_paths
         .codex_self_exe
         .clone()
-        .ok_or_else(|| anyhow::anyhow!("Codex executable path is not configured"))?;
+        .ok_or_else(|| anyhow::anyhow!("{PRODUCT_NAME} executable path is not configured"))?;
     let runtime_paths = codex_exec_server::ExecServerRuntimePaths::new(
         codex_self_exe,
         arg0_paths.codex_linux_sandbox_exe.clone(),
@@ -1605,12 +1552,12 @@ fn reject_remote_mode_for_subcommand(
 ) -> anyhow::Result<()> {
     if let Some(remote) = remote {
         anyhow::bail!(
-            "`--remote {remote}` is only supported for interactive TUI commands, not `codex {subcommand}`"
+            "`--remote {remote}` is only supported for interactive TUI commands, not `{PRIMARY_COMMAND} {subcommand}`"
         );
     }
     if remote_auth_token_env.is_some() {
         anyhow::bail!(
-            "`--remote-auth-token-env` is only supported for interactive TUI commands, not `codex {subcommand}`"
+            "`--remote-auth-token-env` is only supported for interactive TUI commands, not `{PRIMARY_COMMAND} {subcommand}`"
         );
     }
     Ok(())
@@ -1701,7 +1648,7 @@ async fn run_interactive_tui(
         }
 
         eprintln!(
-            "WARNING: TERM is set to \"dumb\". Codex's interactive TUI may not work in this terminal."
+            "WARNING: TERM is set to \"dumb\". DeepSeekX's interactive TUI may not work in this terminal."
         );
         if !confirm("Continue anyway? [y/N]: ")? {
             return Ok(AppExitInfo::fatal(
@@ -1844,7 +1791,7 @@ fn merge_interactive_cli_flags(interactive: &mut TuiCli, subcommand_cli: TuiCli)
 
 fn print_completion(cmd: CompletionCommand) {
     let mut app = MultitoolCli::command();
-    let name = "codex";
+    let name = PRIMARY_COMMAND;
     generate(cmd.shell, &mut app, name, &mut std::io::stdout());
 }
 
@@ -1855,6 +1802,14 @@ mod tests {
     use codex_protocol::ThreadId;
     use codex_tui::TokenUsage;
     use pretty_assertions::assert_eq;
+
+    #[test]
+    fn rejects_legacy_codex_argv0_names() {
+        assert!(is_legacy_codex_argv0("codex"));
+        assert!(is_legacy_codex_argv0("codex.exe"));
+        assert!(!is_legacy_codex_argv0("deepseekx"));
+        assert!(!is_legacy_codex_argv0("deepseekx.exe"));
+    }
 
     fn finalize_resume_from_args(args: &[&str]) -> TuiCli {
         let cli = MultitoolCli::try_parse_from(args).expect("parse");
@@ -2037,6 +1992,12 @@ mod tests {
         );
     }
 
+    fn version_from_args(args: &[&str]) -> String {
+        let err = MultitoolCli::try_parse_from(args).expect_err("version should short-circuit");
+        assert_eq!(err.kind(), clap::error::ErrorKind::DisplayVersion);
+        err.to_string()
+    }
+
     fn help_from_args(args: &[&str]) -> String {
         let err = MultitoolCli::try_parse_from(args).expect_err("help should short-circuit");
         assert_eq!(err.kind(), clap::error::ErrorKind::DisplayHelp);
@@ -2044,17 +2005,80 @@ mod tests {
     }
 
     #[test]
+    fn root_version_uses_deepseekx_product_name() {
+        let version = version_from_args(&["codex", "--version"]);
+        assert_eq!(
+            version.trim(),
+            format!("{PRODUCT_NAME} {DEEPSEEKX_VERSION}")
+        );
+    }
+
+    #[test]
+    fn cloud_help_is_disabled_without_codex_cloud_subcommands() {
+        let help = help_from_args(&["codex", "cloud", "--help"]);
+        assert!(help.contains("[disabled] DeepSeekX Cloud tasks are not configured"));
+        assert!(help.contains("Usage: deepseekx cloud [OPTIONS]"));
+        assert!(
+            !help.contains("Codex Cloud task"),
+            "disabled cloud help should not expose Codex Cloud commands: {help}"
+        );
+        assert!(
+            !help.contains("Commands:"),
+            "disabled cloud help should not expose command list: {help}"
+        );
+    }
+
+    #[test]
+    fn root_help_hides_unsupported_deepseekx_services() {
+        let help = help_from_args(&["codex", "--help"]);
+        for hidden_command in ["  login", "  logout", "  app ", "  cloud"] {
+            assert!(
+                !help.contains(hidden_command),
+                "root help should not expose unsupported command {hidden_command:?}: {help}"
+            );
+        }
+    }
+
+    #[test]
+    fn unsupported_deepseekx_service_help_is_disabled() {
+        for (args, expected) in [
+            (
+                ["codex", "login", "--help"],
+                "Usage: deepseekx login [OPTIONS]",
+            ),
+            (
+                ["codex", "logout", "--help"],
+                "Usage: deepseekx logout [OPTIONS]",
+            ),
+            (["codex", "app", "--help"], "Usage: deepseekx app [OPTIONS]"),
+        ] {
+            let help = help_from_args(&args);
+            assert!(help.contains(expected), "{help}");
+            assert!(
+                !help.contains("Commands:"),
+                "disabled service help should not expose command list: {help}"
+            );
+            assert!(
+                !help.contains("ChatGPT")
+                    && !help.contains("device-auth")
+                    && !help.contains("with-api-key"),
+                "disabled service help should not expose auth/app options: {help}"
+            );
+        }
+    }
+
+    #[test]
     fn plugin_marketplace_help_uses_plugin_namespace() {
         let help = help_from_args(&["codex", "plugin", "marketplace", "--help"]);
         assert!(
-            help.contains("Usage: codex plugin marketplace [OPTIONS] <COMMAND>"),
+            help.contains("Usage: deepseekx plugin marketplace [OPTIONS] <COMMAND>"),
             "{help}"
         );
 
         for (subcommand, usage) in [
-            ("add", "Usage: codex plugin marketplace add"),
-            ("upgrade", "Usage: codex plugin marketplace upgrade"),
-            ("remove", "Usage: codex plugin marketplace remove"),
+            ("add", "Usage: deepseekx plugin marketplace add"),
+            ("upgrade", "Usage: deepseekx plugin marketplace upgrade"),
+            ("remove", "Usage: deepseekx plugin marketplace remove"),
         ] {
             let help = help_from_args(&["codex", "plugin", "marketplace", subcommand, "--help"]);
             assert!(help.contains(usage), "{help}");
@@ -2211,7 +2235,7 @@ mod tests {
             lines,
             vec![
                 "Token usage: total=2 input=0 output=2".to_string(),
-                "To continue this session, run codex resume 123e4567-e89b-12d3-a456-426614174000"
+                "To continue this session, run deepseekx resume 123e4567-e89b-12d3-a456-426614174000"
                     .to_string(),
             ]
         );
@@ -2239,7 +2263,7 @@ mod tests {
             lines,
             vec![
                 "Token usage: total=2 input=0 output=2".to_string(),
-                "To continue this session, run codex resume 123e4567-e89b-12d3-a456-426614174000"
+                "To continue this session, run deepseekx resume 123e4567-e89b-12d3-a456-426614174000"
                     .to_string(),
             ]
         );

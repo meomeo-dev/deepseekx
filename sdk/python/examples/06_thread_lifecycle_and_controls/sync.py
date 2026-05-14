@@ -9,27 +9,27 @@ from _bootstrap import ensure_local_sdk_src, runtime_config
 
 ensure_local_sdk_src()
 
-from openai_codex import Codex, TextInput
+from deepseekx import DeepSeekX, TextInput
 
-with Codex(config=runtime_config()) as codex:
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+with DeepSeekX(config=runtime_config()) as deepseekx:
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
     first = thread.turn(TextInput("One sentence about structured planning.")).run()
     second = thread.turn(TextInput("Now restate it for a junior engineer.")).run()
 
-    reopened = codex.thread_resume(thread.id)
-    listing_active = codex.thread_list(limit=20, archived=False)
+    reopened = deepseekx.thread_resume(thread.id)
+    listing_active = deepseekx.thread_list(limit=20, archived=False)
     reading = reopened.read(include_turns=True)
 
     _ = reopened.set_name("sdk-lifecycle-demo")
-    _ = codex.thread_archive(reopened.id)
-    listing_archived = codex.thread_list(limit=20, archived=True)
-    unarchived = codex.thread_unarchive(reopened.id)
+    _ = deepseekx.thread_archive(reopened.id)
+    listing_archived = deepseekx.thread_list(limit=20, archived=True)
+    unarchived = deepseekx.thread_unarchive(reopened.id)
 
     resumed_info = "n/a"
     try:
-        resumed = codex.thread_resume(
+        resumed = deepseekx.thread_resume(
             unarchived.id,
-            model="gpt-5.4",
+            model="deepseek-v4-pro",
             config={"model_reasoning_effort": "high"},
         )
         resumed_result = resumed.turn(TextInput("Continue in one short sentence.")).run()
@@ -39,7 +39,7 @@ with Codex(config=runtime_config()) as codex:
 
     forked_info = "n/a"
     try:
-        forked = codex.thread_fork(unarchived.id, model="gpt-5.4")
+        forked = deepseekx.thread_fork(unarchived.id, model="deepseek-v4-pro")
         forked_result = forked.turn(
             TextInput("Take a different angle in one short sentence.")
         ).run()

@@ -71,6 +71,20 @@ impl ModelsEndpointClient for OpenAiModelsEndpoint {
         self.provider_info.has_command_auth()
     }
 
+    fn has_provider_auth(&self) -> bool {
+        self.provider_info.has_command_auth()
+            || self
+                .provider_info
+                .experimental_bearer_token
+                .as_deref()
+                .is_some_and(|token| !token.trim().is_empty())
+            || self
+                .provider_info
+                .env_key
+                .as_deref()
+                .is_some_and(|key| env_var_has_value(key))
+    }
+
     async fn uses_codex_backend(&self) -> bool {
         self.auth()
             .await
@@ -107,6 +121,10 @@ impl ModelsEndpointClient for OpenAiModelsEndpoint {
         .map_err(|_| CodexErr::Timeout)?
         .map_err(map_api_error)
     }
+}
+
+fn env_var_has_value(key: &str) -> bool {
+    std::env::var(key).is_ok_and(|value| !value.trim().is_empty())
 }
 
 #[derive(Clone)]
@@ -243,5 +261,15 @@ mod tests {
         );
 
         assert!(!endpoint.has_command_auth());
+    }
+
+    #[test]
+    fn provider_with_bearer_token_reports_provider_auth() {
+        let mut provider = ModelProviderInfo::create_openai_provider(/*base_url*/ None);
+        provider.requires_openai_auth = false;
+        provider.experimental_bearer_token = Some("provider-token".to_string());
+        let endpoint = OpenAiModelsEndpoint::new(provider, /*auth_manager*/ None);
+
+        assert!(endpoint.has_provider_auth());
     }
 }

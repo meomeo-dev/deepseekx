@@ -1,10 +1,10 @@
 from ._version import __version__
 from .api import (
     ApprovalMode,
-    AsyncCodex,
+    AsyncDeepSeekX,
     AsyncThread,
     AsyncTurnHandle,
-    Codex,
+    DeepSeekX,
     ImageInput,
     Input,
     InputItem,
@@ -36,8 +36,8 @@ from .retry import retry_on_overload
 __all__ = [
     "__version__",
     "AppServerConfig",
-    "Codex",
-    "AsyncCodex",
+    "DeepSeekX",
+    "AsyncDeepSeekX",
     "ApprovalMode",
     "Thread",
     "AsyncThread",

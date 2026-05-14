@@ -1,5 +1,5 @@
 name: 💻 CLI Bug
-description: Report an issue in the Codex CLI
+description: Report an issue in the DeepSeekX CLI
 labels:
   - bug
 body:
@@ -9,13 +9,13 @@ body:
         Before submitting a new issue, please search for existing issues to see if your issue has already been reported.
         If it has, please add a 👍 reaction (no need to leave a comment) to the existing issue instead of creating a new one.
 
-        Make sure you are running the [latest](https://npmjs.com/package/@openai/codex) version of Codex CLI. The bug you are experiencing may already have been fixed.
+        Make sure you are running the [latest](https://npmjs.com/package/@meomeo/deepseekx) version of DeepSeekX CLI. The bug you are experiencing may already have been fixed.
 
   - type: input
     id: version
     attributes:
-      label: What version of Codex CLI is running?
-      description: use `codex --version`
+      label: What version of DeepSeekX CLI is running?
+      description: use `deepseekx --version`
     validations:
       required: true
   - type: input
@@ -28,7 +28,7 @@ body:
     id: model
     attributes:
       label: Which model were you using?
-      description: Like `gpt-5.2`, `gpt-5.2-codex`, etc.
+      description: Like `deepseek-v4-pro`, etc.
   - type: input
     id: platform
     attributes:

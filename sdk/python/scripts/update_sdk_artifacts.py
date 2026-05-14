@@ -18,8 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Sequence, get_args, get_origin
 
-SDK_DISTRIBUTION_NAME = "openai-codex"
-RUNTIME_DISTRIBUTION_NAME = "openai-codex-cli-bin"
+SDK_DISTRIBUTION_NAME = "deepseekx"
+RUNTIME_DISTRIBUTION_NAME = "deepseekx-cli-bin"
 
 
 def repo_root() -> Path:
@@ -49,19 +49,19 @@ def _is_windows() -> bool:
 
 
 def runtime_binary_name() -> str:
-    return "codex.exe" if _is_windows() else "codex"
+    return "deepseekx.exe" if _is_windows() else "deepseekx"
 
 
 def staged_runtime_bin_path(root: Path) -> Path:
-    return root / "src" / "codex_cli_bin" / "bin" / runtime_binary_name()
+    return root / "src" / "deepseekx_cli_bin" / "bin" / runtime_binary_name()
 
 
 def staged_runtime_resource_path(root: Path, resource: Path) -> Path:
-    """Stage runtime helper binaries beside the main bundled Codex binary."""
+    """Stage runtime helper binaries beside the main bundled DeepSeekX binary."""
     # Runtime wheels include the whole bin/ directory, so helper executables
-    # should be staged beside the main Codex binary instead of changing the
+    # should be staged beside the main DeepSeekX binary instead of changing the
     # package template for each platform.
-    return root / "src" / "codex_cli_bin" / "bin" / resource.name
+    return root / "src" / "deepseekx_cli_bin" / "bin" / resource.name
 
 
 def run(cmd: list[str], cwd: Path) -> None:
@@ -103,7 +103,7 @@ def pinned_runtime_version() -> str:
 
 
 def pinned_runtime_codex_path() -> Path:
-    """Return the bundled Codex binary from the installed pinned runtime wheel."""
+    """Return the bundled DeepSeekX binary from the installed pinned runtime wheel."""
     expected_version = pinned_runtime_version()
     try:
         installed_version = importlib.metadata.version(RUNTIME_DISTRIBUTION_NAME)
@@ -121,15 +121,16 @@ def pinned_runtime_codex_path() -> Path:
         )
 
     try:
-        from codex_cli_bin import bundled_codex_path
+        from deepseekx_cli_bin import bundled_deepseekx_path
     except ImportError as exc:
         raise RuntimeError(
-            f"Installed {RUNTIME_DISTRIBUTION_NAME} package does not expose bundled_codex_path."
+            f"Installed {RUNTIME_DISTRIBUTION_NAME} package does not expose "
+            "bundled_deepseekx_path."
         ) from exc
 
-    codex_path = bundled_codex_path()
+    codex_path = bundled_deepseekx_path()
     if not codex_path.exists():
-        raise RuntimeError(f"Pinned Codex runtime binary not found at {codex_path}.")
+        raise RuntimeError(f"Pinned DeepSeekX runtime binary not found at {codex_path}.")
     return codex_path
 
 
@@ -145,7 +146,9 @@ def normalize_codex_version(version: str) -> str:
     normalized = re.sub(r"-rc\.?([0-9]+)$", r"rc\1", normalized)
 
     if not re.fullmatch(r"[0-9]+(?:\.[0-9]+)*(?:(?:a|b|rc)[0-9]+)?", normalized):
-        raise RuntimeError(f"Could not normalize Codex version {version!r} to a PEP 440 version")
+        raise RuntimeError(
+            f"Could not normalize DeepSeekX version {version!r} to a PEP 440 version"
+        )
     return normalized
 
 
@@ -240,10 +243,10 @@ def _rewrite_sdk_runtime_dependency(pyproject_text: str, runtime_version: str) -
     return pyproject_text[: match.start()] + replacement + pyproject_text[match.end() :]
 
 
-def stage_python_sdk_package(staging_dir: Path, codex_version: str) -> Path:
-    package_version = normalize_codex_version(codex_version)
+def stage_python_sdk_package(staging_dir: Path, deepseekx_version: str) -> Path:
+    package_version = normalize_codex_version(deepseekx_version)
     _copy_package_tree(sdk_root(), staging_dir)
-    sdk_bin_dir = staging_dir / "src" / "openai_codex" / "bin"
+    sdk_bin_dir = staging_dir / "src" / "deepseekx" / "bin"
     if sdk_bin_dir.exists():
         shutil.rmtree(sdk_bin_dir)
 
@@ -258,12 +261,12 @@ def stage_python_sdk_package(staging_dir: Path, codex_version: str) -> Path:
 
 def stage_python_runtime_package(
     staging_dir: Path,
-    codex_version: str,
+    deepseekx_version: str,
     binary_path: Path,
     platform_tag: str | None = None,
     resource_binaries: Sequence[Path] = (),
 ) -> Path:
-    package_version = normalize_codex_version(codex_version)
+    package_version = normalize_codex_version(deepseekx_version)
     _copy_package_tree(python_runtime_root(), staging_dir)
 
     pyproject_path = staging_dir / "pyproject.toml"
@@ -549,7 +552,7 @@ def _normalized_schema_bundle_text(schema_dir: Path) -> str:
 
 def generate_v2_all(schema_dir: Path) -> None:
     """Regenerate the Pydantic v2 protocol model module from runtime schemas."""
-    out_path = sdk_root() / "src" / "openai_codex" / "generated" / "v2_all.py"
+    out_path = sdk_root() / "src" / "deepseekx" / "generated" / "v2_all.py"
     out_dir = out_path.parent
     old_package_dir = out_dir / "v2_all"
     if old_package_dir.exists():
@@ -598,7 +601,7 @@ def _notification_specs(schema_dir: Path) -> list[tuple[str, str]]:
     """Map each server notification method to its generated payload model class."""
     server_notifications = json.loads((schema_dir / "ServerNotification.json").read_text())
     one_of = server_notifications.get("oneOf", [])
-    generated_source = (sdk_root() / "src" / "openai_codex" / "generated" / "v2_all.py").read_text()
+    generated_source = (sdk_root() / "src" / "deepseekx" / "generated" / "v2_all.py").read_text()
 
     specs: list[tuple[str, str]] = []
 
@@ -670,7 +673,7 @@ def _type_tuple_source(class_names: list[str]) -> str:
 
 def generate_notification_registry(schema_dir: Path) -> None:
     """Regenerate notification dispatch metadata from the runtime notification schema."""
-    out = sdk_root() / "src" / "openai_codex" / "generated" / "notification_registry.py"
+    out = sdk_root() / "src" / "deepseekx" / "generated" / "notification_registry.py"
     specs = _notification_specs(schema_dir)
     class_names = sorted({class_name for _, class_name in specs})
     direct_turn_id_types, nested_turn_types = _notification_turn_id_specs(
@@ -797,7 +800,7 @@ def _load_public_fields(
 ) -> list[PublicFieldSpec]:
     """Load generated model fields used to render the ergonomic public methods."""
     exclude = exclude or set()
-    if module_name == "openai_codex.generated.v2_all":
+    if module_name == "deepseekx.generated.v2_all":
         module = _load_generated_v2_all_module()
     else:
         module = importlib.import_module(module_name)
@@ -824,9 +827,9 @@ def _load_public_fields(
 
 def _load_generated_v2_all_module() -> types.ModuleType:
     """Import the freshly generated v2_all module without importing package init."""
-    module_name = "_openai_codex_generated_v2_all_for_artifacts"
+    module_name = "_deepseekx_generated_v2_all_for_artifacts"
     sys.modules.pop(module_name, None)
-    module_path = sdk_root() / "src" / "openai_codex" / "generated" / "v2_all.py"
+    module_path = sdk_root() / "src" / "deepseekx" / "generated" / "v2_all.py"
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Failed to load generated module from {module_path}")
@@ -1092,7 +1095,7 @@ def _render_async_thread_block(
 def generate_public_api_flat_methods() -> None:
     """Regenerate the public convenience methods from generated protocol models."""
     src_dir = sdk_root() / "src"
-    public_api_path = src_dir / "openai_codex" / "api.py"
+    public_api_path = src_dir / "deepseekx" / "api.py"
     if not public_api_path.exists():
         # PR2 can run codegen before the ergonomic public API layer is added.
         return
@@ -1102,26 +1105,26 @@ def generate_public_api_flat_methods() -> None:
 
     approval_fields = {"approval_policy", "approvals_reviewer"}
     thread_start_fields = _load_public_fields(
-        "openai_codex.generated.v2_all",
+        "deepseekx.generated.v2_all",
         "ThreadStartParams",
         exclude=approval_fields,
     )
     thread_list_fields = _load_public_fields(
-        "openai_codex.generated.v2_all",
+        "deepseekx.generated.v2_all",
         "ThreadListParams",
     )
     thread_resume_fields = _load_public_fields(
-        "openai_codex.generated.v2_all",
+        "deepseekx.generated.v2_all",
         "ThreadResumeParams",
         exclude={"thread_id", *approval_fields},
     )
     thread_fork_fields = _load_public_fields(
-        "openai_codex.generated.v2_all",
+        "deepseekx.generated.v2_all",
         "ThreadForkParams",
         exclude={"thread_id", *approval_fields},
     )
     turn_start_fields = _load_public_fields(
-        "openai_codex.generated.v2_all",
+        "deepseekx.generated.v2_all",
         "TurnStartParams",
         exclude={"thread_id", "input", *approval_fields},
     )
@@ -1129,7 +1132,7 @@ def generate_public_api_flat_methods() -> None:
     source = public_api_path.read_text()
     source = _replace_generated_block(
         source,
-        "Codex.flat_methods",
+        "DeepSeekX.flat_methods",
         _render_codex_block(
             thread_start_fields,
             thread_list_fields,
@@ -1139,7 +1142,7 @@ def generate_public_api_flat_methods() -> None:
     )
     source = _replace_generated_block(
         source,
-        "AsyncCodex.flat_methods",
+        "AsyncDeepSeekX.flat_methods",
         _render_async_codex_block(
             thread_start_fields,
             thread_list_fields,
@@ -1192,12 +1195,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Output directory for the staged SDK package",
     )
     stage_sdk_parser.add_argument(
-        "--codex-version",
+        "--deepseekx-version",
         help=(
-            "Codex release version to write into the staged SDK package and exact "
+            "DeepSeekX release version to write into the staged SDK package and exact "
             f"{RUNTIME_DISTRIBUTION_NAME} dependency. Accepts PEP 440 versions "
             "or release tags such as rust-v0.116.0-alpha.1."
         ),
+    )
+    stage_sdk_parser.add_argument(
+        "--codex-version",
+        dest="codex_version",
+        help=argparse.SUPPRESS,
     )
     stage_sdk_parser.add_argument(
         "--runtime-version",
@@ -1220,14 +1228,19 @@ def build_parser() -> argparse.ArgumentParser:
     stage_runtime_parser.add_argument(
         "runtime_binary",
         type=Path,
-        help="Path to the codex binary to package for this platform",
+        help="Path to the deepseekx binary to package for this platform",
+    )
+    stage_runtime_parser.add_argument(
+        "--deepseekx-version",
+        help=(
+            "DeepSeekX release version to write into the staged runtime package. "
+            "Accepts PEP 440 versions or release tags such as rust-v0.116.0-alpha.1."
+        ),
     )
     stage_runtime_parser.add_argument(
         "--codex-version",
-        help=(
-            "Codex release version to write into the staged runtime package. "
-            "Accepts PEP 440 versions or release tags such as rust-v0.116.0-alpha.1."
-        ),
+        dest="codex_version",
+        help=argparse.SUPPRESS,
     )
     stage_runtime_parser.add_argument(
         "--runtime-version",
@@ -1245,7 +1258,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         default=[],
         type=Path,
-        help="Additional executable to package beside the codex runtime binary.",
+        help="Additional executable to package beside the deepseekx runtime binary.",
     )
     return parser
 
@@ -1263,10 +1276,11 @@ def default_cli_ops() -> CliOps:
     )
 
 
-def _resolve_codex_version(args: argparse.Namespace) -> str:
+def _resolve_deepseekx_version(args: argparse.Namespace) -> str:
     versions = [
         value
         for value in (
+            getattr(args, "deepseekx_version", None),
             getattr(args, "codex_version", None),
             getattr(args, "runtime_version", None),
             getattr(args, "sdk_version", None),
@@ -1274,11 +1288,13 @@ def _resolve_codex_version(args: argparse.Namespace) -> str:
         if value is not None
     ]
     if not versions:
-        raise RuntimeError("Pass --codex-version to stage Python release artifacts")
+        raise RuntimeError("Pass --deepseekx-version to stage Python release artifacts")
 
     normalized_versions = [normalize_codex_version(version) for version in versions]
     if len(set(normalized_versions)) != 1:
-        raise RuntimeError("SDK and runtime package versions must match; pass one --codex-version")
+        raise RuntimeError(
+            "SDK and runtime package versions must match; pass one --deepseekx-version"
+        )
     return normalized_versions[0]
 
 
@@ -1286,17 +1302,17 @@ def run_command(args: argparse.Namespace, ops: CliOps) -> None:
     if args.command == "generate-types":
         ops.generate_types()
     elif args.command == "stage-sdk":
-        codex_version = _resolve_codex_version(args)
+        deepseekx_version = _resolve_deepseekx_version(args)
         ops.generate_types()
         ops.stage_python_sdk_package(
             args.staging_dir,
-            codex_version,
+            deepseekx_version,
         )
     elif args.command == "stage-runtime":
-        codex_version = _resolve_codex_version(args)
+        deepseekx_version = _resolve_deepseekx_version(args)
         ops.stage_python_runtime_package(
             args.staging_dir,
-            codex_version,
+            deepseekx_version,
             args.runtime_binary.resolve(),
             args.platform_tag,
             tuple(path.resolve() for path in args.resource_binary),
