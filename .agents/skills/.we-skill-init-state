@@ -1,0 +1,16 @@
+initialized_at=2026-05-14T18:23:19Z
+source=we-skill-init
+template_schema=we-skill-bundle/v1
+template_version=1
+source_commit=0120cda126
+bundle_manifest=/Users/jin/projects/deepseekx/.agents/skills/we-skill-init/templates/bundles.yaml
+bundle_manifest_hash=571eb92fdafe830af168d837da94d807ff6a94f29201a8bc801a785b620d5059
+bundle_tree_hash=8d6e228d4d2eac0c3d934fb7a81d1f7b07b734ce83b37bd9c3684321147f832a
+project_type=npm-package
+target_root=/Users/jin/projects/deepseekx
+bundle_root=/Users/jin/projects/deepseekx/.agents/skills/we-skill-init/templates/bundles
+force=0
+overwrite=0
+copied=we-branch-protection we-ci-maintenance we-design-note we-feature-dev we-help we-public-sync we-publish we-release we-release-cleanup we-release-readiness we-requirement-intake we-skill-audit we-worktree-dev
+skipped=
+excluded=we-skill-init we-skill-maker

@@ -1,0 +1,283 @@
+digraph WeSkillAudit20260514 {
+  graph [
+    rankdir=LR,
+    compound=true,
+    bgcolor="white",
+    fontname="Arial",
+    fontsize=12,
+    label="WE 技能集合基准审计：2026-05-14",
+    labelloc=t,
+    nodesep=0.55,
+    ranksep=0.85
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=10,
+    margin="0.08,0.06",
+    color="#334155",
+    fillcolor="#F8FAFC"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=9,
+    color="#475569",
+    arrowsize=0.75
+  ];
+
+  subgraph cluster_legend {
+    label="Legend";
+    color="#CBD5E1";
+    style="rounded,dashed";
+
+    legend_covered [
+      label="covered\n已有技能清晰覆盖",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    legend_partial [
+      label="partial\n依赖人工纪律或外部配置",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    legend_missing [
+      label="missing\n有实际风险的缺口",
+      fillcolor="#FEE2E2",
+      color="#DC2626"
+    ];
+    legend_not_needed [
+      label="not needed\n当前规模不建议新增",
+      fillcolor="#F1F5F9",
+      color="#64748B"
+    ];
+  }
+
+  subgraph cluster_professional {
+    label="Professional Baseline";
+    color="#2563EB";
+    style="rounded,dashed";
+
+    p_intake [
+      label="1. 需求记录 / issue\n验收标准、影响范围、优先级",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_design [
+      label="2. 轻量设计 / 决策记录\n风险、回滚、测试计划",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_branch [
+      label="3. 从最新 main 创建短生命周期分支",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_impl [
+      label="4. 实现 + 测试\n小提交、清晰范围",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_pr [
+      label="5. PR 必需\n代码审查和变更说明",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_ci_pr [
+      label="6. PR CI 必须通过\nlint / typecheck / test / package verify",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_protected [
+      label="7. 受保护 main\n禁止未审查直接合并",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_release_candidate [
+      label="8. release candidate\n版本、changelog、tag 策略冻结",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_release_ci [
+      label="9. 发布前必要平台 CI\n按风险选择 Linux / Windows / all",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_artifacts [
+      label="10. 发布物确认\nnpm tarball、checksum、release notes",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_publish [
+      label="11. 发布 npm / GitHub Release\n可追溯、可回滚",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+    p_post [
+      label="12. 发布后验证和收尾\nregistry、CI、分支、产物、监控",
+      fillcolor="#DBEAFE",
+      color="#2563EB"
+    ];
+  }
+
+  subgraph cluster_current {
+    label="Current WE Skill Coverage";
+    color="#64748B";
+    style="rounded";
+
+    c_intake [
+      label="covered\n$we-requirement-intake\n范围、验收、风险、issue 建议",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_design [
+      label="covered\n$we-design-note\n背景、方案、取舍、测试、回滚",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_branch [
+      label="covered\n$we-feature-dev\npreflight、feature 分支、提交卫生",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_worktree [
+      label="covered\n$we-worktree-dev\n并行隔离和逐个合并",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_pr [
+      label="partial\nfeature-dev professional mode\nPR 必需，但 solo mode 保留",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    c_ci [
+      label="partial\n$we-ci-maintenance\nLinux 默认，Windows 条件手动",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    c_protected [
+      label="partial\n$we-branch-protection\n能检查，但远端配置需用户执行",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    c_readiness [
+      label="covered\n$we-release-readiness\n版本意图、平台 CI、阻塞项",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_release [
+      label="covered\n$we-release\nversion、CHANGELOG、tag、tarball",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_public [
+      label="partial\n$we-public-sync\n只读检查已具备，同步仍需授权",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    c_publish [
+      label="covered\n$we-publish\nnpm 授权发布和 registry 验证",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    c_cleanup [
+      label="covered\n$we-release-cleanup\nLevel 1/2/3 收工检查",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+  }
+
+  subgraph cluster_findings {
+    label="Audit Findings";
+    color="#CBD5E1";
+    style="rounded";
+
+    f_strength [
+      label="结论：主流程已完整覆盖\n需求 -> 设计 -> 开发 -> CI -> release -> publish -> cleanup",
+      fillcolor="#DCFCE7",
+      color="#16A34A"
+    ];
+    f_pr_tradeoff [
+      label="合理取舍：PR 不是全局强制\nsolo 省成本；professional mode 可切换",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    f_branch_limit [
+      label="外部限制：branch protection 取决于 GitHub 权限/计划\n技能只能检查和建议",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    f_public_sync [
+      label="需继续关注：public-sync 已有只读检查\n真正同步脚本可等流程稳定后再做",
+      fillcolor="#FEF9C3",
+      color="#CA8A04"
+    ];
+    f_not_needed_issue [
+      label="not needed：暂不新增独立 issue 技能\nrequirement-intake 已能建议 issue",
+      fillcolor="#F1F5F9",
+      color="#64748B"
+    ];
+    f_not_needed_review [
+      label="not needed：暂不新增 review 技能\nfeature-dev professional mode 已覆盖 PR 入口",
+      fillcolor="#F1F5F9",
+      color="#64748B"
+    ];
+    f_not_needed_monitor [
+      label="not needed：暂不新增 post-release-monitor\npublish + cleanup 对 CLI 已足够",
+      fillcolor="#F1F5F9",
+      color="#64748B"
+    ];
+  }
+
+  p_intake -> p_design;
+  p_design -> p_branch;
+  p_branch -> p_impl;
+  p_impl -> p_pr;
+  p_pr -> p_ci_pr;
+  p_ci_pr -> p_protected;
+  p_protected -> p_release_candidate;
+  p_release_candidate -> p_release_ci;
+  p_release_ci -> p_artifacts;
+  p_artifacts -> p_publish;
+  p_publish -> p_post;
+
+  c_intake -> c_design;
+  c_design -> c_branch;
+  c_branch -> c_worktree [
+    label="需要并行时",
+    style=dashed,
+    color="#16A34A"
+  ];
+  c_branch -> c_pr;
+  c_pr -> c_ci;
+  c_ci -> c_protected;
+  c_protected -> c_readiness;
+  c_readiness -> c_release;
+  c_release -> c_public;
+  c_public -> c_publish;
+  c_publish -> c_cleanup;
+
+  p_intake -> c_intake [color="#16A34A"];
+  p_design -> c_design [color="#16A34A"];
+  p_branch -> c_branch [color="#16A34A"];
+  p_impl -> c_branch [color="#16A34A"];
+  p_impl -> c_worktree [style=dashed, color="#16A34A"];
+  p_pr -> c_pr [color="#CA8A04"];
+  p_ci_pr -> c_ci [color="#CA8A04"];
+  p_protected -> c_protected [color="#CA8A04"];
+  p_release_candidate -> c_readiness [color="#16A34A"];
+  p_release_ci -> c_ci [color="#CA8A04"];
+  p_artifacts -> c_release [color="#16A34A"];
+  p_publish -> c_publish [color="#16A34A"];
+  p_post -> c_cleanup [color="#16A34A"];
+
+  c_intake -> f_strength [color="#16A34A"];
+  c_pr -> f_pr_tradeoff [color="#CA8A04"];
+  c_protected -> f_branch_limit [color="#CA8A04"];
+  c_public -> f_public_sync [color="#CA8A04"];
+  c_intake -> f_not_needed_issue [style=dashed, color="#64748B"];
+  c_pr -> f_not_needed_review [style=dashed, color="#64748B"];
+  c_cleanup -> f_not_needed_monitor [style=dashed, color="#64748B"];
+}

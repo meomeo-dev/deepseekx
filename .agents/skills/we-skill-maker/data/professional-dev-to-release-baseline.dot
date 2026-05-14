@@ -1,0 +1,84 @@
+digraph ProfessionalDevToReleaseBaseline {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Arial",
+    fontsize=12,
+    label="专业开发流程基准：从新需求到发布",
+    labelloc=t,
+    nodesep=0.55,
+    ranksep=0.85
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=10,
+    margin="0.08,0.06",
+    color="#2563EB",
+    fillcolor="#DBEAFE"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=9,
+    color="#475569",
+    arrowsize=0.75
+  ];
+
+  subgraph cluster_professional {
+    label="Professional Baseline";
+    color="#2563EB";
+    style="rounded,dashed";
+
+    p_intake [
+      label="1. 需求记录 / issue\n验收标准、影响范围、优先级"
+    ];
+    p_design [
+      label="2. 轻量设计 / 决策记录\n风险、回滚、测试计划"
+    ];
+    p_branch [
+      label="3. 从最新 main 创建短生命周期分支"
+    ];
+    p_impl [
+      label="4. 实现 + 测试\n小提交、清晰范围"
+    ];
+    p_pr [
+      label="5. PR 必需\n代码审查和变更说明"
+    ];
+    p_ci_pr [
+      label="6. PR CI 必须通过\nlint / typecheck / test / package verify"
+    ];
+    p_protected [
+      label="7. 受保护 main\n禁止未审查直接合并"
+    ];
+    p_release_candidate [
+      label="8. release candidate\n版本、changelog、tag 策略冻结"
+    ];
+    p_release_ci [
+      label="9. 发布前必要平台 CI\n按风险选择 Linux / Windows / all"
+    ];
+    p_artifacts [
+      label="10. 发布物确认\nnpm tarball、checksum、release notes"
+    ];
+    p_publish [
+      label="11. 发布 npm / GitHub Release\n可追溯、可回滚"
+    ];
+    p_post [
+      label="12. 发布后验证和收尾\nregistry、CI、分支、产物、监控"
+    ];
+  }
+
+  p_intake -> p_design;
+  p_design -> p_branch;
+  p_branch -> p_impl;
+  p_impl -> p_pr;
+  p_pr -> p_ci_pr;
+  p_ci_pr -> p_protected;
+  p_protected -> p_release_candidate;
+  p_release_candidate -> p_release_ci;
+  p_release_ci -> p_artifacts;
+  p_artifacts -> p_publish;
+  p_publish -> p_post;
+}

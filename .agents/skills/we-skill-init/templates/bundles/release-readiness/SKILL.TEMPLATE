@@ -1,0 +1,102 @@
+---
+name: we-release-readiness
+description: Use before release preparation to decide whether the repository is
+  ready to enter we-release, including version intent, changelog readiness,
+  CI platform choice, release artifact policy, and stop conditions.
+---
+
+# we-release-readiness
+
+用于发布候选检查（release readiness / release candidate check）。
+目标是在进入 `$we-release` 前，判断本轮是否真的可以开始发布准备，
+以及需要哪些平台 CI、发布物、tag、GitHub Release 页面和用户确认。
+
+默认只读检查和决策建议。除非用户明确要求，不修改版本号、不改
+CHANGELOG、不创建 tag、不推送、不发布 npm、不创建 GitHub Release。
+
+## 范围
+
+- 判断是否可以从当前状态进入 `$we-release`。
+- 确认目标版本、变更类型和 SemVer 方向。
+- 确认 CHANGELOG、README、包内容、公开仓库和 npm metadata 风险。
+- 决定 Linux、Windows 或全平台 CI 是否需要运行。
+- 确认 GitHub Release 页面和附件是否需要创建。
+- 判断是否需要 `$we-public-sync` 检查公开镜像。
+- 给出进入 `$we-release` 前的阻塞项和下一步。
+
+## 非目标
+
+- 不维护版本号；版本更新由 `$we-release` 执行。
+- 不创建 tag；tag 创建和推送由 `$we-release` 执行。
+- 不执行 npm publish；registry 发布由 `$we-publish` 执行。
+- 不调试 CI 失败；CI 调试由 `$we-ci-maintenance` 执行。
+- 不执行公开仓库同步；公开镜像检查和同步由 `$we-public-sync` 执行。
+- 不做发布后收尾；收尾检查由 `$we-release-cleanup` 执行。
+
+## 只读检查
+
+发布候选检查时优先读取：
+
+```bash
+git status --short --branch
+node -p "require('./package.json').version"
+npm view __WE_PACKAGE_NAME__ version dist-tags --json
+git tag --list "v*"
+```
+
+可按需要补充：
+
+```bash
+npm run release:preflight
+npm pack --dry-run --json --ignore-scripts
+```
+
+如果只是判断发布计划，不必先消耗远端 CI 分钟数。
+
+## Readiness Checklist
+
+进入 `$we-release` 前应明确：
+
+- 目标版本是否高于 npm latest。
+- SemVer 类型：patch、minor、major 或 prerelease。
+- `CHANGELOG.md` 是否需要新增本版本条目。
+- 本轮改动是否影响 npm 包内容、CLI 行为、跨平台脚本或公开文档。
+- 是否需要 Windows CI。
+- 是否需要 GitHub Release 页面。
+- 是否涉及公开仓库同步；涉及时必须进入 `$we-public-sync`。
+- 发布附件是否只需要 npm tarball 和可选 checksum。
+- 是否有 dirty、untracked tarball、cache、`.env` 或凭据风险。
+
+## Windows CI Policy
+
+满足任一条件时，建议进入 `$we-ci-maintenance` 手动跑 Windows：
+
+- 改动 shell、路径、文件分隔符、换行、权限或可执行脚本。
+- 改动 `package.json` scripts、打包流程、bin 入口或安装验证。
+- 改动 CLI 启动、子进程、文件读写、临时目录或缓存路径。
+- 改动 GitHub Actions、artifact、npm pack 或 release preflight。
+- 用户要求本轮发布必须证明 Windows 可运行。
+
+仅文档、CHANGELOG、WE skill 文本或 Linux 已覆盖的纯类型改动，
+可以说明跳过 Windows 的理由。
+
+## Release Candidate Result
+
+输出以下结论之一：
+
+- Ready：可以进入 `$we-release`。
+- Ready with conditions：满足列出的检查或用户确认后进入 `$we-release`。
+- Blocked：存在版本、dirty state、CI、包内容、凭据或公开镜像阻塞。
+- Not a release：当前请求应回到 `$we-feature-dev` 或其他技能。
+
+## Final Response
+
+报告：
+
+- 当前版本、npm latest 和建议目标版本。
+- readiness 结论。
+- 是否需要 Windows 或全平台 CI。
+- 是否需要 `$we-public-sync`。
+- 是否需要 GitHub Release 页面和附件。
+- 进入 `$we-release` 前的阻塞项。
+- 下一步建议使用的 WE skill。

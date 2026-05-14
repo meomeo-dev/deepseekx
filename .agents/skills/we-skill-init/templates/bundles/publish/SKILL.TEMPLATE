@@ -1,0 +1,199 @@
+---
+name: we-publish
+description: Use when preparing, validating, or executing npm publication for
+  this repository or another JavaScript package with similar release gates.
+---
+
+# we-publish
+
+## Adaptation Gate
+
+- project type：`__WE_PROJECT_TYPE__`。
+- publish adaptation status：`__WE_PUBLISH_ADAPTATION_STATUS__`。
+__WE_PUBLISH_ADAPTATION_GUIDANCE__
+
+如果状态以 `needs-adaptation:` 开头，不执行本技能中的 npm 命令。
+先用 `$we-skill-maker` 改写为目标生态的发布技能，例如 PyPI、
+Cargo、Go module、Docker image、GitHub Release 或文档发布流程。
+
+用于 npm 发布（npm publication）的通用流程技能。目标是确认包元数据、
+发布门禁、tarball 内容、registry 状态和发布后验证都可解释、可复现。
+
+除非用户明确要求，不自动执行 `npm publish`。
+
+## 当前仓库事实
+
+- 当前包名（package name）：`__WE_PACKAGE_NAME__`。
+- 当前许可证（license）：`__WE_LICENSE__`。
+- 当前 npm 发布访问级别：`publishConfig.access = __WE_NPM_ACCESS__`。
+- CLI bin：`__WE_CLI_BIN__ -> __WE_CLI_ENTRY__`。
+- npm latest 必须通过 `npm view __WE_PACKAGE_NAME__ version` 实时查询。
+- npm registry 当前登录用户必须用 `npm whoami` 检查。
+- npm 包内容通常由 `package.json` 的 `files` 和项目包验证脚本共同约束。
+- 私有开发仓库远端使用 `__WE_PRIVATE_REPO_NAME__`。
+- npm metadata 的 `repository`、`bugs`、`homepage` 指向公开仓库
+  `__WE_PUBLIC_REPO_URL__`。
+- 双仓库清洗、公开镜像同步、私有路径删除属于 `$we-release` 范围。
+- 日常开发分支管理属于 `$we-feature-dev` 范围。
+
+## 适用范围
+
+- 准备 npm 发布或 dry-run 发布。
+- 检查 package metadata 是否适合公开 registry。
+- 检查 npm tarball 是否只包含预期 runtime 文件。
+- 检查版本号、changelog、license、repository、bin 和 engines。
+- 执行用户明确授权后的 `npm publish`。
+- 发布后核验 npm registry 和临时安装后的 CLI 行为。
+
+## 非目标
+
+- 不替代 `$we-release` 的私有/公开双仓库流程。
+- 不自动推送 git remote。
+- 不自动创建 GitHub release，除非用户明确要求。
+- 不发布私有包，除非用户明确指定私有 registry 和访问策略。
+- 不把 `_tasks/`、`_workflows/`、`.codex/`、`.env`、
+  `__WE_PUBLIC_KNOWLEDGE_DIR__/` 或本地 cache 纳入 npm 包。
+
+## 安全边界
+
+- 不打印 npm token、`.npmrc` auth 内容、API key 或私有凭据。
+- 读取 `.npmrc` 时只报告是否存在 auth-like entry，不回显值。
+- npm publish 前必须确认 git 工作区状态和 staged 内容。
+- 如果用户没有明确说“发布”或“执行 npm publish”，只给发布命令。
+- 若 registry、auth、2FA、网络或权限检查失败，停止并报告阻塞项。
+
+## 前置检查
+
+1. 查看工作区：`git status --short --branch`。
+2. 查看包元数据：`node -p "require('./package.json')"` 或等价读取。
+3. 查看 registry：`npm view <name> name version dist-tags --json`。
+4. 查看登录用户：`npm whoami`，失败时不要继续发布。
+5. 检查 `.npmrc` 是否含 auth-like entry，但不要打印具体值。
+6. 确认 `package.json`：
+   - `private` 为 `false`；
+   - `license` 与目标发布策略一致；
+   - `publishConfig.access` 与目标访问级别一致；
+   - `repository`、`bugs`、`homepage` 指向公开可访问地址；
+   - `bin` 指向打包产物；
+   - `files` 白名单覆盖必要 runtime 文件。
+
+## 版本和记录
+
+1. 对比 npm latest 和本地 `package.json` 版本。
+2. 如果本地版本不高于 registry latest，先更新版本号。
+3. 同步更新 `package-lock.json`，如果仓库存在 lockfile。
+4. 更新 `CHANGELOG.md`，记录用户可见变化和发布日期。
+5. 版本变更必须独立、可审查，避免混入无关重构。
+
+## 发布门禁
+
+优先使用仓库已有 scripts，不手写替代命令：
+
+```bash
+npm run lint
+npm run typecheck
+npm run test:changed
+npm run test:all
+npm run package:verify
+npm run release:preflight
+```
+
+选择规则：
+
+- 日常发布准备至少跑 `npm run release:preflight`。
+- 大改动或公共 API 变化跑 `npm run test:all`。
+- 小改动可先跑 `npm run test:changed`，但发布前仍跑完整门禁。
+- 若需要先完成私有/公开双仓库同步，切换到 `$we-release`。
+- live API 测试默认不属于发布门禁；只有用户要求或改动影响 provider
+  runtime 时运行相关 live test。
+
+## Tarball 检查
+
+发布前必须检查 tarball 内容：
+
+```bash
+npm pack --dry-run --json --ignore-scripts
+npm run pack:release
+```
+
+确认：
+
+- tarball 文件数和大小合理。
+- 包内包含 `dist/src/cli.js`、README、LICENSE、CHANGELOG、package.json。
+- 包内不包含 `src/`、`test/`、`scripts/`、`specs/`、`_tasks/`、
+  `_workflows/`、`.codex/`、`.deep-research/`、
+  `__WE_PUBLIC_KNOWLEDGE_DIR__/`。
+- 包内不包含 `.env`、cache、runtime output、log、summary 或凭据文件。
+- experimental 内容只能来自白名单 runtime 模板。
+
+## 临时安装验证
+
+在临时目录安装本地 tarball，并验证 CLI：
+
+```bash
+tmp="$(mktemp -d)"
+npm install --prefix "$tmp" ./__WE_PACKAGE_TARBALL_GLOB__
+"$tmp/node_modules/.bin/__WE_CLI_BIN__" --help
+```
+
+按项目实际 CLI 行为补充核心 smoke commands。初始化脚本也会提供
+默认 smoke command 占位符供 `$we-release` 使用。
+
+## 发布执行
+
+只有用户明确授权后执行：
+
+```bash
+npm publish --access public
+```
+
+执行前再次确认：
+
+- 本地版本高于 npm latest。
+- 发布访问级别与意图一致。
+- 当前目录是要发布的 package root。
+- 工作区没有未解释的 staged 或 dirty 发布文件。
+- 用户已接受 npm 2FA 或 registry auth 的交互要求。
+
+## 发布后验证
+
+发布完成后运行：
+
+```bash
+npm view __WE_PACKAGE_NAME__ version dist-tags license repository --json
+npm view __WE_PACKAGE_NAME__ dist.tarball dist.fileCount dist.unpackedSize --json
+```
+
+必要时在新临时目录安装 registry 版本：
+
+```bash
+tmp="$(mktemp -d)"
+npm install --prefix "$tmp" __WE_PACKAGE_NAME__@latest
+"$tmp/node_modules/.bin/__WE_CLI_BIN__" --help
+```
+
+确认 registry 版本、dist-tag、license、repository 和 CLI 输出符合预期。
+
+## Git 处理
+
+- 发布准备变更可以提交；实际发布命令不必单独提交。
+- 提交前运行 `git diff --cached --name-only`。
+- 只 stage 发布相关文件。
+- 不 stage `.env`、token、tarball、cache、临时安装目录或无关变更。
+- 如果需要双仓库公开镜像，同步交给 `$we-release`。
+- npm publish 和 registry 验证全部完成后，使用 `$we-release-cleanup`
+  检查双仓库、tag、CI、本地产物和分支状态是否收干净。
+
+## 最终答复
+
+报告：
+
+- 包名、本地版本、registry latest。
+- 是否执行了 `npm publish`。
+- 运行过的门禁命令和结果。
+- tarball 检查结论。
+- 临时安装验证结论。
+- 发布后 registry 验证结论。
+- 提交哈希，如果有提交。
+- 未处理或保留的无关 dirty files。
+- 是否建议继续执行 `$we-release-cleanup`。

@@ -1,0 +1,89 @@
+version: 1
+schema: we-skill-bundle/v1
+description: >
+  Generic WE skill bundle set installed by we-skill-init. Bundles use
+  SKILL.TEMPLATE in source form and become SKILL.md only after installation.
+bundles:
+  - name: branch-protection
+    version: 1
+    applies_to: [all]
+    purpose: Check GitHub branch protection and PR gate requirements.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: [scripts/check_branch_protection.sh]
+  - name: ci-maintenance
+    version: 1
+    applies_to: [all]
+    purpose: Maintain GitHub Actions CI with platform and cost controls.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: design-note
+    version: 1
+    applies_to: [all]
+    purpose: Record lightweight design decisions before risky changes.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: feature-dev
+    version: 1
+    applies_to: [all]
+    purpose: Run feature development with branch preflight and PR hygiene.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: [scripts/preflight_feature_dev.sh]
+  - name: help
+    version: 1
+    applies_to: [all]
+    purpose: Route project requests to the right WE skill or ordinary flow.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: public-sync
+    version: 1
+    applies_to: [public-mirror]
+    purpose: Validate sanitized public repository mirrors and leak checks.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: [scripts/check_public_sync.sh]
+  - name: publish
+    version: 1
+    applies_to: [npm-cli, npm-package]
+    purpose: Prepare, execute, and verify npm publication when applicable.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: release
+    version: 1
+    applies_to: [npm-cli, npm-package, generic-adaptation]
+    purpose: Prepare release versioning, artifacts, tags, and mirror checks.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: release-cleanup
+    version: 1
+    applies_to: [all]
+    purpose: Check post-release repository, tag, artifact, and CI state.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: [scripts/check_release_cleanup.sh]
+  - name: release-readiness
+    version: 1
+    applies_to: [all]
+    purpose: Decide whether a candidate is ready to enter release work.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: requirement-intake
+    version: 1
+    applies_to: [all]
+    purpose: Clarify scope, acceptance criteria, risk, and skill routing.
+    required_files: [SKILL.TEMPLATE]
+    optional_files: []
+  - name: we-skill-audit
+    version: 1
+    applies_to: [all]
+    purpose: Audit the WE skill set against a professional workflow baseline.
+    required_files: [SKILL.TEMPLATE]
+    optional_files:
+      - scripts/copy_baseline_for_audit.sh
+      - data/professional-dev-to-release-baseline.dot
+  - name: worktree-dev
+    version: 1
+    applies_to: [parallel-dev]
+    purpose: Coordinate isolated git worktrees and parallel agent work.
+    required_files: [SKILL.TEMPLATE]
+    optional_files:
+      - scripts/assert_worktree_identity.sh
+      - scripts/create_worktree.sh
+      - scripts/preflight_worktree_dev.sh
