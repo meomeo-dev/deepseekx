@@ -3,11 +3,11 @@ from __future__ import annotations
 import asyncio
 import time
 
-from openai_codex.async_client import AsyncAppServerClient
-from openai_codex.generated.v2_all import (
+from deepseekx.async_client import AsyncAppServerClient
+from deepseekx.generated.v2_all import (
     TurnCompletedNotification,
 )
-from openai_codex.models import Notification, UnknownNotification
+from deepseekx.models import Notification, UnknownNotification
 
 
 def test_async_client_allows_concurrent_transport_calls() -> None:

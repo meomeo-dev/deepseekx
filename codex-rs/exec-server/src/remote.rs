@@ -15,7 +15,7 @@ use crate::relay::run_multiplexed_executor;
 use crate::server::ConnectionProcessor;
 
 pub const CODEX_EXEC_SERVER_REMOTE_BEARER_TOKEN_ENV_VAR: &str =
-    "CODEX_EXEC_SERVER_REMOTE_BEARER_TOKEN";
+    "DEEPSEEKX_EXEC_SERVER_REMOTE_BEARER_TOKEN";
 
 const ERROR_BODY_PREVIEW_BYTES: usize = 4096;
 

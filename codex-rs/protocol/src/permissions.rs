@@ -22,12 +22,14 @@ use crate::protocol::WritableRoot;
 const PROTECTED_METADATA_GIT_PATH_NAME: &str = ".git";
 const PROTECTED_METADATA_AGENTS_PATH_NAME: &str = ".agents";
 const PROTECTED_METADATA_CODEX_PATH_NAME: &str = ".codex";
+const PROTECTED_METADATA_DEEPSEEKX_PATH_NAME: &str = ".deepseekx";
 
 /// Top-level workspace metadata paths that stay protected under writable roots.
 pub const PROTECTED_METADATA_PATH_NAMES: &[&str] = &[
     PROTECTED_METADATA_GIT_PATH_NAME,
     PROTECTED_METADATA_AGENTS_PATH_NAME,
     PROTECTED_METADATA_CODEX_PATH_NAME,
+    PROTECTED_METADATA_DEEPSEEKX_PATH_NAME,
 ];
 
 /// Returns true when a path basename is one of the protected workspace metadata names.
@@ -40,6 +42,7 @@ pub fn is_protected_metadata_name(name: &OsStr) -> bool {
 pub fn is_protected_metadata_directory_name(name: &OsStr) -> bool {
     name == OsStr::new(PROTECTED_METADATA_AGENTS_PATH_NAME)
         || name == OsStr::new(PROTECTED_METADATA_CODEX_PATH_NAME)
+        || name == OsStr::new(PROTECTED_METADATA_DEEPSEEKX_PATH_NAME)
 }
 
 /// Returns the protected workspace metadata name when an agent write to `path`
@@ -555,6 +558,10 @@ impl FileSystemSandboxPolicy {
         append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".git");
         append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".agents");
         append_default_read_only_project_root_subpath_if_no_explicit_rule(&mut entries, ".codex");
+        append_default_read_only_project_root_subpath_if_no_explicit_rule(
+            &mut entries,
+            ".deepseekx",
+        );
         for writable_root in writable_roots {
             for protected_path in default_read_only_subpaths_for_writable_root(
                 writable_root,
@@ -1461,13 +1468,17 @@ pub(crate) fn default_read_only_subpaths_for_writable_root(
         subpaths.push(top_level_agents);
     }
 
-    // Keep top-level project metadata under .codex read-only to the agent by
-    // default. For the workspace root itself, protect it even before the
-    // directory exists so first-time creation still goes through the
+    // Keep top-level project metadata under .codex and .deepseekx read-only to
+    // the agent by default. For the workspace root itself, protect it even
+    // before the directory exists so first-time creation still goes through the
     // protected-path approval flow.
     let top_level_codex = writable_root.join(PROTECTED_METADATA_CODEX_PATH_NAME);
     if protect_missing_dot_codex || top_level_codex.as_path().is_dir() {
         subpaths.push(top_level_codex);
+    }
+    let top_level_deepseekx = writable_root.join(PROTECTED_METADATA_DEEPSEEKX_PATH_NAME);
+    if protect_missing_dot_codex || top_level_deepseekx.as_path().is_dir() {
+        subpaths.push(top_level_deepseekx);
     }
 
     dedup_absolute_paths(subpaths, /*normalize_effective_paths*/ false)
@@ -1817,6 +1828,7 @@ mod tests {
         )
         .expect("absolute canonical root");
         let expected_dot_codex = expected_root.join(".codex");
+        let expected_dot_deepseekx = expected_root.join(".deepseekx");
 
         let policy = FileSystemSandboxPolicy::restricted(vec![FileSystemSandboxEntry {
             path: FileSystemPath::Special {
@@ -1832,6 +1844,11 @@ mod tests {
             writable_roots[0]
                 .read_only_subpaths
                 .contains(&expected_dot_codex)
+        );
+        assert!(
+            writable_roots[0]
+                .read_only_subpaths
+                .contains(&expected_dot_deepseekx)
         );
     }
 
@@ -1874,6 +1891,12 @@ mod tests {
                 FileSystemSandboxEntry {
                     path: FileSystemPath::Special {
                         value: FileSystemSpecialPath::project_roots(Some(".codex".into())),
+                    },
+                    access: FileSystemAccessMode::Read,
+                },
+                FileSystemSandboxEntry {
+                    path: FileSystemPath::Special {
+                        value: FileSystemSpecialPath::project_roots(Some(".deepseekx".into())),
                     },
                     access: FileSystemAccessMode::Read,
                 },
@@ -1952,12 +1975,61 @@ mod tests {
         );
     }
 
+    #[cfg(unix)]
+    #[test]
+    fn writable_roots_skip_default_dot_deepseekx_when_explicit_user_rule_exists() {
+        let cwd = TempDir::new().expect("tempdir");
+        let expected_root = AbsolutePathBuf::from_absolute_path(
+            cwd.path().canonicalize().expect("canonicalize cwd"),
+        )
+        .expect("absolute canonical root");
+        let explicit_dot_deepseekx = expected_root.join(".deepseekx");
+
+        let policy = FileSystemSandboxPolicy::restricted(vec![
+            FileSystemSandboxEntry {
+                path: FileSystemPath::Special {
+                    value: FileSystemSpecialPath::project_roots(/*subpath*/ None),
+                },
+                access: FileSystemAccessMode::Write,
+            },
+            FileSystemSandboxEntry {
+                path: FileSystemPath::Path {
+                    path: explicit_dot_deepseekx.clone(),
+                },
+                access: FileSystemAccessMode::Write,
+            },
+        ]);
+
+        let writable_roots = policy.get_writable_roots_with_cwd(cwd.path());
+        let workspace_root = writable_roots
+            .iter()
+            .find(|root| root.root == expected_root)
+            .expect("workspace writable root");
+        assert!(
+            !workspace_root
+                .protected_metadata_names
+                .contains(&".deepseekx".to_string()),
+            "explicit .deepseekx rule should remove the metadata-name protection"
+        );
+        assert!(
+            !workspace_root
+                .read_only_subpaths
+                .contains(&explicit_dot_deepseekx),
+            "explicit .deepseekx rule should win over the default protected carveout"
+        );
+        assert!(policy.can_write_path_with_cwd(
+            explicit_dot_deepseekx.join("config.toml").as_path(),
+            cwd.path()
+        ));
+    }
+
     #[test]
     fn filesystem_policy_blocks_protected_metadata_path_writes_by_default() {
         let cwd = TempDir::new().expect("tempdir");
         let dot_git_config = cwd.path().join(".git").join("config");
         let dot_agents_config = cwd.path().join(".agents").join("config");
         let dot_codex_config = cwd.path().join(".codex").join("config.toml");
+        let dot_deepseekx_config = cwd.path().join(".deepseekx").join("config.toml");
         let root = AbsolutePathBuf::from_absolute_path(cwd.path()).expect("absolute cwd");
         let file_system_policy =
             FileSystemSandboxPolicy::restricted(vec![FileSystemSandboxEntry {
@@ -1968,6 +2040,7 @@ mod tests {
         assert!(!file_system_policy.can_write_path_with_cwd(&dot_git_config, cwd.path()));
         assert!(!file_system_policy.can_write_path_with_cwd(&dot_agents_config, cwd.path()));
         assert!(!file_system_policy.can_write_path_with_cwd(&dot_codex_config, cwd.path()));
+        assert!(!file_system_policy.can_write_path_with_cwd(&dot_deepseekx_config, cwd.path()));
 
         let writable_roots = file_system_policy.get_writable_roots_with_cwd(cwd.path());
         assert_eq!(writable_roots.len(), 1);
@@ -1977,11 +2050,13 @@ mod tests {
                 ".git".to_string(),
                 ".agents".to_string(),
                 ".codex".to_string(),
+                ".deepseekx".to_string(),
             ]
         );
         assert!(!writable_roots[0].is_path_writable(&dot_git_config));
         assert!(!writable_roots[0].is_path_writable(&dot_agents_config));
         assert!(!writable_roots[0].is_path_writable(&dot_codex_config));
+        assert!(!writable_roots[0].is_path_writable(&dot_deepseekx_config));
     }
 
     #[test]

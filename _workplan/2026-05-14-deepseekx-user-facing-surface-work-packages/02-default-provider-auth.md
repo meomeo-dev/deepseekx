@@ -3,7 +3,7 @@
 ## Metadata
 
 - id: `02-default-provider-auth`
-- status: `planned`
+- status: `completed`
 - source: `2026-05-14-deepseekx-user-facing-surface-work-breakdown.yaml`
 - depends_on: `00-cli-launcher-help`
 - owner: DeepSeekX
@@ -65,4 +65,14 @@ Out of scope:
 
 ## Completion Evidence
 
-- Package `02-default-provider-auth` not started.
+- Completed in current branch.
+- Evidence files:
+  - `codex-rs/core/src/config/mod.rs`
+  - `codex-rs/config/src/config_toml.rs`
+  - `codex-rs/login/src/auth/manager.rs`
+  - `codex-rs/model-provider/src/models_endpoint.rs`
+  - `codex-rs/models-manager/src/manager.rs`
+- Focused checks passed earlier:
+  - `cargo test -p codex-login`
+  - `cargo test -p codex-model-provider`
+  - `cargo test -p codex-models-manager     refresh_available_models_skips_network_without_chatgpt_auth`

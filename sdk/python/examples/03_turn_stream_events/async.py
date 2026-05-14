@@ -16,13 +16,13 @@ ensure_local_sdk_src()
 
 import asyncio
 
-from openai_codex import AsyncCodex, TextInput
+from deepseekx import AsyncDeepSeekX, TextInput
 
 
 async def main() -> None:
-    async with AsyncCodex(config=runtime_config()) as codex:
-        thread = await codex.thread_start(
-            model="gpt-5.4", config={"model_reasoning_effort": "high"}
+    async with AsyncDeepSeekX(config=runtime_config()) as deepseekx:
+        thread = await deepseekx.thread_start(
+            model="deepseek-v4-pro", config={"model_reasoning_effort": "high"}
         )
         turn = await thread.turn(TextInput("Explain SIMD in 3 short bullets."))
 

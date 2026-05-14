@@ -112,7 +112,7 @@ def _approval_mode_override_settings(
     return _approval_mode_settings(approval_mode)
 
 
-class Codex:
+class DeepSeekX:
     """Minimal typed SDK surface for app-server v2."""
 
     def __init__(self, config: AppServerConfig | None = None) -> None:
@@ -124,7 +124,7 @@ class Codex:
             self._client.close()
             raise
 
-    def __enter__(self) -> "Codex":
+    def __enter__(self) -> "DeepSeekX":
         return self
 
     def __exit__(self, _exc_type, _exc, _tb) -> None:
@@ -175,7 +175,7 @@ class Codex:
     def close(self) -> None:
         self._client.close()
 
-    # BEGIN GENERATED: Codex.flat_methods
+    # BEGIN GENERATED: DeepSeekX.flat_methods
     def thread_start(
         self,
         *,
@@ -318,16 +318,16 @@ class Codex:
         unarchived = self._client.thread_unarchive(thread_id)
         return Thread(self._client, unarchived.thread.id)
 
-    # END GENERATED: Codex.flat_methods
+    # END GENERATED: DeepSeekX.flat_methods
 
     def models(self, *, include_hidden: bool = False) -> ModelListResponse:
         return self._client.model_list(include_hidden=include_hidden)
 
 
-class AsyncCodex:
-    """Async mirror of :class:`Codex`.
+class AsyncDeepSeekX:
+    """Async mirror of :class:`DeepSeekX`.
 
-    Prefer ``async with AsyncCodex()`` so initialization and shutdown are
+    Prefer ``async with AsyncDeepSeekX()`` so initialization and shutdown are
     explicit and paired. The async client initializes lazily on context entry
     or first awaited API use.
     """
@@ -338,7 +338,7 @@ class AsyncCodex:
         self._initialized = False
         self._init_lock = asyncio.Lock()
 
-    async def __aenter__(self) -> "AsyncCodex":
+    async def __aenter__(self) -> "AsyncDeepSeekX":
         await self._ensure_initialized()
         return self
 
@@ -354,7 +354,7 @@ class AsyncCodex:
             try:
                 await self._client.start()
                 payload = await self._client.initialize()
-                self._init = Codex._validate_initialize(payload)
+                self._init = DeepSeekX._validate_initialize(payload)
                 self._initialized = True
             except Exception:
                 await self._client.close()
@@ -366,7 +366,8 @@ class AsyncCodex:
     def metadata(self) -> InitializeResponse:
         if self._init is None:
             raise RuntimeError(
-                "AsyncCodex is not initialized yet. Prefer `async with AsyncCodex()`; "
+                "AsyncDeepSeekX is not initialized yet. Prefer "
+                "`async with AsyncDeepSeekX()`; "
                 "initialization also happens on first awaited API use."
             )
         return self._init
@@ -376,7 +377,7 @@ class AsyncCodex:
         self._init = None
         self._initialized = False
 
-    # BEGIN GENERATED: AsyncCodex.flat_methods
+    # BEGIN GENERATED: AsyncDeepSeekX.flat_methods
     async def thread_start(
         self,
         *,
@@ -525,7 +526,7 @@ class AsyncCodex:
         unarchived = await self._client.thread_unarchive(thread_id)
         return AsyncThread(self, unarchived.thread.id)
 
-    # END GENERATED: AsyncCodex.flat_methods
+    # END GENERATED: AsyncDeepSeekX.flat_methods
 
     async def models(self, *, include_hidden: bool = False) -> ModelListResponse:
         await self._ensure_initialized()
@@ -617,7 +618,7 @@ class Thread:
 
 @dataclass(slots=True)
 class AsyncThread:
-    _codex: AsyncCodex
+    _codex: AsyncDeepSeekX
     id: str
 
     async def run(
@@ -752,7 +753,7 @@ class TurnHandle:
 
 @dataclass(slots=True)
 class AsyncTurnHandle:
-    _codex: AsyncCodex
+    _codex: AsyncDeepSeekX
     thread_id: str
     id: str
 

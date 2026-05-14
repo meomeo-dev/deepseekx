@@ -8,7 +8,7 @@ import uuid
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Iterator, TypeVar
+from typing import Callable, Iterator, Mapping, TypeVar
 
 from pydantic import BaseModel
 
@@ -49,7 +49,19 @@ from .retry import retry_on_overload
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 ApprovalHandler = Callable[[str, JsonObject | None], JsonObject]
-RUNTIME_PKG_NAME = "openai-codex-cli-bin"
+RUNTIME_PKG_NAME = "deepseekx-cli-bin"
+INTERNAL_ORIGINATOR_ENV = "DEEPSEEKX_INTERNAL_ORIGINATOR_OVERRIDE"
+PYTHON_SDK_ORIGINATOR = "deepseekx_sdk_python"
+CODEX_ENV_KEYS_TO_DROP = {
+    "CODEX_API_KEY",
+    "CODEX_ACCESS_TOKEN",
+    "CODEX_EXEC_PATH",
+    "CODEX_EXEC_SERVER_REMOTE_BEARER_TOKEN",
+    "CODEX_EXEC_SERVER_URL",
+    "CODEX_HOME",
+    "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+    "CODEX_SQLITE_HOME",
+}
 
 
 def _params_dict(
@@ -79,64 +91,78 @@ def _params_dict(
     raise TypeError(f"Expected generated params model or dict, got {type(params).__name__}")
 
 
-def _installed_codex_path() -> Path:
+def _installed_deepseekx_path() -> Path:
     try:
-        from codex_cli_bin import bundled_codex_path
+        from deepseekx_cli_bin import bundled_deepseekx_path
     except ImportError as exc:
         raise FileNotFoundError(
-            "Unable to locate the pinned Codex runtime. Install the published SDK build "
-            f"with its {RUNTIME_PKG_NAME} dependency, or set AppServerConfig.codex_bin "
+            "Unable to locate the pinned DeepSeekX runtime. Install the published SDK build "
+            f"with its {RUNTIME_PKG_NAME} dependency, or set AppServerConfig.deepseekx_bin "
             "explicitly."
         ) from exc
 
-    return bundled_codex_path()
+    return bundled_deepseekx_path()
 
 
 @dataclass(frozen=True)
-class CodexBinResolverOps:
-    installed_codex_path: Callable[[], Path]
+class DeepSeekXBinResolverOps:
+    installed_deepseekx_path: Callable[[], Path]
     path_exists: Callable[[Path], bool]
 
 
-def _default_codex_bin_resolver_ops() -> CodexBinResolverOps:
-    return CodexBinResolverOps(
-        installed_codex_path=_installed_codex_path,
+def _default_deepseekx_bin_resolver_ops() -> DeepSeekXBinResolverOps:
+    return DeepSeekXBinResolverOps(
+        installed_deepseekx_path=_installed_deepseekx_path,
         path_exists=lambda path: path.exists(),
     )
 
 
-def resolve_codex_bin(config: "AppServerConfig", ops: CodexBinResolverOps) -> Path:
-    if config.codex_bin is not None:
-        codex_bin = Path(config.codex_bin)
-        if not ops.path_exists(codex_bin):
+def resolve_deepseekx_bin(
+    config: "AppServerConfig",
+    ops: DeepSeekXBinResolverOps,
+) -> Path:
+    if config.deepseekx_bin is not None:
+        deepseekx_bin = Path(config.deepseekx_bin)
+        if not ops.path_exists(deepseekx_bin):
             raise FileNotFoundError(
-                f"Codex binary not found at {codex_bin}. Set AppServerConfig.codex_bin "
-                "to a valid binary path."
+                f"DeepSeekX binary not found at {deepseekx_bin}. "
+                "Set AppServerConfig.deepseekx_bin to a valid binary path."
             )
-        return codex_bin
+        return deepseekx_bin
 
-    return ops.installed_codex_path()
+    return ops.installed_deepseekx_path()
 
 
-def _resolve_codex_bin(config: "AppServerConfig") -> Path:
-    return resolve_codex_bin(config, _default_codex_bin_resolver_ops())
+def _resolve_deepseekx_bin(config: "AppServerConfig") -> Path:
+    return resolve_deepseekx_bin(config, _default_deepseekx_bin_resolver_ops())
+
+
+def _deepseekx_child_env(
+    base_env: Mapping[str, str],
+    override_env: Mapping[str, str] | None,
+) -> dict[str, str]:
+    env = {key: value for key, value in base_env.items() if key not in CODEX_ENV_KEYS_TO_DROP}
+    if override_env:
+        env.update(override_env)
+    env.setdefault(INTERNAL_ORIGINATOR_ENV, PYTHON_SDK_ORIGINATOR)
+    return env
 
 
 @dataclass(slots=True)
 class AppServerConfig:
-    codex_bin: str | None = None
+    deepseekx_bin: str | None = None
     launch_args_override: tuple[str, ...] | None = None
     config_overrides: tuple[str, ...] = ()
     cwd: str | None = None
     env: dict[str, str] | None = None
-    client_name: str = "codex_python_sdk"
-    client_title: str = "Codex Python SDK"
+    client_name: str = "deepseekx_python_sdk"
+    client_title: str = "DeepSeekX Python SDK"
     client_version: str = SDK_VERSION
     experimental_api: bool = True
 
 
 class AppServerClient:
-    """Synchronous typed JSON-RPC client for `codex app-server` over stdio."""
+    """Synchronous typed JSON-RPC client for `deepseekx app-server` over stdio."""
 
     def __init__(
         self,
@@ -166,15 +192,13 @@ class AppServerClient:
         if self.config.launch_args_override is not None:
             args = list(self.config.launch_args_override)
         else:
-            codex_bin = _resolve_codex_bin(self.config)
-            args = [str(codex_bin)]
+            deepseekx_bin = _resolve_deepseekx_bin(self.config)
+            args = [str(deepseekx_bin)]
             for kv in self.config.config_overrides:
                 args.extend(["--config", kv])
             args.extend(["app-server", "--listen", "stdio://"])
 
-        env = os.environ.copy()
-        if self.config.env:
-            env.update(self.config.env)
+        env = _deepseekx_child_env(os.environ, self.config.env)
 
         self._proc = subprocess.Popen(
             args,
@@ -559,5 +583,5 @@ class AppServerClient:
         return message
 
 
-def default_codex_home() -> str:
-    return str(Path.home() / ".codex")
+def default_deepseekx_home() -> str:
+    return str(Path.home() / ".deepseekx")

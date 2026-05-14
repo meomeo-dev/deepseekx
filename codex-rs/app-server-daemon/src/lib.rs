@@ -26,7 +26,6 @@ const START_POLL_INTERVAL: Duration = Duration::from_millis(50);
 const START_TIMEOUT: Duration = Duration::from_secs(10);
 const OPERATION_LOCK_TIMEOUT: Duration = Duration::from_secs(75);
 const PID_FILE_NAME: &str = "app-server.pid";
-const UPDATE_PID_FILE_NAME: &str = "app-server-updater.pid";
 const OPERATION_LOCK_FILE_NAME: &str = "daemon.lock";
 const SETTINGS_FILE_NAME: &str = "settings.json";
 const STATE_DIR_NAME: &str = "app-server-daemon";
@@ -83,7 +82,7 @@ pub struct BootstrapOutput {
     pub backend: BackendKind,
     pub auto_update_enabled: bool,
     pub remote_control_enabled: bool,
-    pub managed_codex_path: PathBuf,
+    pub managed_deepseekx_path: PathBuf,
     pub socket_path: PathBuf,
     pub cli_version: String,
     pub app_server_version: String,
@@ -197,14 +196,13 @@ fn ensure_supported_platform() -> Result<()> {
 #[cfg(not(unix))]
 fn ensure_supported_platform() -> Result<()> {
     Err(anyhow!(
-        "codex app-server daemon lifecycle is only supported on Unix platforms"
+        "deepseekx app-server daemon lifecycle is only supported on Unix platforms"
     ))
 }
 
 struct Daemon {
     socket_path: PathBuf,
     pid_file: PathBuf,
-    update_pid_file: PathBuf,
     operation_lock_file: PathBuf,
     settings_file: PathBuf,
     managed_codex_bin: PathBuf,
@@ -212,7 +210,7 @@ struct Daemon {
 
 impl Daemon {
     fn from_environment() -> Result<Self> {
-        let codex_home = find_codex_home().context("failed to resolve CODEX_HOME")?;
+        let codex_home = find_codex_home().context("failed to resolve DeepSeekX home")?;
         let socket_path = app_server_control_socket_path(codex_home.as_path())?
             .as_path()
             .to_path_buf();
@@ -220,7 +218,6 @@ impl Daemon {
         Ok(Self {
             socket_path,
             pid_file: state_dir.join(PID_FILE_NAME),
-            update_pid_file: state_dir.join(UPDATE_PID_FILE_NAME),
             operation_lock_file: state_dir.join(OPERATION_LOCK_FILE_NAME),
             settings_file: state_dir.join(SETTINGS_FILE_NAME),
             managed_codex_bin: managed_codex_bin(codex_home.as_path()),
@@ -283,7 +280,7 @@ impl Daemon {
             && self.running_backend(&settings).await?.is_none()
         {
             return Err(anyhow!(
-                "app server is running but is not managed by codex app-server daemon"
+                "app server is running but is not managed by deepseekx app-server daemon"
             ));
         }
 
@@ -335,7 +332,7 @@ impl Daemon {
             }
         } else if client::probe(&self.socket_path).await.is_ok() {
             return Err(anyhow!(
-                "app server is running but is not managed by codex app-server daemon"
+                "app server is running but is not managed by deepseekx app-server daemon"
             ));
         } else {
             RestartIfRunningOutcome::NotRunning
@@ -362,7 +359,7 @@ impl Daemon {
 
         if client::probe(&self.socket_path).await.is_ok() {
             return Err(anyhow!(
-                "app server is running but is not managed by codex app-server daemon"
+                "app server is running but is not managed by deepseekx app-server daemon"
             ));
         }
 
@@ -446,7 +443,7 @@ impl Daemon {
 
         if backend.is_none() && client::probe(&self.socket_path).await.is_ok() {
             return Err(anyhow!(
-                "app server is running but is not managed by codex app-server daemon"
+                "app server is running but is not managed by deepseekx app-server daemon"
             ));
         }
 
@@ -494,7 +491,7 @@ impl Daemon {
             && self.running_backend(&settings).await?.is_none()
         {
             return Err(anyhow!(
-                "app server is running but is not managed by codex app-server daemon"
+                "app server is running but is not managed by deepseekx app-server daemon"
             ));
         }
         settings.save(&self.settings_file).await?;
@@ -505,19 +502,13 @@ impl Daemon {
 
         let backend = backend::pid_backend(self.backend_paths(&settings));
         backend.start().await?;
-        let updater = backend::pid_update_loop_backend(self.backend_paths(&settings));
-        if updater.is_starting_or_running().await? {
-            updater.stop().await?;
-        }
-        updater.start().await?;
-
         let info = self.wait_until_ready().await?;
         Ok(BootstrapOutput {
             status: BootstrapStatus::Bootstrapped,
             backend: BackendKind::Pid,
-            auto_update_enabled: true,
+            auto_update_enabled: false,
             remote_control_enabled: settings.remote_control_enabled,
-            managed_codex_path: self.managed_codex_bin.clone(),
+            managed_deepseekx_path: self.managed_codex_bin.clone(),
             socket_path: self.socket_path.clone(),
             cli_version: env!("CARGO_PKG_VERSION").to_string(),
             app_server_version: info.app_server_version,
@@ -568,7 +559,7 @@ impl Daemon {
         }
 
         Err(anyhow!(
-            "managed standalone Codex install not found at {}; install Codex first",
+            "managed standalone DeepSeekX install not found at {}; install DeepSeekX first",
             self.managed_codex_bin.display()
         ))
     }
@@ -585,7 +576,9 @@ impl Daemon {
         BackendPaths {
             codex_bin: managed_codex_bin.to_path_buf(),
             pid_file: self.pid_file.clone(),
-            update_pid_file: self.update_pid_file.clone(),
+            update_pid_file: self
+                .pid_file
+                .with_file_name("app-server-updater-disabled.pid"),
             remote_control_enabled: settings.remote_control_enabled,
         }
     }
@@ -857,10 +850,10 @@ mod tests {
         let bootstrap_output = BootstrapOutput {
             status: BootstrapStatus::Bootstrapped,
             backend: BackendKind::Pid,
-            auto_update_enabled: true,
+            auto_update_enabled: false,
             remote_control_enabled: true,
-            managed_codex_path: "codex".into(),
-            socket_path: "codex.sock".into(),
+            managed_deepseekx_path: "deepseekx".into(),
+            socket_path: "deepseekx.sock".into(),
             cli_version: "1.2.3".to_string(),
             app_server_version: "1.2.4".to_string(),
         };

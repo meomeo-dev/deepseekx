@@ -40,13 +40,13 @@ function createEarlyExitChild(exitCode = 2): FakeChildProcess {
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-describe("CodexExec", () => {
+describe("DeepSeekXExec", () => {
   it("rejects when exit happens before stdout closes", async () => {
-    const { CodexExec } = await import("../src/exec");
+    const { DeepSeekXExec } = await import("../src/exec");
     const child = createEarlyExitChild();
     spawnMock.mockReturnValue(child as unknown as child_process.ChildProcess);
 
-    const exec = new CodexExec("codex");
+    const exec = new DeepSeekXExec("deepseekx");
     const runPromise = (async () => {
       for await (const _ of exec.run({ input: "hi" })) {
         // no-op
@@ -64,12 +64,12 @@ describe("CodexExec", () => {
     expect(result.status).toBe("rejected");
     if (result.status === "rejected") {
       expect(result.error).toBeInstanceOf(Error);
-      expect(result.error.message).toMatch(/Codex Exec exited/);
+      expect(result.error.message).toMatch(/DeepSeekX exec exited/);
     }
   });
 
   it("places resume args before image args", async () => {
-    const { CodexExec } = await import("../src/exec");
+    const { DeepSeekXExec } = await import("../src/exec");
     spawnMock.mockClear();
     const child = new FakeChildProcess();
     spawnMock.mockReturnValue(child as unknown as child_process.ChildProcess);
@@ -80,7 +80,7 @@ describe("CodexExec", () => {
       child.emit("exit", 0, null);
     });
 
-    const exec = new CodexExec("codex");
+    const exec = new DeepSeekXExec("deepseekx");
     for await (const _ of exec.run({ input: "hi", images: ["img.png"], threadId: "thread-id" })) {
       // no-op
     }
@@ -94,8 +94,8 @@ describe("CodexExec", () => {
     expect(resumeIndex).toBeLessThan(imageIndex);
   });
 
-  it("allows overriding the env passed to the Codex CLI", async () => {
-    const { CodexExec } = await import("../src/exec");
+  it("allows overriding the env passed to the DeepSeekX CLI", async () => {
+    const { DeepSeekXExec } = await import("../src/exec");
     spawnMock.mockClear();
     const child = new FakeChildProcess();
     spawnMock.mockReturnValue(child as unknown as child_process.ChildProcess);
@@ -109,8 +109,8 @@ describe("CodexExec", () => {
     process.env.CODEX_ENV_SHOULD_NOT_LEAK = "leak";
 
     try {
-      const exec = new CodexExec("codex", {
-        CODEX_HOME: "/tmp/codex-home",
+      const exec = new DeepSeekXExec("deepseekx", {
+        DEEPSEEKX_HOME: "/tmp/deepseekx-home",
         CUSTOM_ENV: "custom",
       });
 
@@ -131,15 +131,58 @@ describe("CodexExec", () => {
         throw new Error("Spawn args missing");
       }
 
-      expect(spawnEnv.CODEX_HOME).toBe("/tmp/codex-home");
+      expect(spawnEnv.DEEPSEEKX_HOME).toBe("/tmp/deepseekx-home");
       expect(spawnEnv.CUSTOM_ENV).toBe("custom");
       expect(spawnEnv.CODEX_ENV_SHOULD_NOT_LEAK).toBeUndefined();
-      expect(spawnEnv.CODEX_API_KEY).toBe("test");
-      expect(spawnEnv.CODEX_INTERNAL_ORIGINATOR_OVERRIDE).toBeDefined();
+      expect(spawnEnv.DEEPSEEK_API_KEY).toBe("test");
+      expect(spawnEnv.DEEPSEEKX_INTERNAL_ORIGINATOR_OVERRIDE).toBeDefined();
       expect(commandArgs).toContain("--config");
       expect(commandArgs).toContain(`openai_base_url=${JSON.stringify("https://example.test")}`);
     } finally {
       delete process.env.CODEX_ENV_SHOULD_NOT_LEAK;
+    }
+  });
+
+  it("drops Codex user environment when inheriting process.env", async () => {
+    const { DeepSeekXExec } = await import("../src/exec");
+    spawnMock.mockClear();
+    const child = new FakeChildProcess();
+    spawnMock.mockReturnValue(child as unknown as child_process.ChildProcess);
+
+    setImmediate(() => {
+      child.stdout.end();
+      child.stderr.end();
+      child.emit("exit", 0, null);
+    });
+
+    process.env.CODEX_HOME = "/tmp/openai-codex-home";
+    process.env.CODEX_API_KEY = "openai-codex-key";
+    process.env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE = "codex_sdk_ts";
+    process.env.DEEPSEEKX_HOME = "/tmp/deepseekx-home";
+
+    try {
+      const exec = new DeepSeekXExec("deepseekx");
+      for await (const _ of exec.run({ input: "inherit env" })) {
+        // no-op
+      }
+
+      const spawnOptions = spawnMock.mock.calls[0]?.[2] as child_process.SpawnOptions | undefined;
+      const spawnEnv = spawnOptions?.env as Record<string, string> | undefined;
+      expect(spawnEnv).toBeDefined();
+      if (!spawnEnv) {
+        throw new Error("Spawn env missing");
+      }
+
+      expect(spawnEnv.CODEX_HOME).toBeUndefined();
+      expect(spawnEnv.CODEX_API_KEY).toBeUndefined();
+      expect(spawnEnv.CODEX_INTERNAL_ORIGINATOR_OVERRIDE).toBeUndefined();
+      expect(spawnEnv.DEEPSEEKX_HOME).toBe("/tmp/deepseekx-home");
+      expect(spawnEnv.DEEPSEEKX_INTERNAL_ORIGINATOR_OVERRIDE).toBe("deepseekx_sdk_ts");
+    } finally {
+      delete process.env.CODEX_HOME;
+      delete process.env.CODEX_API_KEY;
+      delete process.env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE;
+      delete process.env.DEEPSEEKX_HOME;
     }
   });
 });

@@ -11,11 +11,11 @@ ensure_local_sdk_src()
 
 import asyncio
 
-from openai_codex import (
-    AsyncCodex,
+from deepseekx import (
+    AsyncDeepSeekX,
     TextInput,
 )
-from openai_codex.types import (
+from deepseekx.types import (
     ThreadTokenUsageUpdatedNotification,
     TurnCompletedNotification,
 )
@@ -42,11 +42,11 @@ def _format_usage(usage: object | None) -> str:
 
 
 async def main() -> None:
-    print("Codex async mini CLI. Type /exit to quit.")
+    print("DeepSeekX async mini CLI. Type /exit to quit.")
 
-    async with AsyncCodex(config=runtime_config()) as codex:
-        thread = await codex.thread_start(
-            model="gpt-5.4", config={"model_reasoning_effort": "high"}
+    async with AsyncDeepSeekX(config=runtime_config()) as deepseekx:
+        thread = await deepseekx.thread_start(
+            model="deepseek-v4-pro", config={"model_reasoning_effort": "high"}
         )
         print("Thread:", thread.id)
 

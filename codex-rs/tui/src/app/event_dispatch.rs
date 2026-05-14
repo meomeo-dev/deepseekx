@@ -5,6 +5,8 @@
 
 use super::resize_reflow::trailing_run_start;
 use super::*;
+#[cfg(target_os = "windows")]
+use codex_utils_cli::PRODUCT_NAME;
 
 const SHUTDOWN_FIRST_EXIT_TIMEOUT: Duration = Duration::from_secs(/*secs*/ 2);
 
@@ -1161,7 +1163,7 @@ impl App {
                                     Line::from(vec!["• ".dim(), "Sandbox ready".into()]),
                                     Line::from(vec![
                                         "  ".into(),
-                                        "Codex can now safely edit files and execute commands in your computer"
+                                        format!("{PRODUCT_NAME} can now safely edit files and execute commands on your computer")
                                             .dark_gray(),
                                     ]),
                                 ]);

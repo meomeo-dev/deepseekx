@@ -16,11 +16,11 @@ ensure_local_sdk_src()
 
 import asyncio
 
-from openai_codex import (
-    AsyncCodex,
+from deepseekx import (
+    AsyncDeepSeekX,
     TextInput,
 )
-from openai_codex.types import (
+from deepseekx.types import (
     Personality,
     ReasoningEffort,
     ReasoningSummary,
@@ -35,7 +35,7 @@ REASONING_RANK = {
     "high": 4,
     "xhigh": 5,
 }
-PREFERRED_MODEL = "gpt-5.4"
+PREFERRED_MODEL = "deepseek-v4-pro"
 
 
 def _pick_highest_model(models):
@@ -84,15 +84,15 @@ SANDBOX_POLICY = SandboxPolicy.model_validate(
 
 
 async def main() -> None:
-    async with AsyncCodex(config=runtime_config()) as codex:
-        models = await codex.models(include_hidden=True)
+    async with AsyncDeepSeekX(config=runtime_config()) as deepseekx:
+        models = await deepseekx.models(include_hidden=True)
         selected_model = _pick_highest_model(models.data)
         selected_effort = _pick_highest_turn_effort(selected_model)
 
         print("selected.model:", selected_model.model)
         print("selected.effort:", selected_effort.value)
 
-        thread = await codex.thread_start(
+        thread = await deepseekx.thread_start(
             model=selected_model.model,
             config={"model_reasoning_effort": selected_effort.value},
         )

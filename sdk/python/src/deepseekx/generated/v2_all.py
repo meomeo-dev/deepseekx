@@ -864,7 +864,7 @@ class ExternalAgentConfigDetectParams(BaseModel):
         bool | None,
         Field(
             alias="includeHome",
-            description="If true, include detection under the user's home (~/.claude, ~/.codex, etc.).",
+            description="If true, include detection under the user's home (~/.claude, ~/.deepseekx, etc.).",
         ),
     ] = None
 
@@ -7775,7 +7775,7 @@ class Thread(BaseModel):
     source: Annotated[
         SessionSource,
         Field(
-            description="Origin of the thread (CLI, VSCode, codex exec, codex app-server, etc.)."
+            description="Origin of the thread (CLI, VSCode, deepseekx exec, deepseekx app-server, etc.)."
         ),
     ]
     status: Annotated[ThreadStatus, Field(description="Current runtime status for the thread.")]

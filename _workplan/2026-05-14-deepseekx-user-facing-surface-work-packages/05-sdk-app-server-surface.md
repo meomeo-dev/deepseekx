@@ -3,7 +3,7 @@
 ## Metadata
 
 - id: `05-sdk-app-server-surface`
-- status: `planned`
+- status: `completed`
 - source: `2026-05-14-deepseekx-user-facing-surface-work-breakdown.yaml`
 - depends_on: `00-cli-launcher-help`
 - owner: DeepSeekX
@@ -32,7 +32,7 @@ Out of scope:
 
 - v2 协议兼容性优先于品牌纯度。
 - DeepSeekX SDK 应隐藏历史 Codex wire 名称，而不是破坏协议。
-- binary lookup 应优先 `deepseekx`，并可回退 legacy `codex`。
+- binary lookup 只允许 `deepseekx`，不能回退 legacy `codex`。
 
 ## Quality Standards
 
@@ -46,7 +46,7 @@ Out of scope:
 1. 定位 SDK 包装层、examples、binary lookup 和 app-server 启动入口。
 2. 设计 DeepSeekX SDK 表面与 v2 wire schema 兼容边界。
 3. 调整用户可见文案、默认 `client_info` 和 lookup 顺序。
-4. 如需新增 header，采用 DeepSeekX 与 legacy Codex 双写。
+4. 如需新增 header，采用 DeepSeekX 与 legacy wire header 双写。
 5. 运行 package 质量门禁并记录证据。
 
 ## Audit-Evaluate-Optimize Loop
@@ -59,9 +59,27 @@ Out of scope:
 
 - SDK 面向用户的包表面和 examples 使用 DeepSeekX。
 - app-server 启动入口和默认 client info 展示 DeepSeekX。
+- SDK 不会拉起用户已安装的原版 `codex`。
 - v2 wire schema 兼容性不被破坏。
 - 相关测试和构建检查通过，或记录阻塞原因。
 
 ## Completion Evidence
 
-- Package `05-sdk-app-server-surface` not started.
+- Completed in current branch.
+- Evidence files:
+  - `sdk/typescript/src/exec.ts`
+  - `sdk/typescript/package.json`
+  - `sdk/typescript/samples/*`
+  - `sdk/python/src/deepseekx/*`
+  - `sdk/python-runtime/src/deepseekx_cli_bin/__init__.py`
+  - `sdk/python/scripts/update_sdk_artifacts.py`
+  - `codex-rs/app-server/src/request_processors/initialize_processor.rs`
+  - `codex-rs/app-server/README.md`
+- TypeScript SDK drops inherited `CODEX_*` environment variables by default and
+  only resolves `deepseekx` from `@meomeo/deepseekx` optional dependencies.
+- Python SDK uses `deepseekx` and `deepseekx-cli-bin`; user examples use
+  `DeepSeekX`, `deepseekx`, and `deepseek-v4-pro`.
+- App-server docs use `deepseekx app-server` and describe `codexHome` as a
+  legacy v2 wire field interpreted as `DEEPSEEKX_HOME` in DeepSeekX builds.
+- Focused check passed earlier: `cargo test -p codex-app-server
+  external_agent_config`.

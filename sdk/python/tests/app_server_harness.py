@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-from openai_codex import AppServerConfig
+from deepseekx import AppServerConfig
 
 Json = dict[str, Any]
 
@@ -229,7 +229,7 @@ class AppServerHarness:
         return AppServerConfig(
             cwd=str(self.workspace),
             env={
-                "CODEX_HOME": str(self.codex_home),
+                "DEEPSEEKX_HOME": str(self.codex_home),
                 "CODEX_APP_SERVER_DISABLE_MANAGED_CONFIG": "1",
                 "RUST_LOG": "warn",
             },

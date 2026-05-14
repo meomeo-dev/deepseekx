@@ -14,16 +14,16 @@ from _bootstrap import (
 
 ensure_local_sdk_src()
 
-from openai_codex import Codex, TextInput
+from deepseekx import DeepSeekX, TextInput
 
-with Codex(config=runtime_config()) as codex:
+with DeepSeekX(config=runtime_config()) as deepseekx:
     # Create an initial thread and turn so we have a real thread to resume.
-    original = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+    original = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
     first = original.turn(TextInput("Tell me one fact about Saturn.")).run()
     print("Created thread:", original.id)
 
     # Resume the existing thread by ID.
-    resumed = codex.thread_resume(original.id)
+    resumed = deepseekx.thread_resume(original.id)
     second = resumed.turn(TextInput("Continue with one more fact.")).run()
     persisted = resumed.read(include_turns=True)
     persisted_turn = find_turn_by_id(persisted.thread.turns, second.id)

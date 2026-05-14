@@ -1,6 +1,6 @@
-# OpenAI Codex SDK — API Reference
+# DeepSeekX SDK - API Reference
 
-Public surface of `openai_codex` for app-server v2.
+Public surface of `deepseekx` for app-server v2.
 
 This SDK surface is experimental. Turn streams are routed by turn ID so one client can consume multiple active turns concurrently.
 Thread and turn starts expose `approval_mode`. `ApprovalMode.auto_review` is the default; use `ApprovalMode.deny_all` to deny escalated permissions.
@@ -8,9 +8,9 @@ Thread and turn starts expose `approval_mode`. `ApprovalMode.auto_review` is the
 ## Package Entry
 
 ```python
-from openai_codex import (
-    Codex,
-    AsyncCodex,
+from deepseekx import (
+    DeepSeekX,
+    AsyncDeepSeekX,
     ApprovalMode,
     RunResult,
     Thread,
@@ -25,7 +25,7 @@ from openai_codex import (
     SkillInput,
     MentionInput,
 )
-from openai_codex.types import (
+from deepseekx.types import (
     InitializeResponse,
     ThreadItem,
     ThreadTokenUsage,
@@ -33,14 +33,14 @@ from openai_codex.types import (
 )
 ```
 
-- Version: `openai_codex.__version__`
+- Version: `deepseekx.__version__`
 - Requires Python >= 3.10
-- Public app-server value and event types live in `openai_codex.types`
+- Public app-server value and event types live in `deepseekx.types`
 
-## Codex (sync)
+## DeepSeekX (sync)
 
 ```python
-Codex(config: AppServerConfig | None = None)
+DeepSeekX(config: AppServerConfig | None = None)
 ```
 
 Properties/methods:
@@ -58,24 +58,24 @@ Properties/methods:
 Context manager:
 
 ```python
-with Codex() as codex:
+with DeepSeekX() as deepseekx:
     ...
 ```
 
-## AsyncCodex (async parity)
+## AsyncDeepSeekX (async parity)
 
 ```python
-AsyncCodex(config: AppServerConfig | None = None)
+AsyncDeepSeekX(config: AppServerConfig | None = None)
 ```
 
 Preferred usage:
 
 ```python
-async with AsyncCodex() as codex:
+async with AsyncDeepSeekX() as deepseekx:
     ...
 ```
 
-`AsyncCodex` initializes lazily. Context entry is the standard path because it
+`AsyncDeepSeekX` initializes lazily. Context entry is the standard path because it
 ensures startup and shutdown are paired explicitly.
 
 Properties/methods:
@@ -93,7 +93,7 @@ Properties/methods:
 Async context manager:
 
 ```python
-async with AsyncCodex() as codex:
+async with AsyncDeepSeekX() as deepseekx:
     ...
 ```
 
@@ -138,24 +138,24 @@ Use `turn(...)` when you need low-level turn control (`stream()`, `steer()`,
 - `steer(input: Input) -> TurnSteerResponse`
 - `interrupt() -> TurnInterruptResponse`
 - `stream() -> Iterator[Notification]`
-- `run() -> openai_codex.types.Turn`
+- `run() -> deepseekx.types.Turn`
 
 Behavior notes:
 
 - `stream()` and `run()` consume only notifications for their own turn ID
-- one `Codex` instance can stream multiple active turns concurrently
+- one `DeepSeekX` instance can stream multiple active turns concurrently
 
 ### AsyncTurnHandle
 
 - `steer(input: Input) -> Awaitable[TurnSteerResponse]`
 - `interrupt() -> Awaitable[TurnInterruptResponse]`
 - `stream() -> AsyncIterator[Notification]`
-- `run() -> Awaitable[openai_codex.types.Turn]`
+- `run() -> Awaitable[deepseekx.types.Turn]`
 
 Behavior notes:
 
 - `stream()` and `run()` consume only notifications for their own turn ID
-- one `AsyncCodex` instance can stream multiple active turns concurrently
+- one `AsyncDeepSeekX` instance can stream multiple active turns concurrently
 
 ## Inputs
 
@@ -175,7 +175,7 @@ Input = list[InputItem] | InputItem
 The SDK wrappers return and accept public app-server models wherever possible:
 
 ```python
-from openai_codex.types import (
+from deepseekx.types import (
     ThreadReadResponse,
     Turn,
     TurnStatus,
@@ -185,7 +185,7 @@ from openai_codex.types import (
 ## Retry + errors
 
 ```python
-from openai_codex import (
+from deepseekx import (
     retry_on_overload,
     JsonRpcError,
     MethodNotFoundError,
@@ -201,10 +201,10 @@ from openai_codex import (
 ## Example
 
 ```python
-from openai_codex import Codex
+from deepseekx import DeepSeekX
 
-with Codex() as codex:
-    thread = codex.thread_start(model="gpt-5.4", config={"model_reasoning_effort": "high"})
+with DeepSeekX() as deepseekx:
+    thread = deepseekx.thread_start(model="deepseek-v4-pro", config={"model_reasoning_effort": "high"})
     result = thread.run("Say hello in one sentence.")
     print(result.final_response)
 ```

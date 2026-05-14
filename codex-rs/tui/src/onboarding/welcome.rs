@@ -11,6 +11,8 @@ use ratatui::widgets::WidgetRef;
 use ratatui::widgets::Wrap;
 use std::cell::Cell;
 
+use codex_utils_cli::PRODUCT_NAME;
+
 use crate::ascii_animation::AsciiAnimation;
 use crate::key_hint::KeyBindingListExt;
 use crate::onboarding::keys;
@@ -94,8 +96,8 @@ impl WidgetRef for &WelcomeWidget {
         lines.push(Line::from(vec![
             "  ".into(),
             "Welcome to ".into(),
-            "Codex".bold(),
-            ", OpenAI's command-line coding agent".into(),
+            PRODUCT_NAME.bold(),
+            ", your command-line coding agent".into(),
         ]));
 
         Paragraph::new(lines)

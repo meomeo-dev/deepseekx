@@ -192,7 +192,7 @@ jobs:
             --target "$target" \
             --release \
             --timings \
-            --bin codex \
+            --bin deepseekx \
             --bin codex-responses-api-proxy
 
       - name: Stage macOS package
@@ -203,11 +203,11 @@ jobs:
           target="${{ matrix.target }}"
           root="dist/$package"
           mkdir -p "$root/bin"
-          cp "target/$target/release/codex" "$root/bin/codex"
+          cp "target/$target/release/deepseekx" "$root/bin/deepseekx"
           cp \
             "target/$target/release/codex-responses-api-proxy" \
             "$root/bin/codex-responses-api-proxy"
-          chmod 0755 "$root/bin/codex" "$root/bin/codex-responses-api-proxy"
+          chmod 0755 "$root/bin/deepseekx" "$root/bin/codex-responses-api-proxy"
 
           dmg="dist/$package.dmg"
           hdiutil create \
@@ -271,7 +271,7 @@ jobs:
           package="deepseekx-mac-universal"
           root="dist/$package"
           mkdir -p "$root/bin"
-          for binary in codex codex-responses-api-proxy; do
+          for binary in deepseekx codex-responses-api-proxy; do
             lipo -create \
               "artifacts/mac-x64/deepseekx-mac-x64/bin/$binary" \
               "artifacts/mac-arm64/deepseekx-mac-arm64/bin/$binary" \
@@ -341,7 +341,7 @@ jobs:
             --target "$target" \
             --release \
             --timings \
-            --bin codex \
+            --bin deepseekx \
             --bin codex-responses-api-proxy \
             --bin codex-windows-sandbox-setup \
             --bin codex-command-runner
@@ -356,7 +356,7 @@ jobs:
           New-Item -ItemType Directory -Force "$root/bin" | Out-Null
 
           $binaries = @(
-            "codex",
+            "deepseekx",
             "codex-responses-api-proxy",
             "codex-windows-sandbox-setup",
             "codex-command-runner"

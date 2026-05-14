@@ -8,20 +8,20 @@
 
 ## `run()` vs `stream()`
 
-- `TurnHandle.run()` / `AsyncTurnHandle.run()` is the easiest path. It consumes events until completion and returns the public app-server `Turn` model from `openai_codex.types`.
+- `TurnHandle.run()` / `AsyncTurnHandle.run()` is the easiest path. It consumes events until completion and returns the public app-server `Turn` model from `deepseekx.types`.
 - `TurnHandle.stream()` / `AsyncTurnHandle.stream()` yields raw notifications (`Notification`) so you can react event-by-event.
 
 Choose `run()` for most apps. Choose `stream()` for progress UIs, custom timeout logic, or custom parsing.
 
 ## Sync vs async clients
 
-- `Codex` is the sync public API.
-- `AsyncCodex` is an async replica of the same public API shape.
-- Prefer `async with AsyncCodex()` for async code. It is the standard path for
-  explicit startup/shutdown, and `AsyncCodex` initializes lazily on context
+- `DeepSeekX` is the sync public API.
+- `AsyncDeepSeekX` is an async replica of the same public API shape.
+- Prefer `async with AsyncDeepSeekX()` for async code. It is the standard path for
+  explicit startup/shutdown, and `AsyncDeepSeekX` initializes lazily on context
   entry or first awaited API use.
 
-If your app is not already async, stay with `Codex`.
+If your app is not already async, stay with `DeepSeekX`.
 
 ## Public kwargs are snake_case
 
@@ -50,17 +50,17 @@ This avoids duplicate ways to do the same operation and keeps behavior explicit.
 
 ## Why does constructor fail?
 
-`Codex()` is eager: it starts transport and calls `initialize` in `__init__`.
+`DeepSeekX()` is eager: it starts transport and calls `initialize` in `__init__`.
 
 Common causes:
 
-- published runtime package (`openai-codex-cli-bin`) is not installed
-- local `codex_bin` override points to a missing file
+- published runtime package (`deepseekx-cli-bin`) is not installed
+- local `deepseekx_bin` override points to a missing file
 - local auth/session is missing
 - incompatible/old app-server
 
 Maintainers stage releases by building the SDK once and the runtime once per
-platform with the same pinned runtime version. Publish `openai-codex-cli-bin`
+platform with the same pinned runtime version. Publish `deepseekx-cli-bin`
 as platform wheels only; do not publish an sdist:
 
 ```bash
@@ -68,13 +68,13 @@ cd sdk/python
 python scripts/update_sdk_artifacts.py generate-types
 python scripts/update_sdk_artifacts.py \
   stage-sdk \
-  /tmp/codex-python-release/openai-codex \
-  --codex-version <codex-release-tag-or-pep440-version>
+  /tmp/deepseekx-python-release/deepseekx \
+  --deepseekx-version <deepseekx-release-tag-or-pep440-version>
 python scripts/update_sdk_artifacts.py \
   stage-runtime \
-  /tmp/codex-python-release/openai-codex-cli-bin \
-  /path/to/codex \
-  --codex-version <codex-release-tag-or-pep440-version>
+  /tmp/deepseekx-python-release/deepseekx-cli-bin \
+  /path/to/deepseekx \
+  --deepseekx-version <deepseekx-release-tag-or-pep440-version>
 ```
 
 If you are packaging a binary for a different target than the Python build

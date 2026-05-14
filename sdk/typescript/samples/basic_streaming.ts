@@ -3,12 +3,12 @@
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-import { Codex } from "@openai/codex-sdk";
-import type { ThreadEvent, ThreadItem } from "@openai/codex-sdk";
-import { codexPathOverride } from "./helpers.ts";
+import { DeepSeekX } from "@meomeo/deepseekx-sdk";
+import type { ThreadEvent, ThreadItem } from "@meomeo/deepseekx-sdk";
+import { deepseekxPathOverride } from "./helpers.ts";
 
-const codex = new Codex({ codexPathOverride: codexPathOverride() });
-const thread = codex.startThread();
+const deepseekx = new DeepSeekX({ deepseekxPathOverride: deepseekxPathOverride() });
+const thread = deepseekx.startThread();
 const rl = createInterface({ input, output });
 
 const handleItemCompleted = (item: ThreadItem): void => {

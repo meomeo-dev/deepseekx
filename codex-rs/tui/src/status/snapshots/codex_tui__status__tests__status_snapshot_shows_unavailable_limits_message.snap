@@ -5,12 +5,13 @@ expression: sanitized
 /status
 
 ╭───────────────────────────────────────────────────────────────────────╮
-│  >_ OpenAI Codex (v0.0.0)                                             │
+│  >_ DeepSeekX (v0.131.0-alpha.12)                                     │
 │                                                                       │
-│ Visit https://chatgpt.com/codex/settings/usage for up-to-date         │
-│ information on rate limits and credits                                │
+│ Visit https://api-docs.deepseek.com for up-to-date                    │
+│ information on DeepSeek API rate limits                               │
 │                                                                       │
-│  Model:            gpt-5.1-codex-max (reasoning none, summaries auto) │
+│  Model:            gpt-5.1-codex-max                                  │
+│  Model provider:   DeepSeek                                           │
 │  Directory: [[workspace]]                                             │
 │  Permissions:      Custom (workspace with network access, on-request) │
 │  Agents.md:        <none>                                             │

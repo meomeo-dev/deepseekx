@@ -185,7 +185,7 @@ def test_generate_v2_all_uses_titles_for_generated_names() -> None:
 
 
 def test_runtime_package_template_has_no_checked_in_binaries() -> None:
-    runtime_root = ROOT.parent / "python-runtime" / "src" / "codex_cli_bin"
+    runtime_root = ROOT.parent / "python-runtime" / "src" / "deepseekx_cli_bin"
     assert sorted(
         path.name
         for path in runtime_root.rglob("*")
@@ -202,14 +202,14 @@ def test_examples_readme_points_to_runtime_version_source_of_truth() -> None:
 def test_runtime_distribution_name_is_consistent() -> None:
     script = _load_update_script_module()
     runtime_setup = _load_runtime_setup_module()
-    from openai_codex import _version, client as client_module
+    from deepseekx import _version, client as client_module
 
-    assert script.SDK_DISTRIBUTION_NAME == "openai-codex"
-    assert runtime_setup.SDK_PACKAGE_NAME == "openai-codex"
-    assert _version.DISTRIBUTION_NAME == "openai-codex"
-    assert script.RUNTIME_DISTRIBUTION_NAME == "openai-codex-cli-bin"
-    assert runtime_setup.PACKAGE_NAME == "openai-codex-cli-bin"
-    assert client_module.RUNTIME_PKG_NAME == "openai-codex-cli-bin"
+    assert script.SDK_DISTRIBUTION_NAME == "deepseekx"
+    assert runtime_setup.SDK_PACKAGE_NAME == "deepseekx"
+    assert _version.DISTRIBUTION_NAME == "deepseekx"
+    assert script.RUNTIME_DISTRIBUTION_NAME == "deepseekx-cli-bin"
+    assert runtime_setup.PACKAGE_NAME == "deepseekx-cli-bin"
+    assert client_module.RUNTIME_PKG_NAME == "deepseekx-cli-bin"
     assert (
         "importlib.metadata.version('codex-cli-bin')"
         not in (ROOT / "_runtime_setup.py").read_text()
@@ -230,7 +230,7 @@ def test_source_sdk_package_pins_published_runtime() -> None:
         "runtime_pin": "0.131.0a4",
         "dependencies": [
             "pydantic>=2.12",
-            "openai-codex-cli-bin==0.131.0a4",
+            "deepseekx-cli-bin==0.131.0a4",
         ],
     }
 
@@ -266,7 +266,7 @@ def test_runtime_setup_uses_pep440_package_version_and_codex_release_tags() -> N
     runtime_setup = _load_runtime_setup_module()
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
 
-    assert runtime_setup.PACKAGE_NAME == "openai-codex-cli-bin"
+    assert runtime_setup.PACKAGE_NAME == "deepseekx-cli-bin"
     assert runtime_setup.pinned_runtime_version() == pyproject["project"]["version"]
     assert (
         f"{runtime_setup.PACKAGE_NAME}=={pyproject['project']['version']}"
@@ -321,10 +321,10 @@ def test_runtime_package_is_wheel_only_and_builds_platform_specific_wheels() -> 
         elif isinstance(node.value, ast.JoinedStr):
             build_data_assignments[node.targets[0].slice.value] = "joined-string"
 
-    assert pyproject["project"]["name"] == "openai-codex-cli-bin"
+    assert pyproject["project"]["name"] == "deepseekx-cli-bin"
     assert pyproject["tool"]["hatch"]["build"]["targets"]["wheel"] == {
-        "packages": ["src/codex_cli_bin"],
-        "include": ["src/codex_cli_bin/bin/**"],
+        "packages": ["src/deepseekx_cli_bin"],
+        "include": ["src/deepseekx_cli_bin/bin/**"],
         "hooks": {"custom": {}},
     }
     assert pyproject["tool"]["hatch"]["build"]["targets"]["sdist"] == {
@@ -351,7 +351,7 @@ def test_stage_runtime_release_copies_binary_and_sets_version(tmp_path: Path) ->
 
     assert staged == tmp_path / "runtime-stage"
     assert script.staged_runtime_bin_path(staged).read_text() == "fake codex\n"
-    assert 'name = "openai-codex-cli-bin"' in (staged / "pyproject.toml").read_text()
+    assert 'name = "deepseekx-cli-bin"' in (staged / "pyproject.toml").read_text()
     assert 'version = "1.2.3"' in (staged / "pyproject.toml").read_text()
 
 
@@ -419,8 +419,8 @@ def test_stage_runtime_release_copies_resource_binaries(tmp_path: Path) -> None:
     )
 
     assert {
-        path.relative_to(staged / "src" / "codex_cli_bin" / "bin").as_posix(): path.read_text()
-        for path in (staged / "src" / "codex_cli_bin" / "bin").iterdir()
+        path.relative_to(staged / "src" / "deepseekx_cli_bin" / "bin").as_posix(): path.read_text()
+        for path in (staged / "src" / "deepseekx_cli_bin" / "bin").iterdir()
     } == {
         script.runtime_binary_name(): "fake codex\n",
         "fallback-helper": "fake fallback\n",
@@ -431,7 +431,7 @@ def test_stage_runtime_release_copies_resource_binaries(tmp_path: Path) -> None:
 def test_runtime_resource_binaries_are_included_by_wheel_config(
     tmp_path: Path,
 ) -> None:
-    """The runtime wheel config should include helper binaries beside Codex."""
+    """The runtime wheel config should include helper binaries beside DeepSeekX."""
     script = _load_update_script_module()
     fake_binary = tmp_path / script.runtime_binary_name()
     helper = tmp_path / "helper"
@@ -448,9 +448,9 @@ def test_runtime_resource_binaries_are_included_by_wheel_config(
     pyproject = tomllib.loads((staged / "pyproject.toml").read_text())
     assert {
         "include": pyproject["tool"]["hatch"]["build"]["targets"]["wheel"]["include"],
-        "helper": (staged / "src" / "codex_cli_bin" / "bin" / "helper").read_text(),
+        "helper": (staged / "src" / "deepseekx_cli_bin" / "bin" / "helper").read_text(),
     } == {
-        "include": ["src/codex_cli_bin/bin/**"],
+        "include": ["src/deepseekx_cli_bin/bin/**"],
         "helper": "fake helper\n",
     }
 
@@ -463,18 +463,18 @@ def test_stage_sdk_release_injects_exact_runtime_pin(tmp_path: Path) -> None:
     )
 
     pyproject = (staged / "pyproject.toml").read_text()
-    assert 'name = "openai-codex"' in pyproject
+    assert 'name = "deepseekx"' in pyproject
     assert 'version = "0.116.0a1"' in pyproject
-    assert '"openai-codex-cli-bin==0.116.0a1"' in pyproject
+    assert '"deepseekx-cli-bin==0.116.0a1"' in pyproject
     assert (
         '__version__ = "0.116.0a1"'
-        not in (staged / "src" / "openai_codex" / "__init__.py").read_text()
+        not in (staged / "src" / "deepseekx" / "__init__.py").read_text()
     )
     assert (
         'client_version: str = "0.116.0a1"'
-        not in (staged / "src" / "openai_codex" / "client.py").read_text()
+        not in (staged / "src" / "deepseekx" / "client.py").read_text()
     )
-    assert not any((staged / "src" / "openai_codex").glob("bin/**"))
+    assert not any((staged / "src" / "deepseekx").glob("bin/**"))
 
 
 def test_stage_sdk_release_replaces_existing_staging_dir(tmp_path: Path) -> None:
@@ -511,7 +511,7 @@ def test_staged_sdk_and_runtime_versions_match(tmp_path: Path) -> None:
     assert sdk_pyproject["project"]["version"] == runtime_pyproject["project"]["version"]
     assert sdk_pyproject["project"]["dependencies"] == [
         "pydantic>=2.12",
-        "openai-codex-cli-bin==0.116.0a1",
+        "deepseekx-cli-bin==0.116.0a1",
     ]
 
 
@@ -522,7 +522,7 @@ def test_stage_sdk_runs_type_generation_before_staging(tmp_path: Path) -> None:
         [
             "stage-sdk",
             str(tmp_path / "sdk-stage"),
-            "--codex-version",
+            "--deepseekx-version",
             "rust-v0.116.0-alpha.1",
         ]
     )
@@ -530,8 +530,8 @@ def test_stage_sdk_runs_type_generation_before_staging(tmp_path: Path) -> None:
     def fake_generate_types() -> None:
         calls.append("generate_types")
 
-    def fake_stage_sdk_package(_staging_dir: Path, codex_version: str) -> Path:
-        calls.append(f"stage_sdk:{codex_version}")
+    def fake_stage_sdk_package(_staging_dir: Path, deepseekx_version: str) -> Path:
+        calls.append(f"stage_sdk:{deepseekx_version}")
         return tmp_path / "sdk-stage"
 
     def fake_stage_runtime_package(
@@ -564,7 +564,7 @@ def test_stage_sdk_rejects_mismatched_legacy_versions(tmp_path: Path) -> None:
         [
             "stage-sdk",
             str(tmp_path / "sdk-stage"),
-            "--codex-version",
+            "--deepseekx-version",
             "0.116.0a1",
             "--runtime-version",
             "0.116.0a1",
@@ -591,7 +591,7 @@ def test_stage_runtime_stages_binary_without_type_generation(tmp_path: Path) -> 
             "stage-runtime",
             str(tmp_path / "runtime-stage"),
             str(fake_binary),
-            "--codex-version",
+            "--deepseekx-version",
             "rust-v0.116.0-alpha.1",
             "--platform-tag",
             "musllinux_1_1_x86_64",
@@ -605,18 +605,18 @@ def test_stage_runtime_stages_binary_without_type_generation(tmp_path: Path) -> 
     def fake_generate_types() -> None:
         calls.append("generate_types")
 
-    def fake_stage_sdk_package(_staging_dir: Path, _codex_version: str) -> Path:
+    def fake_stage_sdk_package(_staging_dir: Path, _deepseekx_version: str) -> Path:
         raise AssertionError("sdk staging should not run for stage-runtime")
 
     def fake_stage_runtime_package(
         _staging_dir: Path,
-        codex_version: str,
+        deepseekx_version: str,
         _runtime_binary: Path,
         platform_tag: str | None,
         resource_binaries: Sequence[Path],
     ) -> Path:
         calls.append(
-            f"stage_runtime:{codex_version}:{platform_tag}:"
+            f"stage_runtime:{deepseekx_version}:{platform_tag}:"
             f"{','.join(path.name for path in resource_binaries)}"
         )
         return tmp_path / "runtime-stage"
@@ -639,63 +639,65 @@ def test_stage_runtime_stages_binary_without_type_generation(tmp_path: Path) -> 
 def test_default_runtime_is_resolved_from_installed_runtime_package(
     tmp_path: Path,
 ) -> None:
-    from openai_codex import client as client_module
+    from deepseekx import client as client_module
 
-    fake_binary = tmp_path / ("codex.exe" if client_module.os.name == "nt" else "codex")
+    fake_binary = tmp_path / (
+        "deepseekx.exe" if client_module.os.name == "nt" else "deepseekx"
+    )
     fake_binary.write_text("")
-    ops = client_module.CodexBinResolverOps(
-        installed_codex_path=lambda: fake_binary,
+    ops = client_module.DeepSeekXBinResolverOps(
+        installed_deepseekx_path=lambda: fake_binary,
         path_exists=lambda path: path == fake_binary,
     )
 
     config = client_module.AppServerConfig()
-    assert config.codex_bin is None
-    assert client_module.resolve_codex_bin(config, ops) == fake_binary
+    assert config.deepseekx_bin is None
+    assert client_module.resolve_deepseekx_bin(config, ops) == fake_binary
 
 
-def test_explicit_codex_bin_override_takes_priority(tmp_path: Path) -> None:
-    from openai_codex import client as client_module
+def test_explicit_deepseekx_bin_override_takes_priority(tmp_path: Path) -> None:
+    from deepseekx import client as client_module
 
     explicit_binary = tmp_path / (
-        "custom-codex.exe" if client_module.os.name == "nt" else "custom-codex"
+        "custom-deepseekx.exe" if client_module.os.name == "nt" else "custom-deepseekx"
     )
     explicit_binary.write_text("")
-    ops = client_module.CodexBinResolverOps(
-        installed_codex_path=lambda: (_ for _ in ()).throw(
+    ops = client_module.DeepSeekXBinResolverOps(
+        installed_deepseekx_path=lambda: (_ for _ in ()).throw(
             AssertionError("packaged runtime should not be used")
         ),
         path_exists=lambda path: path == explicit_binary,
     )
 
-    config = client_module.AppServerConfig(codex_bin=str(explicit_binary))
-    assert client_module.resolve_codex_bin(config, ops) == explicit_binary
+    config = client_module.AppServerConfig(deepseekx_bin=str(explicit_binary))
+    assert client_module.resolve_deepseekx_bin(config, ops) == explicit_binary
 
 
-def test_missing_runtime_package_requires_explicit_codex_bin() -> None:
-    from openai_codex import client as client_module
+def test_missing_runtime_package_requires_explicit_deepseekx_bin() -> None:
+    from deepseekx import client as client_module
 
-    ops = client_module.CodexBinResolverOps(
-        installed_codex_path=lambda: (_ for _ in ()).throw(
+    ops = client_module.DeepSeekXBinResolverOps(
+        installed_deepseekx_path=lambda: (_ for _ in ()).throw(
             FileNotFoundError("missing packaged runtime")
         ),
         path_exists=lambda _path: False,
     )
 
     with pytest.raises(FileNotFoundError, match="missing packaged runtime"):
-        client_module.resolve_codex_bin(client_module.AppServerConfig(), ops)
+        client_module.resolve_deepseekx_bin(client_module.AppServerConfig(), ops)
 
 
 def test_broken_runtime_package_does_not_fall_back() -> None:
-    from openai_codex import client as client_module
+    from deepseekx import client as client_module
 
-    ops = client_module.CodexBinResolverOps(
-        installed_codex_path=lambda: (_ for _ in ()).throw(
+    ops = client_module.DeepSeekXBinResolverOps(
+        installed_deepseekx_path=lambda: (_ for _ in ()).throw(
             FileNotFoundError("missing packaged binary")
         ),
         path_exists=lambda _path: False,
     )
 
     with pytest.raises(FileNotFoundError) as exc_info:
-        client_module.resolve_codex_bin(client_module.AppServerConfig(), ops)
+        client_module.resolve_deepseekx_bin(client_module.AppServerConfig(), ops)
 
     assert str(exc_info.value) == ("missing packaged binary")

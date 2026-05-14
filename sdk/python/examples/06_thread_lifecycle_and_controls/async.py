@@ -11,33 +11,33 @@ ensure_local_sdk_src()
 
 import asyncio
 
-from openai_codex import AsyncCodex, TextInput
+from deepseekx import AsyncDeepSeekX, TextInput
 
 
 async def main() -> None:
-    async with AsyncCodex(config=runtime_config()) as codex:
-        thread = await codex.thread_start(
-            model="gpt-5.4", config={"model_reasoning_effort": "high"}
+    async with AsyncDeepSeekX(config=runtime_config()) as deepseekx:
+        thread = await deepseekx.thread_start(
+            model="deepseek-v4-pro", config={"model_reasoning_effort": "high"}
         )
         first = await (
             await thread.turn(TextInput("One sentence about structured planning."))
         ).run()
         second = await (await thread.turn(TextInput("Now restate it for a junior engineer."))).run()
 
-        reopened = await codex.thread_resume(thread.id)
-        listing_active = await codex.thread_list(limit=20, archived=False)
+        reopened = await deepseekx.thread_resume(thread.id)
+        listing_active = await deepseekx.thread_list(limit=20, archived=False)
         reading = await reopened.read(include_turns=True)
 
         _ = await reopened.set_name("sdk-lifecycle-demo")
-        _ = await codex.thread_archive(reopened.id)
-        listing_archived = await codex.thread_list(limit=20, archived=True)
-        unarchived = await codex.thread_unarchive(reopened.id)
+        _ = await deepseekx.thread_archive(reopened.id)
+        listing_archived = await deepseekx.thread_list(limit=20, archived=True)
+        unarchived = await deepseekx.thread_unarchive(reopened.id)
 
         resumed_info = "n/a"
         try:
-            resumed = await codex.thread_resume(
+            resumed = await deepseekx.thread_resume(
                 unarchived.id,
-                model="gpt-5.4",
+                model="deepseek-v4-pro",
                 config={"model_reasoning_effort": "high"},
             )
             resumed_result = await (
@@ -49,7 +49,7 @@ async def main() -> None:
 
         forked_info = "n/a"
         try:
-            forked = await codex.thread_fork(unarchived.id, model="gpt-5.4")
+            forked = await deepseekx.thread_fork(unarchived.id, model="deepseek-v4-pro")
             forked_result = await (
                 await forked.turn(TextInput("Take a different angle in one short sentence."))
             ).run()

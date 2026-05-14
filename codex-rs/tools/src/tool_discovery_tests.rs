@@ -18,7 +18,7 @@ fn discoverable_tool_enums_use_expected_wire_names() {
 }
 
 #[test]
-fn filter_request_plugin_install_discoverable_tools_for_codex_tui_omits_plugins() {
+fn filter_request_plugin_install_discoverable_tools_for_deepseekx_tui_omits_plugins() {
     let discoverable_tools = vec![
         DiscoverableTool::Connector(Box::new(AppInfo {
             id: "connector_google_calendar".to_string(),
@@ -48,7 +48,7 @@ fn filter_request_plugin_install_discoverable_tools_for_codex_tui_omits_plugins(
     assert_eq!(
         filter_request_plugin_install_discoverable_tools_for_client(
             discoverable_tools,
-            Some("codex-tui"),
+            Some("deepseekx-tui"),
         ),
         vec![DiscoverableTool::Connector(Box::new(AppInfo {
             id: "connector_google_calendar".to_string(),

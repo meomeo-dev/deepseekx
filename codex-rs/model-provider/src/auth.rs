@@ -64,14 +64,17 @@ pub fn unauthenticated_auth_provider() -> SharedAuthProvider {
 
 /// Returns the provider-scoped auth manager when this provider uses command-backed auth.
 ///
-/// Providers without custom auth continue using the caller-supplied base manager, when present.
+/// Providers that require OpenAI/ChatGPT auth use the caller-supplied base manager. Other
+/// providers authenticate through provider-local config such as `env_key` and must not inherit
+/// DeepSeekX process auth from unrelated products.
 pub(crate) fn auth_manager_for_provider(
     auth_manager: Option<Arc<AuthManager>>,
     provider: &ModelProviderInfo,
 ) -> Option<Arc<AuthManager>> {
     match provider.auth.clone() {
         Some(config) => Some(AuthManager::external_bearer_only(config)),
-        None => auth_manager,
+        None if provider.requires_openai_auth => auth_manager,
+        None => None,
     }
 }
 
@@ -133,5 +136,14 @@ mod tests {
         let auth = resolve_provider_auth(/*auth*/ None, &provider).expect("auth should resolve");
 
         assert!(auth.to_auth_headers().is_empty());
+    }
+
+    #[test]
+    fn non_openai_provider_does_not_inherit_base_auth_manager() {
+        let provider =
+            create_oss_provider_with_base_url("http://localhost:11434/v1", WireApi::Responses);
+        let manager = AuthManager::from_auth_for_testing(CodexAuth::from_api_key("sk-test"));
+
+        assert!(auth_manager_for_provider(Some(manager), &provider).is_none());
     }
 }

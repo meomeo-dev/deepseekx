@@ -101,10 +101,10 @@ impl ToolExecutor<ToolInvocation> for RequestPluginInstallHandler {
             ));
         }
         if args.tool_type == DiscoverableToolType::Plugin
-            && turn.app_server_client_name.as_deref() == Some("codex-tui")
+            && turn.app_server_client_name.as_deref() == Some("deepseekx-tui")
         {
             return Err(FunctionCallError::RespondToModel(
-                "plugin install requests are not available in codex-tui yet".to_string(),
+                "plugin install requests are not available in DeepSeekX TUI yet".to_string(),
             ));
         }
 

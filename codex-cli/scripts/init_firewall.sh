@@ -3,7 +3,7 @@ set -euo pipefail  # Exit on error, undefined vars, and pipeline failures
 IFS=$'\n\t'       # Stricter word splitting
 
 # Read allowed domains from file
-ALLOWED_DOMAINS_FILE="/etc/codex/allowed_domains.txt"
+ALLOWED_DOMAINS_FILE="/etc/deepseekx/allowed_domains.txt"
 if [ -f "$ALLOWED_DOMAINS_FILE" ]; then
     ALLOWED_DOMAINS=()
     while IFS= read -r domain; do
@@ -12,7 +12,7 @@ if [ -f "$ALLOWED_DOMAINS_FILE" ]; then
     echo "Using domains from file: ${ALLOWED_DOMAINS[*]}"
 else
     # Fallback to default domains
-    ALLOWED_DOMAINS=("api.openai.com")
+    ALLOWED_DOMAINS=("api.deepseek.com")
     echo "Domains file not found, using default: ${ALLOWED_DOMAINS[*]}"
 fi
 

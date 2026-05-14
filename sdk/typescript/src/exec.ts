@@ -3,10 +3,10 @@ import path from "node:path";
 import readline from "node:readline";
 import { createRequire } from "node:module";
 
-import type { CodexConfigObject, CodexConfigValue } from "./codexOptions";
+import type { DeepSeekXConfigObject, DeepSeekXConfigValue } from "./codexOptions";
 import { SandboxMode, ModelReasoningEffort, ApprovalMode, WebSearchMode } from "./threadOptions";
 
-export type CodexExecArgs = {
+export type DeepSeekXExecArgs = {
   input: string;
 
   baseUrl?: string;
@@ -39,37 +39,47 @@ export type CodexExecArgs = {
   approvalPolicy?: ApprovalMode;
 };
 
-const INTERNAL_ORIGINATOR_ENV = "CODEX_INTERNAL_ORIGINATOR_OVERRIDE";
-const TYPESCRIPT_SDK_ORIGINATOR = "codex_sdk_ts";
-const CODEX_NPM_NAME = "@openai/codex";
+const INTERNAL_ORIGINATOR_ENV = "DEEPSEEKX_INTERNAL_ORIGINATOR_OVERRIDE";
+const TYPESCRIPT_SDK_ORIGINATOR = "deepseekx_sdk_ts";
+const DEEPSEEKX_NPM_NAME = "@meomeo/deepseekx";
+const CODEX_ENV_KEYS_TO_DROP = new Set([
+  "CODEX_API_KEY",
+  "CODEX_ACCESS_TOKEN",
+  "CODEX_EXEC_PATH",
+  "CODEX_EXEC_SERVER_REMOTE_BEARER_TOKEN",
+  "CODEX_EXEC_SERVER_URL",
+  "CODEX_HOME",
+  "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+  "CODEX_SQLITE_HOME",
+]);
 
 const PLATFORM_PACKAGE_BY_TARGET: Record<string, string> = {
-  "x86_64-unknown-linux-musl": "@openai/codex-linux-x64",
-  "aarch64-unknown-linux-musl": "@openai/codex-linux-arm64",
-  "x86_64-apple-darwin": "@openai/codex-darwin-x64",
-  "aarch64-apple-darwin": "@openai/codex-darwin-arm64",
-  "x86_64-pc-windows-msvc": "@openai/codex-win32-x64",
-  "aarch64-pc-windows-msvc": "@openai/codex-win32-arm64",
+  "x86_64-unknown-linux-musl": "@meomeo/deepseekx-linux-x64",
+  "aarch64-unknown-linux-musl": "@meomeo/deepseekx-linux-arm64",
+  "x86_64-apple-darwin": "@meomeo/deepseekx-darwin-x64",
+  "aarch64-apple-darwin": "@meomeo/deepseekx-darwin-arm64",
+  "x86_64-pc-windows-msvc": "@meomeo/deepseekx-win32-x64",
+  "aarch64-pc-windows-msvc": "@meomeo/deepseekx-win32-arm64",
 };
 
 const moduleRequire = createRequire(import.meta.url);
 
-export class CodexExec {
+export class DeepSeekXExec {
   private executablePath: string;
   private envOverride?: Record<string, string>;
-  private configOverrides?: CodexConfigObject;
+  private configOverrides?: DeepSeekXConfigObject;
 
   constructor(
     executablePath: string | null = null,
     env?: Record<string, string>,
-    configOverrides?: CodexConfigObject,
+    configOverrides?: DeepSeekXConfigObject,
   ) {
-    this.executablePath = executablePath || findCodexPath();
+    this.executablePath = executablePath || findDeepSeekXPath();
     this.envOverride = env;
     this.configOverrides = configOverrides;
   }
 
-  async *run(args: CodexExecArgs): AsyncGenerator<string> {
+  async *run(args: DeepSeekXExecArgs): AsyncGenerator<string> {
     const commandArgs: string[] = ["exec", "--experimental-json"];
 
     if (this.configOverrides) {
@@ -149,6 +159,9 @@ export class CodexExec {
       Object.assign(env, this.envOverride);
     } else {
       for (const [key, value] of Object.entries(process.env)) {
+        if (CODEX_ENV_KEYS_TO_DROP.has(key)) {
+          continue;
+        }
         if (value !== undefined) {
           env[key] = value;
         }
@@ -158,7 +171,7 @@ export class CodexExec {
       env[INTERNAL_ORIGINATOR_ENV] = TYPESCRIPT_SDK_ORIGINATOR;
     }
     if (args.apiKey) {
-      env.CODEX_API_KEY = args.apiKey;
+      env.DEEPSEEK_API_KEY = args.apiKey;
     }
 
     const child = spawn(this.executablePath, commandArgs, {
@@ -212,7 +225,9 @@ export class CodexExec {
       if (code !== 0 || signal) {
         const stderrBuffer = Buffer.concat(stderrChunks);
         const detail = signal ? `signal ${signal}` : `code ${code ?? 1}`;
-        throw new Error(`Codex Exec exited with ${detail}: ${stderrBuffer.toString("utf8")}`);
+        throw new Error(
+          `DeepSeekX exec exited with ${detail}: ${stderrBuffer.toString("utf8")}`,
+        );
       }
     } finally {
       rl.close();
@@ -226,14 +241,14 @@ export class CodexExec {
   }
 }
 
-function serializeConfigOverrides(configOverrides: CodexConfigObject): string[] {
+function serializeConfigOverrides(configOverrides: DeepSeekXConfigObject): string[] {
   const overrides: string[] = [];
   flattenConfigOverrides(configOverrides, "", overrides);
   return overrides;
 }
 
 function flattenConfigOverrides(
-  value: CodexConfigValue,
+  value: DeepSeekXConfigValue,
   prefix: string,
   overrides: string[],
 ): void {
@@ -242,7 +257,7 @@ function flattenConfigOverrides(
       overrides.push(`${prefix}=${toTomlValue(value, prefix)}`);
       return;
     } else {
-      throw new Error("Codex config overrides must be a plain object");
+      throw new Error("DeepSeekX config overrides must be a plain object");
     }
   }
 
@@ -258,7 +273,7 @@ function flattenConfigOverrides(
 
   for (const [key, child] of entries) {
     if (!key) {
-      throw new Error("Codex config override keys must be non-empty strings");
+      throw new Error("DeepSeekX config override keys must be non-empty strings");
     }
     if (child === undefined) {
       continue;
@@ -272,12 +287,12 @@ function flattenConfigOverrides(
   }
 }
 
-function toTomlValue(value: CodexConfigValue, path: string): string {
+function toTomlValue(value: DeepSeekXConfigValue, path: string): string {
   if (typeof value === "string") {
     return JSON.stringify(value);
   } else if (typeof value === "number") {
     if (!Number.isFinite(value)) {
-      throw new Error(`Codex config override at ${path} must be a finite number`);
+      throw new Error(`DeepSeekX config override at ${path} must be a finite number`);
     }
     return `${value}`;
   } else if (typeof value === "boolean") {
@@ -289,7 +304,7 @@ function toTomlValue(value: CodexConfigValue, path: string): string {
     const parts: string[] = [];
     for (const [key, child] of Object.entries(value)) {
       if (!key) {
-        throw new Error("Codex config override keys must be non-empty strings");
+        throw new Error("DeepSeekX config override keys must be non-empty strings");
       }
       if (child === undefined) {
         continue;
@@ -298,10 +313,10 @@ function toTomlValue(value: CodexConfigValue, path: string): string {
     }
     return `{${parts.join(", ")}}`;
   } else if (value === null) {
-    throw new Error(`Codex config override at ${path} cannot be null`);
+    throw new Error(`DeepSeekX config override at ${path} cannot be null`);
   } else {
     const typeName = typeof value;
-    throw new Error(`Unsupported Codex config override value at ${path}: ${typeName}`);
+    throw new Error(`Unsupported DeepSeekX config override value at ${path}: ${typeName}`);
   }
 }
 
@@ -310,11 +325,11 @@ function formatTomlKey(key: string): string {
   return TOML_BARE_KEY.test(key) ? key : JSON.stringify(key);
 }
 
-function isPlainObject(value: unknown): value is CodexConfigObject {
+function isPlainObject(value: unknown): value is DeepSeekXConfigObject {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function findCodexPath() {
+function findDeepSeekXPath() {
   const { platform, arch } = process;
 
   let targetTriple = null;
@@ -371,19 +386,19 @@ function findCodexPath() {
 
   let vendorRoot: string;
   try {
-    const codexPackageJsonPath = moduleRequire.resolve(`${CODEX_NPM_NAME}/package.json`);
-    const codexRequire = createRequire(codexPackageJsonPath);
-    const platformPackageJsonPath = codexRequire.resolve(`${platformPackage}/package.json`);
+    const packageJsonPath = moduleRequire.resolve(`${DEEPSEEKX_NPM_NAME}/package.json`);
+    const deepseekxRequire = createRequire(packageJsonPath);
+    const platformPackageJsonPath = deepseekxRequire.resolve(`${platformPackage}/package.json`);
     vendorRoot = path.join(path.dirname(platformPackageJsonPath), "vendor");
   } catch {
     throw new Error(
-      `Unable to locate Codex CLI binaries. Ensure ${CODEX_NPM_NAME} is installed with optional dependencies.`,
+      `Unable to locate DeepSeekX CLI binaries. Ensure ${DEEPSEEKX_NPM_NAME} is installed with optional dependencies.`,
     );
   }
 
   const archRoot = path.join(vendorRoot, targetTriple);
-  const codexBinaryName = process.platform === "win32" ? "codex.exe" : "codex";
-  const binaryPath = path.join(archRoot, "codex", codexBinaryName);
+  const codexBinaryName = process.platform === "win32" ? "deepseekx.exe" : "deepseekx";
+  const binaryPath = path.join(archRoot, "deepseekx", codexBinaryName);
 
   return binaryPath;
 }

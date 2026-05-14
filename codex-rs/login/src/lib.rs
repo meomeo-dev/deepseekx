@@ -43,6 +43,7 @@ pub use auth::login_with_api_key;
 pub use auth::logout;
 pub use auth::logout_with_revoke;
 pub use auth::read_codex_access_token_from_env;
+pub use auth::read_codex_api_key_from_env;
 pub use auth::read_openai_api_key_from_env;
 pub use auth::save_auth;
 pub use auth_env_telemetry::AuthEnvTelemetry;

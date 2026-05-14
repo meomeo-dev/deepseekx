@@ -80,14 +80,14 @@ trust_level = "trusted"
     ]);
     let _response_mock = responses::mount_sse_once(&server, sse).await;
     let openai_base_url_config = format!("openai_base_url=\"{}/v1\"", server.uri());
-    let codex = if let Ok(path) = codex_utils_cargo_bin::cargo_bin("codex") {
+    let codex = if let Ok(path) = codex_utils_cargo_bin::cargo_bin("deepseekx") {
         path
     } else {
-        let fallback = repo_root.join("codex-rs/target/debug/codex");
+        let fallback = repo_root.join("codex-rs/target/debug/deepseekx");
         if fallback.is_file() {
             fallback
         } else {
-            eprintln!("skipping integration test because codex binary is unavailable");
+            eprintln!("skipping integration test because deepseekx binary is unavailable");
             return Ok(());
         }
     };
@@ -100,19 +100,19 @@ trust_level = "trusted"
         .arg("-C")
         .arg(&repo_root)
         .arg("seed session for resume")
-        .env("CODEX_HOME", codex_home.path())
+        .env("DEEPSEEKX_HOME", codex_home.path())
         .env("OPENAI_API_KEY", "dummy")
         .output()
-        .context("failed to execute codex exec")?;
+        .context("failed to execute deepseekx exec")?;
     anyhow::ensure!(
         exec_output.status.success(),
-        "codex exec failed: {}",
+        "deepseekx exec failed: {}",
         String::from_utf8_lossy(&exec_output.stderr)
     );
 
     let mut env = HashMap::new();
     env.insert(
-        "CODEX_HOME".to_string(),
+        "DEEPSEEKX_HOME".to_string(),
         codex_home.path().display().to_string(),
     );
     env.insert("OPENAI_API_KEY".to_string(), "dummy".to_string());

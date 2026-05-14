@@ -3,8 +3,8 @@
 ## Goal
 
 将用户安装、启动、配置、TUI、server 模式和 SDK 包装层中的主产品
-感知调整为 DeepSeekX，同时保留 Codex 内核、协议和兼容入口，
-降低后续与上游 Codex 版本对齐时的冲突成本。
+感知调整为 DeepSeekX。DeepSeekX 必须与用户可能已安装的原版
+OpenAI Codex 并存，不抢占 `codex` 命令，不读取原版 Codex 配置。
 
 ## Source Documents
 
@@ -34,25 +34,26 @@ app-server v2 wire schema、测试夹具和上游协议名默认保留 Codex 命
 - TUI 首页、输入框、状态卡和启动摘要展示 DeepSeekX。
 - 默认 provider、模型和凭据提示面向 DeepSeek API。
 - 配置目录优先使用 `DEEPSEEKX_HOME` 和 `~/.deepseekx`。
-- 旧 `codex` 命令、`CODEX_HOME` 和 `~/.codex` 保持兼容路径。
+- 原版 `codex` 命令、`CODEX_HOME` 和 `~/.codex` 不被 DeepSeekX
+  安装、读取或修改。
 - app-server v2 wire schema 不改名，由 SDK 包装层隐藏历史命名。
 
 ## Roadmap Phases
 
 1. 建立 CLI 外壳：新增或调整 `deepseekx` launcher、帮助文案和 exec
-   人类可读输出，同时保留 `codex` 兼容入口。
+   人类可读输出，不安装或保留 `codex` 兼容入口。
 2. 改造 TUI 用户文案：集中产品 label，更新标题、placeholder、
    状态卡、approval 文案和必要 snapshot。
 3. 调整默认 provider 与认证提示：DeepSeekX build 默认使用 DeepSeek
    provider，并把默认凭据说明切到 `DEEPSEEK_API_KEY`。
-4. 增加配置 home 兼容层：支持 `DEEPSEEKX_HOME`、`~/.deepseekx` 和
-   legacy Codex 路径读取，不静默迁移 secret。
+4. 增加配置 home 隔离层：支持 `DEEPSEEKX_HOME` 和 `~/.deepseekx`，
+   不读取 `CODEX_HOME` 或 `~/.codex`，不静默迁移 secret。
 5. 改造打包产物：npm、平台包、nightly artifact、安装脚本和主 binary
-   命名使用 DeepSeekX，保留 `codex` alias。
-6. 建立 SDK 和 app-server 包装层：SDK 默认寻找 `deepseekx` binary，
+   命名使用 DeepSeekX，不发布 `codex` alias。
+6. 建立 SDK 和 app-server 包装层：SDK 只寻找 `deepseekx` binary，
    文档和 examples 使用 DeepSeekX，v2 wire schema 保持兼容。
-7. 做兼容验收：覆盖新入口、legacy 入口、配置路径、默认 provider、
-   app-server 启动和 release artifact 命名。
+7. 做隔离验收：覆盖 DeepSeekX 入口、原版 Codex 并存、配置路径、
+   默认 provider、app-server 启动和 release artifact 命名。
 
 ## Quality Gates
 
@@ -64,6 +65,8 @@ app-server v2 wire schema、测试夹具和上游协议名默认保留 Codex 命
 - app-server 协议形状改动必须运行 `just write-app-server-schema`。
 - 打包和 SDK 改动必须运行对应 package 的最小构建或测试。
 - 不执行全仓库 `codex -> deepseekx` 字符串替换。
+- 不发布 `codex` 命令别名、shim、软链接或 npm `bin` alias。
+- 不读取 `CODEX_HOME` 或 `~/.codex` 作为 DeepSeekX 配置路径。
 
 ## Risks
 
@@ -74,9 +77,11 @@ app-server v2 wire schema、测试夹具和上游协议名默认保留 Codex 命
 - 包名和 SDK import 名是公开 API，改造会影响安装、测试和发布
   流水线。
 - app-server v2 wire schema 若直接改名，会破坏已发布客户端兼容。
+- 若 DeepSeekX 抢占 `codex` 命令或读取 `~/.codex`，会破坏用户
+  原版 OpenAI Codex 的真实使用环境。
 
 ## Residual Risks
 
 首轮完成后，内部 crate、测试 helper、telemetry key 和 v2 schema 中
-仍会保留 Codex 命名。这是上游对齐成本控制的一部分，不应视为
-用户感知面未完成，除非这些名称直接暴露给最终用户。
+仍会保留 Codex 命名。这些名称不能变成命令、安装包、配置目录或
+SDK fallback，否则会破坏 DeepSeekX 与原版 OpenAI Codex 的隔离边界。
