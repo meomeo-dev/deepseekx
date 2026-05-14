@@ -1433,7 +1433,11 @@ fn namespace_specs_are_hidden_when_namespace_tools_are_disabled() {
     );
 
     assert_lacks_tool_name(&tools, "mcp__sample__");
+    let tool = find_function_tool(&tools, "mcp__sample__echo");
+    assert_eq!(tool.name, "mcp__sample__echo");
+    assert_eq!(tool.description, "Echo");
     assert!(registry.has_handler(&ToolName::namespaced("mcp__sample__", "echo")));
+    assert!(registry.has_handler(&ToolName::plain("mcp__sample__echo")));
 }
 
 #[test]
@@ -2646,6 +2650,14 @@ fn find_tool<'a>(tools: &'a [ToolSpec], expected_name: &str) -> &'a ToolSpec {
         .iter()
         .find(|tool| tool.name() == expected_name)
         .unwrap_or_else(|| panic!("expected tool {expected_name}"))
+}
+
+fn find_function_tool<'a>(tools: &'a [ToolSpec], expected_name: &str) -> &'a ResponsesApiTool {
+    let tool = find_tool(tools, expected_name);
+    let ToolSpec::Function(function) = tool else {
+        panic!("expected function tool {expected_name}");
+    };
+    function
 }
 
 fn assert_process_tool_environment_id(

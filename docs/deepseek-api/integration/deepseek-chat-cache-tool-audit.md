@@ -100,6 +100,9 @@ DeepSeek。
 当前实现符合基础工具调用路径：
 
 - `ToolSpec::Function` 转为 Chat Completions `type: function` tool。
+- 当 provider 不支持 Responses `namespace` 工具时，MCP namespace 工具
+  会降级为扁平 function tool。例如 Context7 的 `query_docs` 会暴露为
+  `mcp__context7__query_docs`，并由本地工具路由回原 MCP server。
 - tool choice 使用 `auto`。
 - 流式 `delta.tool_calls` 会聚合 fragmented arguments。
 - 完成后生成内部 `ResponseItem::FunctionCall`。
@@ -109,7 +112,7 @@ DeepSeek。
 
 DeepSeek 只支持 function tools。当前实现拒绝或禁用无直接等价的能力：
 
-- namespace tools
+- Responses namespace tool wire shape
 - hosted web search
 - hosted image generation
 - tool search

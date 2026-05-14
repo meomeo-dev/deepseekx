@@ -37,6 +37,10 @@ pub(crate) type ToolTelemetryTags = Vec<(&'static str, String)>;
 pub use codex_tools::ToolExecutor;
 
 pub trait ToolHandler: ToolExecutor<ToolInvocation> {
+    fn fallback_spec(&self) -> Option<ToolSpec> {
+        None
+    }
+
     fn search_info(&self) -> Option<ToolSearchInfo> {
         None
     }
@@ -160,6 +164,8 @@ pub(crate) trait AnyToolHandler: Send + Sync {
 
     fn spec(&self) -> Option<ToolSpec>;
 
+    fn fallback_spec(&self) -> Option<ToolSpec>;
+
     fn search_info(&self) -> Option<ToolSearchInfo>;
 
     fn supports_parallel_tool_calls(&self) -> bool;
@@ -196,6 +202,10 @@ where
 
     fn spec(&self) -> Option<ToolSpec> {
         ToolExecutor::spec(self)
+    }
+
+    fn fallback_spec(&self) -> Option<ToolSpec> {
+        ToolHandler::fallback_spec(self)
     }
 
     fn search_info(&self) -> Option<ToolSearchInfo> {
@@ -576,11 +586,39 @@ impl ToolRegistryBuilder {
             return;
         }
 
+        let fallback_spec = handler.fallback_spec();
+        let flat_alias = fallback_spec
+            .as_ref()
+            .map(ToolSpec::name)
+            .map(ToolName::plain);
+        if let Some(alias) = &flat_alias
+            && self.handlers.contains_key(alias)
+        {
+            error_or_panic(format!("handler for tool alias {alias} already registered"));
+            return;
+        }
+
         if include_spec && let Some(spec) = handler.spec() {
             self.push_spec(spec);
         }
+        if include_spec && let Some(spec) = fallback_spec {
+            self.push_spec(spec);
+        }
 
-        self.handlers.insert(name, handler);
+        self.handlers.insert(name, Arc::clone(&handler));
+        if let Some(alias) = flat_alias {
+            self.handlers.insert(alias, handler);
+        }
+    }
+
+    pub(crate) fn push_fallback_spec(&mut self, spec: ToolSpec) {
+        let has_spec = self
+            .specs
+            .iter()
+            .any(|existing| existing.name() == spec.name());
+        if !has_spec {
+            self.push_spec(spec);
+        }
     }
 
     pub fn register_extension_tool_executor(&mut self, executor: Arc<dyn ExtensionToolExecutor>) {

@@ -126,6 +126,14 @@ pub fn build_tool_registry_builder(
         builder.push_spec(spec);
     }
 
+    if !config.namespace_tools {
+        for handler in &handlers {
+            if let Some(spec) = handler.fallback_spec() {
+                builder.push_fallback_spec(spec);
+            }
+        }
+    }
+
     for handler in handlers {
         builder.register_any_handler_without_spec(handler);
     }
