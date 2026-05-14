@@ -1,14 +1,14 @@
 ---
-name: we:we-skill-maker
-description: Create or maintain project-local WE skills under
-  .codex/skills/we/<short_name>/ with concise SKILL.md instructions, optional
-  scripts/templates/data folders, project safety checks, and commit hygiene.
+name: we-skill-maker
+description: Use when creating or maintaining project-local WE skills under
+  .agents/skills/we-<short-name>/ with concise SKILL.md instructions,
+  optional scripts/templates/data folders, safety checks, and commit hygiene.
 ---
 
 # WE Skill Maker
 
 Use this skill when the user asks to create, update, or standardize a
-project-local skill in `.codex/skills/we/<short_name>/`.
+project-local skill in `.agents/skills/we-<short-name>/`.
 
 ## Scope
 
@@ -20,20 +20,18 @@ plugins.
 
 - Use a short lowercase kebab-case name.
 - Prefer names that describe the repeated operation:
-  `deepseek-cache-bench`, `deepseek-branch-sync`,
-  `deepseekx-worktree-clean`, `deepseekx-bug-fix`,
-  `deepseekx-feature-dev`, `deepseekx-github-flow`.
+  `deepseek-cache-bench`, `deepseek-branch-sync`.
 - Avoid vague names such as `helper`, `tool`, `workflow`, or `misc`.
-- Directory must be `.codex/skills/we/<short_name>/`.
-- Frontmatter `name` must be `we:<short_name>`.
-- Invoke WE skills with `$we:<short_name>` after Codex reloads skills.
+- Directory must be `.agents/skills/we-<short-name>/`.
+- Frontmatter `name` must be `we-<short-name>`.
+- Invoke WE skills with `$we-<short-name>` after Codex reloads skills.
 
 ## Required Shape
 
 Every WE skill needs:
 
 ```text
-.codex/skills/we/<short_name>/
+.agents/skills/we-<short-name>/
 └── SKILL.md
 ```
 
@@ -59,7 +57,7 @@ explicitly asks. Put operational instructions in `SKILL.md`.
 - Mention scripts by relative path and explain when to run them.
 - Do not include chat framing or generation notes.
 - Use Chinese-first prose when writing project-facing docs.
-- Keep lines at or under 88 characters.
+- Use 88 characters as the default target line width, not an absolute rule.
 
 ## Safety Rules
 
@@ -68,37 +66,28 @@ explicitly asks. Put operational instructions in `SKILL.md`.
 - Helper scripts should default to read-only unless mutation is the point.
 - For branch, Docker, network, or filesystem operations, include preflight
   checks and stop conditions.
-- For development workflows, branch and remote state must be checked by a
-  preflight script. Do not rely on LLM memory.
-- For git workflow skills, document that the user is the initiator and the
-  AI/LLM is the executor. Commit, push, PR, merge, tag, and branch cleanup
-  must have explicit confirmation boundaries.
-- Keep high-risk upstream sync, ordinary feature development, and release
-  operations in separate skills when they repeat often.
 - If a workflow can destroy work, require explicit user confirmation in the
   skill text instead of automating it.
 
 ## Creation Procedure
 
 1. Inspect existing WE skills for naming and structure.
-2. Choose `<short_name>` and create its directory.
+2. Choose `<short-name>` and create its directory.
 3. Write `SKILL.md` first.
 4. Add `scripts/`, `templates/`, `data/`, or `references/` only when they
    materially improve repeatability.
-5. Add a read-only preflight script for branch, Docker, network, or filesystem
-   workflows.
-6. Prefer small scripts over long pasted shell snippets.
-7. Validate the skill files.
-8. Stage only the new or changed skill directory.
-9. Commit when the user asks, leaving unrelated files untouched.
+5. Prefer small scripts over long pasted shell snippets.
+6. Validate the skill files.
+7. Stage only the new or changed skill directory.
+8. Commit when the user asks, leaving unrelated files untouched.
 
 ## Scaffold Helper
 
 Use the helper to create a minimal directory and `SKILL.md` draft:
 
 ```bash
-.codex/skills/we/we-skill-maker/scripts/scaffold_we_skill.sh \
-  <short_name> "One sentence description"
+.agents/skills/we-skill-maker/scripts/scaffold_we_skill.sh \
+  <short-name> "One sentence description"
 ```
 
 After scaffolding, edit `SKILL.md` manually. The helper intentionally creates
@@ -111,7 +100,7 @@ Run these before finalizing:
 ```bash
 python3 - <<'PY'
 from pathlib import Path
-root = Path('.codex/skills/we/<short_name>')
+root = Path('.agents/skills/we-<short-name>')
 for path in root.rglob('*'):
     if not path.is_file():
         continue
@@ -125,8 +114,8 @@ PY
 For scripts:
 
 ```bash
-bash -n .codex/skills/we/<short_name>/scripts/*.sh
-python3 -m py_compile .codex/skills/we/<short_name>/scripts/*.py
+bash -n .agents/skills/we-<short-name>/scripts/*.sh
+python3 -m py_compile .agents/skills/we-<short-name>/scripts/*.py
 ```
 
 Use only the relevant command when a script type exists.
@@ -143,7 +132,7 @@ git diff --cached --name-only
 Ensure the staged paths are limited to:
 
 ```text
-.codex/skills/we/<short_name>/
+.agents/skills/we-<short-name>/
 ```
 
 Never stage `.env`, key files, scratch research directories, or unrelated

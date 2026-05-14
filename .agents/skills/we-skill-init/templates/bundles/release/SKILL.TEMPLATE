@@ -1,0 +1,247 @@
+---
+name: we-release
+description: >
+  Use when the user says `we-release` in this repository. Expands the
+  __WE_PROJECT_NAME__ private/public dual-repository release workflow.
+---
+
+# we-release
+
+## Adaptation Gate
+
+- project type：`__WE_PROJECT_TYPE__`。
+- release adaptation status：`__WE_RELEASE_ADAPTATION_STATUS__`。
+__WE_RELEASE_ADAPTATION_GUIDANCE__
+
+如果状态以 `needs-adaptation:` 开头，先用 `$we-design-note` 或
+`$we-skill-maker` 明确本项目的版本源、发布物、发布渠道、
+校验命令和回滚策略，再执行 release。不要直接套用 npm CLI 流程。
+
+执行本仓库的 npm 发布准备请求，并协调公开仓库发布镜像。
+私有仓库是开发事实来源（source of truth），公开仓库是清洗后的
+发布镜像（sanitized release mirror），具体公开镜像检查和同步使用
+`$we-public-sync`。
+
+维护版本号，更新发布记录，做安全审计（security audit）。
+编译并打包 tarball。在临时目录安装 tarball 后测试 CLI，
+完成发布前检查。
+如果全部通过，则提交发布准备变更，同步公开仓库，
+并提供 npm 发布命令。
+
+不要自动执行 `npm publish`，除非用户明确要求发布。
+如果用户只要求 npm registry 发布或发布后验证，使用 `$we-publish`。
+进入本技能前，若用户是在询问“能不能发、发什么版本、是否要跑
+Windows 或 GitHub Release”，先使用 `$we-release-readiness`。
+
+## Boundaries
+
+- 私有仓库：`__WE_PRIVATE_ROOT__`
+- 私有 GitHub：`__WE_PRIVATE_REPO_URL__`
+- 私有仓库承载开发、内部工作流、任务表、研究记录
+  和本地 skill。
+- 私有远端必须保持私有，仓库名使用 `__WE_PRIVATE_REPO_NAME__`。
+- 公开仓库：`__WE_PUBLIC_ROOT__`
+- 公开 GitHub：`__WE_PUBLIC_REPO_URL__`
+- 公开仓库是清洗导出（sanitized export），使用独立 git 历史。
+- 公开远端必须保持公开，仓库名使用 `__WE_PUBLIC_REPO_NAME__`。
+- npm 包名以 `package.json` 的 `name` 为准，当前为 `__WE_PACKAGE_NAME__`。
+- npm `repository`、`bugs`、`homepage` 必须指向公开 GitHub 仓库。
+- 公开仓库不得展示 `_tasks/`、`_workflows/`、`.deep-research/`、
+  `.codex/`、`.env`、本地 cache 或私有配置。
+- `__WE_PUBLIC_KNOWLEDGE_DIR__/` 是可公开知识库，可以同步到公开仓库；
+  同步前仍需扫描私有路径、私有远端、凭据和内部任务引用。
+- 公开仓库不得保留私有仓库路径、私有远端、内部任务
+  或工作流引用。
+- 历史 `__WE_PROJECT_NAME__-*.tgz` 文件不是当前包名的权威来源。
+- 发布包内容由 `package.json` 的 `files` 与 `scripts/package-verify.mjs`
+  控制，不要手动复制仓库文件到包内。
+- 不要发布 `_tasks/`、`_workflows/`、`__WE_PUBLIC_KNOWLEDGE_DIR__/`、
+  `scripts/`、`specs/`、`src/`、`test/`、`tmp/`、`.deep-research/`、
+  `.codex/`、`.env`、本地 cache、凭据、私有配置或未列入白名单的文件。
+- 实际 npm publish、registry post-check 和 registry 安装验证属于
+  `$we-publish`；本技能只在双仓库发布准备完成后给出发布命令。
+- 公开仓库清洗同步、泄漏扫描和公开 metadata 验证属于
+  `$we-public-sync`；本技能负责在 release 流程中调用并记录结论。
+- GitHub Release 只在用户明确要求时创建。默认 npm registry package
+  是权威发布物（canonical artifact）。
+
+## Release Readiness Gate
+
+开始维护版本号前，应确认已经满足或本轮将处理：
+
+- 目标版本高于 npm latest，且 SemVer 类型可解释。
+- `CHANGELOG.md` 有或将新增对应版本条目。
+- 本轮是否需要 Windows CI 已由 `$we-release-readiness` 或用户确认。
+- GitHub Release 页面是否需要创建已明确。
+- 公开仓库镜像是否需要同步已明确；需要时必须使用 `$we-public-sync`。
+- 发布附件策略已明确：默认只使用 npm tarball 和可选 checksum。
+- 工作区没有未解释 dirty、staged、tarball、cache、`.env` 或凭据风险。
+
+如果这些问题尚未判断，先停下并切回 `$we-release-readiness`。
+
+## Release Artifact Policy
+
+本项目是 npm CLI package，不是原生桌面应用或独立二进制发行版。
+默认发布物应围绕 npm tarball 和 registry 验证组织。
+
+- 权威安装入口是 `npm install -g __WE_PACKAGE_NAME__` 或等价 npm 安装。
+- 权威 tarball 由 `npm pack --ignore-scripts` 生成。
+- tarball 文件名使用 npm 生成的格式：
+  `__WE_PACKAGE_TARBALL_PATTERN__`。
+- 不手动重命名 npm tarball，除非只是复制到临时验证目录。
+- 不提交 tarball 到 git。
+- 不把 CI 平台 artifact 当成公开 release 文件，除非未来构建出真正
+  不同的平台产物。
+- 当前 Linux 和 Windows CI artifact 只用于验证 npm 包可跨平台打包。
+
+如果用户要求 GitHub Release，使用：
+
+- tag：`v<semver>`，例如 `v0.7.1`。
+- release title：`__WE_PACKAGE_NAME__ v<semver>`。
+- release notes：来自 `CHANGELOG.md` 的对应版本条目。
+- 附件优先只上传 npm tarball：
+  `__WE_PACKAGE_TARBALL_PATTERN__`。
+- 可选上传 checksum：
+  `__WE_PACKAGE_TARBALL_PATTERN__.sha256`。
+
+## Version And Tag Policy
+
+版本号（version）和 git tag 属于 release 准备范围，由 `$we-release`
+控制。npm registry 发布和 dist-tag 验证属于 `$we-publish`。
+
+- 版本号使用 SemVer，并写入 `package.json`。
+- 如果存在 `package-lock.json`，必须同步 lockfile 版本。
+- `CHANGELOG.md` 必须有对应版本条目和用户可见变化摘要。
+- release tag 使用 `v<semver>`，例如 `v0.7.1`。
+- tag message 使用 `__WE_PACKAGE_NAME__ v<semver>`。
+- tag 应指向已通过发布门禁的 release commit。
+- 不要在 dirty worktree、staged 内容未解释、版本不一致、
+  changelog 缺失、CI 或 release preflight 失败时创建 tag。
+- 不要为了 npm publish 单独创建 tag；tag 是 release 记录的一部分。
+- 私有仓库和公开仓库使用独立历史时，必须在最终答复说明两个 tag
+  分别属于哪个仓库。对外 GitHub Release 使用公开仓库 tag，npm
+  registry 记录使用发布包版本作为权威。
+
+创建 tag 前检查：
+
+```bash
+version="$(node -p "require('./package.json').version")"
+test "v$version" = "<expected-tag>"
+git status --short --branch
+git tag --list "v$version"
+```
+
+创建 annotated tag：
+
+```bash
+git tag -a "v$version" -m "__WE_PACKAGE_NAME__ v$version"
+```
+
+推送 tag 前必须确认：
+
+- 私有仓库 release commit 已推送到私有远端。
+- 公开仓库清洗快照已提交并推送到公开远端。
+- tag 指向的 commit 是最终 release commit。
+- 用户明确确认可以推送 tag，或 release 流程已到推送 tag 阶段。
+
+推送 tag：
+
+```bash
+git push origin "v$version"
+```
+
+如果 GitHub Release 页面也要创建，必须复用同一个 tag。
+
+不要上传：
+
+- `node_modules/`、`dist/` 裸目录、测试日志、coverage、CI logs。
+- `_tasks/`、`_workflows/`、`.codex/`、`.deep-research/`、
+  `__WE_PUBLIC_KNOWLEDGE_DIR__/`。
+- `.env`、`.npmrc`、cache、runtime output、summary 或凭据文件。
+
+如果未来需要平台专属文件，命名格式使用：
+
+```text
+__WE_ARTIFACT_NAME_PREFIX__-<version>-<platform>-<arch>.<ext>
+```
+
+示例：
+
+```text
+__WE_ARTIFACT_NAME_PREFIX__-0.8.0-linux-x64.tar.gz
+__WE_ARTIFACT_NAME_PREFIX__-0.8.0-windows-x64.zip
+__WE_ARTIFACT_NAME_PREFIX__-0.8.0-darwin-arm64.tar.gz
+```
+
+平台专属文件必须有真实差异，例如 native binary、installer 或
+bundled runtime；纯 npm CLI 不需要这些文件。
+
+## Workflow
+
+1. 检查私有工作区：`git status --short --branch`。
+2. 维护版本号：更新 `package.json` 与 `package-lock.json`，必要时更新
+   `CHANGELOG.md`、`README.md`、`README.zh-CN.md`。
+3. 执行安全检查：检查 secret 泄漏、包内容白名单、`.env`。
+   同时检查本地缓存未被纳入发布。可显式运行：
+   `npm audit --omit=dev`。记录网络或 registry 限制。
+4. 运行发布门禁：`npm run release:preflight`。
+5. 打包：`npm run pack:release`。
+6. 记录生成的 tarball 文件名、大小和 sha256；文件名应匹配
+   `__WE_PACKAGE_TARBALL_PATTERN__`。
+7. 在临时目录安装最新 tarball，并至少运行：
+   `__WE_SMOKE_COMMAND_1__`、`__WE_SMOKE_COMMAND_2__`、
+   `__WE_SMOKE_COMMAND_3__`。
+8. 复查 `npm pack --dry-run --json --ignore-scripts` 输出，确认只包含预期
+   runtime 文件和实验 example-feature 模板白名单文件。
+9. 如果所有检查通过，提交私有仓库变更。
+10. 使用 `$we-public-sync` 检查公开仓库当前状态和同步风险。
+11. 用户明确要求同步时，按 `$we-public-sync` 的排除规则同步公开仓库。
+12. 同步后再次使用 `$we-public-sync` 检查泄漏和 package metadata。
+13. 在公开仓库运行 `npm run build:package`、`npm run package:verify`、
+    `npm run typecheck`。
+14. 公开仓库通过验证后，提交并推送公开仓库。
+15. 记录 `$we-public-sync` 结论、公开提交和公开远端。
+16. 推送私有仓库到私有后缀远端。
+17. 如果用户要求发布 tag，按 Version And Tag Policy 创建并推送
+    annotated tag。
+18. 最终答复给出实际验证结果、私有/公开提交哈希、tag、tarball 名称、
+   checksum、release 文件建议和发布命令：
+   `npm publish --access public`。若用户要求继续执行 npm 发布，
+   按 `$we-publish` 的执行和发布后验证规则处理。发布、tag 或
+   GitHub Release 页面完成后，使用 `$we-release-cleanup` 做收工检查。
+
+## Public Mirror Boundary
+
+公开镜像的检查、同步、泄漏扫描和 metadata 验证由 `$we-public-sync`
+负责。`$we-release` 只记录其结论，并在结论失败时停止发布准备。
+
+## Validation Notes
+
+- `npm run release:preflight` 当前包含 `check`、`build:package`
+  和 `package:verify`。
+- `check` 当前包含 lint、typecheck、spec validation、unit tests
+  和 contract tests。
+- `quality:check`、`build:tarball` 和 `pack:tarball` 是兼容 alias，
+  新流程优先使用 `check`、`build:package` 和 `pack:release`。
+- live API tests 默认不属于发布门禁。只有用户要求，或本次改动
+  影响 provider runtime 时，运行相关
+  `WE_LIVE_E2E=1 npm run test:live-api`。
+- 如果门禁失败，不要提交发布准备；先修复或记录阻塞原因。
+- CI 全平台通过后，不重复上传平台 artifact 到 GitHub Release。
+  只在平台产物真实不同、且用户明确要求时上传平台文件。
+
+## Post-Run Recommendation
+
+CI、tarball 安装验证和包内容检查全部通过后，常见建议是：
+
+1. 确认 version、tag、changelog、npm registry latest 四者一致。
+2. 确认 `npm pack --dry-run --json --ignore-scripts` 没有私有文件。
+3. 确认临时安装后的 CLI 能运行核心 smoke commands。
+4. 如果只是准备发布，给出 `npm publish --access public`，不要代发。
+5. 如果用户要求 GitHub Release，使用 `v<semver>` tag 和 changelog
+   条目创建 release，附件只放 npm tarball 和可选 checksum。
+6. 如果用户要求 tag，确认 tag 指向最终 release commit 后再推送。
+7. npm publish 后切换到 `$we-publish` 做 registry post-check、
+   dist-tag 检查和 registry 临时安装验证。
+8. 发布相关动作全部结束后，使用 `$we-release-cleanup` 确认双仓库、
+   tag、CI、本地产物和分支状态已经收干净。
