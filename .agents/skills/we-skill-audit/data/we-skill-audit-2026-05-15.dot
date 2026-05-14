@@ -1,0 +1,284 @@
+digraph ProfessionalDevToReleaseBaseline {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Arial",
+    fontsize=12,
+    label="WE 技能审计：DeepSeekX 从新需求到发布",
+    labelloc=t,
+    nodesep=0.55,
+    ranksep=0.85
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=10,
+    margin="0.08,0.06",
+    color="#2563EB",
+    fillcolor="#DBEAFE"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=9,
+    color="#475569",
+    arrowsize=0.75
+  ];
+
+  subgraph cluster_professional {
+    label="Professional Baseline";
+    color="#2563EB";
+    style="rounded,dashed";
+
+    p_intake [
+      label="1. 需求记录 / issue\n验收标准、影响范围、优先级"
+    ];
+    p_design [
+      label="2. 轻量设计 / 决策记录\n风险、回滚、测试计划"
+    ];
+    p_branch [
+      label="3. 从最新 main 创建短生命周期分支"
+    ];
+    p_impl [
+      label="4. 实现 + 测试\n小提交、清晰范围"
+    ];
+    p_pr [
+      label="5. PR 必需\n代码审查和变更说明"
+    ];
+    p_ci_pr [
+      label="6. PR CI 必须通过\nlint / typecheck / test / package verify"
+    ];
+    p_protected [
+      label="7. 受保护 main\n禁止未审查直接合并"
+    ];
+    p_release_candidate [
+      label="8. release candidate\n版本、changelog、tag 策略冻结"
+    ];
+    p_release_ci [
+      label="9. 发布前必要平台 CI\n按风险选择 Linux / Windows / all"
+    ];
+    p_artifacts [
+      label="10. 发布物确认\nnpm tarball、checksum、release notes"
+    ];
+    p_publish [
+      label="11. 发布 npm / GitHub Release\n可追溯、可回滚"
+    ];
+    p_post [
+      label="12. 发布后验证和收尾\nregistry、CI、分支、产物、监控"
+    ];
+  }
+
+  p_intake -> p_design;
+  p_design -> p_branch;
+  p_branch -> p_impl;
+  p_impl -> p_pr;
+  p_pr -> p_ci_pr;
+  p_ci_pr -> p_protected;
+  p_protected -> p_release_candidate;
+  p_release_candidate -> p_release_ci;
+  p_release_ci -> p_artifacts;
+  p_artifacts -> p_publish;
+  p_publish -> p_post;
+
+  subgraph cluster_context {
+    label="Current DeepSeekX Context";
+    color="#64748B";
+    style="rounded,dashed";
+
+    ctx_docs [
+      color="#64748B",
+      fillcolor="#F1F5F9",
+      label="DeepSeek API 文档结论\nChat Completions, messages 回放\n"
+        + "KV cache, reasoning_content, 受限 tools"
+    ];
+    ctx_history [
+      color="#64748B",
+      fillcolor="#F1F5F9",
+      label="二开历史抽查\n448ac3c939 provider, 36fc9bd6c6 JSON repair\n"
+        + "cbe5e08025 strict tools, 6bc1f16ad4 artifacts"
+    ];
+    ctx_dirty [
+      color="#64748B",
+      fillcolor="#F1F5F9",
+      label="当前工作区事实\n旧 .codex/skills/we 删除, 新 .agents/skills 未追踪\n"
+        + "core tools 与 docs/deepseek-api 有进行中改动"
+    ];
+  }
+
+  ctx_docs -> ctx_history -> ctx_dirty [
+    style=dotted,
+    color="#94A3B8"
+  ];
+
+  subgraph cluster_current {
+    label="Current WE Skill Coverage";
+    color="#16A34A";
+    style="rounded,dashed";
+
+    c_intake [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="1 intake: covered\n$we-requirement-intake\n"
+        + "范围、验收、风险和后续技能路由"
+    ];
+    c_design [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="2 design: covered\n$we-design-note\n"
+        + "DeepSeek API docs 已体现设计记录习惯"
+    ];
+    c_branch [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="3 branch: covered\n$we-feature-dev\n"
+        + "deepseekx/main, origin/upstream, dirty preflight"
+    ];
+    c_impl [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="4 implementation: covered\n$we-feature-dev\n"
+        + "Rust, TUI, npm staging, docs, WE skill checks"
+    ];
+    c_pr [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="5 PR: partial\nprofessional mode 强制 PR\n"
+        + "solo mode 允许本地收口，是合理成本取舍"
+    ];
+    c_ci [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="6 PR CI: covered\n$we-ci-maintenance covers operation\n"
+        + ".github/workflows/ci.yml push 已监听 deepseekx/main"
+    ];
+    c_protected [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="7 branch protection: external partial\n已验证远端未保护\n"
+        + "dry-run 配置脚本已补, apply 需用户确认"
+    ];
+    c_release_candidate [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="8 release candidate: covered\n$we-release-readiness + $we-release\n"
+        + "版本、CHANGELOG、tag 和公开镜像门禁"
+    ];
+    c_release_ci [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="9 platform CI: covered\n$we-ci-maintenance\n"
+        + "$we-deepseekx-nightly-artifacts 按风险手动跑"
+    ];
+    c_artifacts [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="10 artifacts: covered\n$we-release + $we-publish\n"
+        + "npm staging, tarball, checksum, notes"
+    ];
+    c_publish [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="11 publish: covered\n$we-publish\n"
+        + "registry, auth, dry-run, install smoke"
+    ];
+    c_post [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="12 post-release: covered\n$we-release-cleanup\n"
+        + "双仓库、tag、npm latest、CI 和本地产物"
+    ];
+  }
+
+  p_intake -> c_intake [style=dashed, color="#94A3B8"];
+  p_design -> c_design [style=dashed, color="#94A3B8"];
+  p_branch -> c_branch [style=dashed, color="#94A3B8"];
+  p_impl -> c_impl [style=dashed, color="#94A3B8"];
+  p_pr -> c_pr [style=dashed, color="#94A3B8"];
+  p_ci_pr -> c_ci [style=dashed, color="#94A3B8"];
+  p_protected -> c_protected [style=dashed, color="#94A3B8"];
+  p_release_candidate -> c_release_candidate [style=dashed, color="#94A3B8"];
+  p_release_ci -> c_release_ci [style=dashed, color="#94A3B8"];
+  p_artifacts -> c_artifacts [style=dashed, color="#94A3B8"];
+  p_publish -> c_publish [style=dashed, color="#94A3B8"];
+  p_post -> c_post [style=dashed, color="#94A3B8"];
+
+  c_intake -> c_design -> c_branch -> c_impl -> c_pr -> c_ci;
+  c_ci -> c_protected -> c_release_candidate -> c_release_ci;
+  c_release_ci -> c_artifacts -> c_publish -> c_post;
+
+  subgraph cluster_deepseekx {
+    label="DeepSeekX-Specific Flow";
+    color="#7C3AED";
+    style="rounded,dashed";
+
+    dx_sync [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="upstream sync: covered\n$we-deepseek-branch-sync\n"
+        + "显式 release tag / commit, sync branch"
+    ];
+    dx_runtime [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="runtime validation: covered\n$we-deepseek-cache-bench\n"
+        + "helper scripts, history data, drift check 已迁入 .agents"
+    ];
+    dx_public [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="public mirror: covered\n$we-public-sync\n"
+        + "私有路径、凭据、metadata 和双仓库身份检查"
+    ];
+    dx_meta [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="skill lifecycle: covered\n$we-skill-init, maker, audit, help\n"
+        + "初始化、维护、审计和路由已成闭环"
+    ];
+  }
+
+  dx_sync -> c_branch [style=dotted, color="#7C3AED"];
+  dx_runtime -> c_impl [style=dotted, color="#7C3AED"];
+  dx_public -> c_release_candidate [style=dotted, color="#7C3AED"];
+  dx_meta -> c_intake [style=dotted, color="#7C3AED"];
+
+  subgraph cluster_findings {
+    label="Audit Findings";
+    color="#0F172A";
+    style="rounded,dashed";
+
+    f_good [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="covered\n主流程由通用 WE baseline 覆盖\n"
+        + "DeepSeekX 风险由 sync/runtime/public/release 技能补足"
+    ];
+    f_partial [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="partial\n专业硬门禁依赖外部 GitHub 设置\n"
+        + "branch protection 已验证缺失, apply 需用户确认"
+    ];
+    f_gap [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="fixed gap\n旧 cache benchmark 脚本和归档已迁入 .agents\n"
+        + "DeepSeek API drift check 已有确定性只读入口"
+    ];
+    f_not_needed [
+      color="#64748B",
+      fillcolor="#E2E8F0",
+      label="not needed\n不建议恢复独立 bug-fix、worktree-clean、GitHub-flow\n"
+        + "现有 feature-dev/worktree-dev/cleanup 覆盖得更清楚"
+    ];
+  }
+
+  ctx_dirty -> f_partial [style=dotted, color="#94A3B8"];
+  ctx_docs -> f_gap [style=dotted, color="#94A3B8"];
+  ctx_history -> f_good [style=dotted, color="#94A3B8"];
+  dx_runtime -> f_gap [style=dotted, color="#94A3B8"];
+  c_ci -> f_partial [style=dotted, color="#94A3B8"];
+  c_protected -> f_partial [style=dotted, color="#94A3B8"];
+}
