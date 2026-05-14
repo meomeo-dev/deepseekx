@@ -1,0 +1,301 @@
+---
+name: we-worktree-dev
+description: Use when coordinating parallel feature development through git
+  worktrees, multiple agents, isolated branches, and controlled merge-back.
+---
+
+# we-worktree-dev
+
+用于通过 git worktree 并行开发（parallel development）。主项目
+worktree 负责规划、分派、审查和最终集成；每个子 worktree 承载一个
+agent 的独立分支和写入范围。
+
+Codex 支持多 agent 协作，但只有用户明确要求多 agent、并行 agent
+或分派工作时，才启动 agent。worktree 只解决文件系统和分支隔离；
+最终合并仍必须由主控 agent 审查。
+
+本技能按保守并行（controlled parallelism）执行。默认最多同时运行
+2 个 worker agent，硬上限为 3 个。超过上限的任务必须排队。
+
+## 范围
+
+- 在主项目父级创建 worktree 根目录。
+- 从 `origin/deepseekx/main` 创建多个 `worktree/<slug>/<agent>` 分支。
+- 给每个 agent 分派清晰、互不重叠的写入范围。
+- 并行运行实现或验证。
+- 将完成的 worktree 逐个合并回主控 feature 分支。
+- 合并后运行增量和必要回归测试。
+- 维护 active agent 台账，限制并行度并记录合并来源。
+
+## 非目标
+
+- 不替代 `$we-feature-dev` 的普通单分支开发。
+- 不发布 npm；发布使用 `$we-publish`。
+- 不同步公开仓库；公开镜像使用 `$we-release`。
+- 不自动删除 worktree、branch、stash 或用户文件。
+- 不在未审查情况下批量合并多个 agent 的输出。
+
+## 目录和分支模型
+
+- 主项目：`/Users/jin/projects/deepseekx`。
+- worktree 根目录默认：`/Users/jin/projects/deepseekx-wt`。
+- 可用 `WE_WORKTREE_ROOT` 覆盖 worktree 根目录。
+- 基准分支：`origin/deepseekx/main`。
+- 主控集成分支：`deepseekx/<slug>`。
+- agent 分支：`worktree/<slug>/<agent>`。
+- agent worktree 路径：`../deepseekx-wt/<slug>-<agent>`。
+
+如果任务依赖当前 feature 分支上尚未进入 `origin/deepseekx/main` 的
+提交，创建 worktree 时必须显式设置基准：
+
+```bash
+WE_WORKTREE_BASE=HEAD \
+  .agents/skills/we-worktree-dev/scripts/create_worktree.sh \
+  <slug> <agent>
+```
+
+不要让依赖当前分支的 agent 从旧的 `origin/deepseekx/main` 开始。
+
+## 入口判断
+
+使用本技能前先问清任务是否适合并行：
+
+- 适合：独立模块、不同 provider、文档和测试分离、验证任务。
+- 不适合：强耦合重构、同一文件密集编辑、需求尚不清楚。
+- 如果下一步被某个探索结果阻塞，主控自己做阻塞探索。
+- 只把能并行推进且写入范围可隔离的任务分给 agent。
+
+## 硬入口门禁
+
+在创建 worktree 或派生 agent 前运行：
+
+```bash
+.agents/skills/we-worktree-dev/scripts/preflight_worktree_dev.sh
+```
+
+检查并报告：
+
+- 当前主控分支。
+- 主控 worktree 是否 dirty。
+- remote URL。
+- 现有 worktree 列表。
+- worktree 根目录状态。
+- secret-like untracked paths。
+- 当前分支相对 `origin/deepseekx/main` 的 ahead/behind。
+
+如果主控有 tracked dirty files，不创建 worktree，除非用户明确批准。
+如果存在 secret-like untracked paths，说明不会 stage 或复制它们。
+
+## 创建 Worktree
+
+为每个 agent 创建独立 worktree：
+
+```bash
+.agents/skills/we-worktree-dev/scripts/create_worktree.sh \
+  <slug> <agent>
+```
+
+示例：
+
+```bash
+.agents/skills/we-worktree-dev/scripts/create_worktree.sh \
+  example-feature cli
+.agents/skills/we-worktree-dev/scripts/create_worktree.sh \
+  example-feature templates
+```
+
+脚本会创建：
+
+- `../deepseekx-wt/example-feature-cli`
+- `worktree/example-feature/cli`
+
+脚本遇到已存在路径、已存在分支或缺少 `origin/deepseekx/main` 会停止。
+
+脚本默认从 `origin/deepseekx/main` 创建 worktree。需要从当前分支、
+特定提交或已存在 feature 分支派生时，设置 `WE_WORKTREE_BASE`。
+
+## 并行度和台账
+
+主控必须维护简短 active agent 台账：
+
+- agent id。
+- agent 名称或分工。
+- worktree 路径。
+- 分支名。
+- 拥有的写入范围。
+- 状态：queued、running、completed、failed、closed、merged。
+
+默认并行度是 2。只有满足以下条件时才允许升到 3：
+
+- 三个写入范围完全互不重叠。
+- 主控没有未完成的阻塞探索。
+- 主控可以在 30 秒内检查所有 running agent 的路径和状态。
+
+禁止同时运行 4 个或更多 worker agent。需要更多任务时排队，等一个
+worker 完成、失败、或被关闭后再启动下一个。
+
+如果一个 worker 超过 2 分钟没有文件改动，也没有明确测试输出：
+
+1. 检查其 worktree 状态。
+2. 如果 worktree 干净，先中断或关闭该 worker。
+3. 将任务切小后重新分派。
+4. 不要在旧 worker 仍运行时启动同类替代 worker。
+
+## Agent 分派规则
+
+分派前写出简短计划：
+
+- 主控当前立即执行的任务。
+- 每个 agent 的目标。
+- 每个 agent 的工作目录。
+- 每个 agent 拥有的文件或模块范围。
+- 禁止修改的文件范围。
+- 期望检查命令。
+- 完成后需要回报的内容。
+
+给 worker agent 的提示必须包含：
+
+- 它不是唯一开发者。
+- 不要 revert 或覆盖其他 worktree 的改动。
+- 只修改分派的文件范围。
+- 所有 shell、read、edit、test 命令都必须使用分派 worktree。
+- 第一条命令必须运行 worktree 身份门禁。
+- 最终列出改动文件、检查命令和剩余风险。
+
+默认不要使用 `fork_context: true`。只有 worker 必须继承完整对话上下文
+时才允许 fork。普通实现任务应给自包含提示，避免继承主控当前目录或
+陈旧计划。
+
+Worker 第一条命令必须是：
+
+```bash
+.agents/skills/we-worktree-dev/scripts/assert_worktree_identity.sh \
+  <absolute-worktree-path>
+```
+
+如果脚本失败，worker 必须立即停止，不得读取或编辑任何文件。
+
+主控在 spawn 后 30 秒内也要检查：
+
+```bash
+git -C <main-worktree> status --short --branch
+git -C <agent-worktree> status --short --branch
+```
+
+如果主控出现意外 dirty 文件，立即停止相关 worker 并进入污染恢复。
+
+## 并行执行约束
+
+- 只有用户明确要求多 agent 或并行工作时，才 spawn agent。
+- 不把主控下一步立即需要的阻塞任务交给 agent。
+- 不让两个 agent 修改同一文件，除非主控明确计划冲突合并。
+- 不在 agent 运行时重复做同一子任务。
+- agent 完成后，主控必须审查 diff，不盲目合并。
+- 共享注册文件、全局配置、主 CLI 文件、统一测试入口等耦合文件，
+  默认只允许一个 worker 或主控处理。
+- 如果共享文件必须由多个来源共同修改，先合并独立产物，再在新的
+  单一 worktree 中做共享接入。
+
+## 主控污染恢复
+
+如果 worker 把文件写进主控 worktree：
+
+1. 立即关闭或中断可疑 worker。
+2. 运行 `git status --short --branch` 和 `git diff --name-only`。
+3. 确认 dirty 文件是否为本轮 worker 误写。
+4. 若确认是误写且没有用户改动，恢复这些文件到 `HEAD`。
+5. 若无法确认来源，停止并询问用户，不要恢复。
+6. 重新分派前，先缩小任务并强化 worktree 身份门禁。
+
+恢复主控前不得继续启动新的 worker。
+
+## 断流和失败恢复
+
+如果 agent 断流、超时、或被关闭：
+
+1. 检查该 worktree 的 `git status --short --branch`。
+2. 如果有未提交文件，先审查文件范围和 diff。
+3. 如果文件范围正确，可重新派 agent 继续该 worktree。
+4. 如果文件范围越界，停止并由主控决定保留、移植或放弃。
+5. 如果 worktree 干净，优先关闭该 agent，再重新分派更小任务。
+6. 不要同时运行旧 agent 和替代 agent 做同一件事。
+
+## 合并回主控
+
+逐个 worktree 合并，不批量合并：
+
+1. 在 agent worktree 中确认状态：
+   `git status --short --branch`。
+2. 查看 agent diff：
+   `git diff --stat` 和必要文件 diff。
+3. 运行该 agent 负责范围的聚焦测试。
+4. agent worktree 内提交或在主控中 cherry-pick patch。
+5. 回到主控 feature 分支。
+6. 使用 `git cherry-pick <agent-commit>` 或手动应用 patch。
+7. 解决冲突后运行相关测试。
+8. 每合并一个 agent，就重新检查状态。
+
+如果 agent 没有提交，主控可以从 worktree 读取 diff 后手动移植。
+不要使用 destructive 命令清理 agent worktree，除非用户明确批准。
+
+## 最终集成检查
+
+合并完成后按风险运行：
+
+```bash
+npm run test:changed
+npm run typecheck
+npm run lint
+```
+
+如果改动影响公共行为、发布包内容或多个模块：
+
+```bash
+npm run test:all
+npm run package:verify
+```
+
+发布前仍使用：
+
+```bash
+npm run release:preflight
+```
+
+## 清理策略
+
+默认不删除 worktree。用户明确要求清理时：
+
+1. 确认 worktree 内没有未提交或未迁移改动。
+2. 确认主控已合并或明确放弃该 worktree。
+3. 使用 `git worktree remove <path>`。
+4. 删除分支前再次确认：`git branch -d worktree/<slug>/<agent>`。
+5. 不使用 `git branch -D`，除非用户明确要求强制删除。
+
+## 提交卫生
+
+主控提交前运行：
+
+```bash
+git status --short
+git diff --cached --name-only
+```
+
+确认：
+
+- staged 文件只包含最终集成结果。
+- 不包含 `.env`、key、token、credential、cache 或临时目录。
+- 不包含 worktree 根目录自身。
+- 不包含未审查的 agent 输出。
+- 记录已合并的 agent 分支或 commit。
+
+## 最终答复
+
+报告：
+
+- 主控分支和 worktree 根目录。
+- 创建的 worktree 路径和分支。
+- agent 分派摘要。
+- 已合并的 agent commit 或 patch 来源。
+- 运行过的检查命令和结果。
+- 主控提交哈希，如果已提交。
+- 未合并、保留或需要清理的 worktree。

@@ -3,27 +3,27 @@ set -euo pipefail
 
 workflow=".github/workflows/deepseekx-nightly-artifacts.yml"
 
-echo "== branch =="
+section() {
+  printf '\n== %s ==\n' "$1"
+}
+
+section "branch"
 git branch --show-current
 
-echo
-echo "== remotes =="
+section "remotes"
 git remote -v
 
-echo
-echo "== worktree =="
+section "worktree"
 git status --short --branch
 
-echo
-echo "== workflow =="
+section "workflow"
 if [[ -f "$workflow" ]]; then
-  echo "present=${workflow}"
+  echo "present=$workflow"
 else
-  echo "missing=${workflow}" >&2
+  echo "missing=$workflow" >&2
 fi
 
-echo
-echo "== gh auth =="
+section "gh auth"
 if gh auth status >/tmp/deepseekx-gh-auth.out 2>&1; then
   cat /tmp/deepseekx-gh-auth.out
 else
@@ -33,8 +33,7 @@ else
 fi
 rm -f /tmp/deepseekx-gh-auth.out
 
-echo
-echo "== latest nightly runs =="
+section "latest nightly runs"
 origin_url="$(git remote get-url origin)"
 repo="${origin_url#https://github.com/}"
 repo="${repo#git@github.com:}"
@@ -50,9 +49,8 @@ if ! gh run list \
 fi
 rm -f /tmp/deepseekx-nightly-runs.err
 
-echo
-echo "== actions usage =="
-if .codex/skills/we/deepseekx-nightly-artifacts/scripts/actions_usage.sh; then
+section "actions usage"
+if .agents/skills/we-deepseekx-nightly-artifacts/scripts/actions_usage.sh; then
   true
 else
   echo "billing usage unavailable; continue only after user understands risk."

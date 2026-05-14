@@ -7,14 +7,14 @@ repo="${repo#git@github.com:}"
 repo="${repo%.git}"
 owner="${repo%%/*}"
 
-echo "repo=${repo}"
-echo "owner=${owner}"
+echo "repo=$repo"
+echo "owner=$owner"
 
 visibility="$(
   gh repo view "$repo" --json visibility --jq .visibility 2>/dev/null || true
 )"
 if [[ -n "$visibility" ]]; then
-  echo "visibility=${visibility}"
+  echo "visibility=$visibility"
 fi
 
 if [[ "$visibility" == "PUBLIC" ]]; then
@@ -22,11 +22,11 @@ if [[ "$visibility" == "PUBLIC" ]]; then
 fi
 
 try_api() {
-  local path="$1"
+  local api_path="$1"
   local out="/tmp/deepseekx-actions-usage.json"
   local err="/tmp/deepseekx-actions-usage.err"
-  if gh api "$path" >"$out" 2>"$err"; then
-    echo "endpoint=${path}"
+  if gh api "$api_path" >"$out" 2>"$err"; then
+    echo "endpoint=$api_path"
     cat "$out"
     rm -f "$out" "$err"
     return 0
@@ -42,7 +42,7 @@ if try_api "/users/${owner}/settings/billing/actions"; then
   exit 0
 fi
 
-echo "Unable to read GitHub Actions billing usage for ${owner}." >&2
+echo "Unable to read GitHub Actions billing usage for $owner." >&2
 echo "This usually means the token lacks billing scope or owner access." >&2
 if [[ -s /tmp/deepseekx-actions-usage.err ]]; then
   cat /tmp/deepseekx-actions-usage.err >&2
