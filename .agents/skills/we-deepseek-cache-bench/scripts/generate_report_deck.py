@@ -205,7 +205,7 @@ th {{ color: var(--muted); background: #f8fafc; }}
       <h3>执行约束</h3>
       <ul>
         <li>Docker 隔离环境，项目 checkout 只读挂载。</li>
-        <li>Codex app-server server mode 驱动 deepseek-v4-pro。</li>
+        <li>DeepSeekX app-server server mode 驱动 deepseek-v4-pro。</li>
         <li>每轮由监督者验收当前产物后再写下一轮 prompt。</li>
         <li>逐轮记录 think effort 和 modelContextWindow。</li>
         <li>禁止用固定 prompt pack 或生成器替代真实产品开发。</li>

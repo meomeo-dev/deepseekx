@@ -217,7 +217,7 @@ def load_state(path):
 
 def write_reports(report_dir, state, workspace, codex_home, preview_port):
     state["workspace"] = str(workspace)
-    state["codexHome"] = str(codex_home)
+    state["deepseekxHome"] = str(codex_home)
     state["previewPort"] = preview_port
     state["lineCount"] = count_lines(workspace)
     state["model"] = "deepseek-v4-pro"
@@ -269,8 +269,8 @@ def initialize(client):
         "initialize",
         {
             "clientInfo": {
-                "name": "deepseek-cache-bench-guided",
-                "title": "deepseek-cache-bench-guided",
+                "name": "deepseekx-cache-bench-guided",
+                "title": "deepseekx-cache-bench-guided",
                 "version": "0",
             },
             "capabilities": {
@@ -346,9 +346,11 @@ def run_turn(client, thread_id, workspace, prompt, turn_index, timeout, effort):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--codex-bin", required=True)
+    parser.add_argument("--deepseekx-bin", dest="codex_bin")
+    parser.add_argument("--codex-bin", dest="codex_bin")
     parser.add_argument("--workspace", required=True)
-    parser.add_argument("--codex-home", required=True)
+    parser.add_argument("--deepseekx-home", dest="codex_home")
+    parser.add_argument("--codex-home", dest="codex_home")
     parser.add_argument("--report-dir", required=True)
     parser.add_argument("--prompt-file")
     parser.add_argument("--turn-name")
@@ -357,6 +359,10 @@ def main():
     parser.add_argument("--timeout", type=int, default=3600)
     parser.add_argument("--new-thread", action="store_true")
     args = parser.parse_args()
+    if not args.codex_bin:
+        parser.error("pass --deepseekx-bin")
+    if not args.codex_home:
+        parser.error("pass --deepseekx-home")
 
     workspace = Path(args.workspace).resolve()
     codex_home = Path(args.codex_home).resolve()
@@ -378,7 +384,8 @@ def main():
     log_path.write_text("", encoding="utf-8")
 
     env = os.environ.copy()
-    env["CODEX_HOME"] = str(codex_home)
+    env["DEEPSEEKX_HOME"] = str(codex_home)
+    env.pop("CODEX_HOME", None)
     client = AppServerClient(
         args.codex_bin,
         workspace,

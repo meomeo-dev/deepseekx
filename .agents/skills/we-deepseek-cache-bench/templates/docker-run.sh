@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-container_name="${1:-codex-deepseek-cache-bench}"
+container_name="${1:-deepseekx-cache-bench}"
 repo_root="${2:-$(pwd)}"
 preview_port="${3:-5173}"
 image_name="${4:-deepseek-cache-bench:local}"

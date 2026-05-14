@@ -220,9 +220,11 @@ def write_config(codex_home: Path, template: Path | None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--codex-bin", required=True)
+    parser.add_argument("--deepseekx-bin", dest="codex_bin")
+    parser.add_argument("--codex-bin", dest="codex_bin")
     parser.add_argument("--workspace", required=True)
-    parser.add_argument("--codex-home", required=True)
+    parser.add_argument("--deepseekx-home", dest="codex_home")
+    parser.add_argument("--codex-home", dest="codex_home")
     parser.add_argument("--prompts", required=True)
     parser.add_argument("--report-dir", required=True)
     parser.add_argument("--config-template")
@@ -230,6 +232,10 @@ def main():
     parser.add_argument("--effort", default=DEFAULT_REASONING_EFFORT)
     parser.add_argument("--clean", action="store_true")
     args = parser.parse_args()
+    if not args.codex_bin:
+        parser.error("pass --deepseekx-bin")
+    if not args.codex_home:
+        parser.error("pass --deepseekx-home")
 
     workspace = Path(args.workspace).resolve()
     report_dir = Path(args.report_dir).resolve()
@@ -254,7 +260,8 @@ def main():
     report_md = report_dir / "report.md"
 
     env = os.environ.copy()
-    env["CODEX_HOME"] = str(codex_home)
+    env["DEEPSEEKX_HOME"] = str(codex_home)
+    env.pop("CODEX_HOME", None)
     client = AppServerClient(args.codex_bin, workspace, env, log_path)
     turn_reports = []
 
@@ -264,8 +271,8 @@ def main():
             "initialize",
             {
                 "clientInfo": {
-                    "name": "deepseek-cache-bench",
-                    "title": "deepseek-cache-bench",
+                    "name": "deepseekx-cache-bench",
+                    "title": "deepseekx-cache-bench",
                     "version": "0",
                 },
                 "capabilities": {
@@ -360,7 +367,7 @@ def main():
             "model": "deepseek-v4-pro",
             "modelProvider": "deepseek",
             "workspace": str(workspace),
-            "codexHome": str(codex_home),
+            "deepseekxHome": str(codex_home),
             "previewPort": args.preview_port,
             "elapsedSeconds": round(time.time() - started_at, 3),
             "turnReports": turn_reports,
