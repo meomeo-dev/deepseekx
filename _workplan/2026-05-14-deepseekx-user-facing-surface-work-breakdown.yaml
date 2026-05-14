@@ -1,0 +1,132 @@
+goal: >-
+  将 DeepSeekX 下游产品的用户可见入口调整为 DeepSeekX，
+  同时保留 Codex 内核命名和兼容入口。
+task_type: 'implementation_plan'
+status: 'planned'
+source_of_truth:
+  current_user_request: true
+  roadmap: '_workplan/2026-05-14-deepseekx-user-facing-surface-roadmap.md'
+  analysis:
+    - 'docs/deepseek-api/integration/deepseekx-user-facing-surface.md'
+    - 'docs/deepseek-api/integration/README.md'
+    - '_workplan/specs/workplan-artifact-boundary.content.spec.yaml'
+    - '_workplan/specs/workplan-roadmap.content.meta_spec.yaml'
+    - '_workplan/specs/workplan-work-breakdown.content.meta_spec.yaml'
+    - '_workplan/specs/workplan-work-package.content.meta_spec.yaml'
+principles:
+  - '外壳优先：用户看到和输入的入口优先 DeepSeekX 化。'
+  - '内核保留：Rust crate、核心类型和 v2 wire schema 默认不改名。'
+  - '兼容优先：旧 codex 命令和 CODEX_HOME 路径继续可用。'
+  - '小包推进：每次只改一个主要用户感知面。'
+  - '禁止全仓库字符串替换。'
+quality_gates:
+  - '新增和修改文件必须通过 88 字符行宽检查。'
+  - '文档和代码变更必须通过 git diff --check。'
+  - 'Rust 修改后在 codex-rs 运行 just fmt。'
+  - 'TUI 文案改动必须运行 codex-tui 测试并审查 snapshot。'
+  - '配置 schema 改动必须运行 just write-config-schema。'
+  - 'app-server 协议改动必须运行 app-server schema 生成和测试。'
+  - '每个 package 完成时更新 Completion Evidence。'
+assumptions:
+  - 'DeepSeekX 不准备在首轮重命名内部 Rust crate。'
+  - 'app-server v2 wire schema 保持兼容，SDK 包装层负责隐藏旧名。'
+  - 'legacy Codex 路径兼容需要保留至少一个发布周期。'
+scope_notes:
+  in:
+    - 'CLI 主入口、帮助文本和 exec 人类可读输出。'
+    - 'TUI 标题、placeholder、状态卡、approval 文案和 snapshot。'
+    - 'DeepSeekX 默认 provider、模型和 API key 提示。'
+    - 'DEEPSEEKX_HOME、~/.deepseekx 和 legacy 路径兼容。'
+    - 'npm、平台包、nightly artifact 和安装脚本命名。'
+    - 'SDK 包装层、examples 和 app-server 启动感知。'
+    - '新旧入口兼容验收。'
+  out:
+    - '全仓库 Codex 到 DeepSeekX 字符串替换。'
+    - 'Rust crate、核心类型和测试 fixture 的系统性重命名。'
+    - 'app-server v2 payload 字段和 JSON-RPC method 改名。'
+    - '静默复制、移动或删除用户 secret。'
+planned_work_packages:
+  - id: '00-cli-launcher-help'
+    name: 'CLI launcher 和帮助文案'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      00-cli-launcher-help.md"
+    managed_requirements:
+      - '提供 deepseekx 主命令并保留 codex 兼容入口。'
+    functional_scope:
+      in:
+        - 'CLI binary、clap bin_name、usage 和 exec 输出。'
+      out:
+        - 'TUI snapshot 和发布包命名。'
+  - id: '01-tui-branding-snapshots'
+    name: 'TUI 品牌文案和 snapshot'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      01-tui-branding-snapshots.md"
+    managed_requirements:
+      - 'TUI 首页和常用交互文案展示 DeepSeekX。'
+    functional_scope:
+      in:
+        - 'TUI title、status card、placeholder、approval 文案。'
+      out:
+        - 'CLI launcher 和配置目录迁移。'
+  - id: '02-default-provider-auth'
+    name: '默认 provider 和认证提示'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      02-default-provider-auth.md"
+    managed_requirements:
+      - 'DeepSeekX 默认模型路径面向 DeepSeek API。'
+    functional_scope:
+      in:
+        - '默认 provider、默认模型和 API key 提示。'
+      out:
+        - 'OpenAI provider 兼容能力删除。'
+  - id: '03-config-home-compat'
+    name: '配置 home 兼容层'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      03-config-home-compat.md"
+    managed_requirements:
+      - '支持 DeepSeekX 配置目录并兼容 legacy Codex 路径。'
+    functional_scope:
+      in:
+        - 'DEEPSEEKX_HOME、~/.deepseekx、CODEX_HOME 和 ~/.codex。'
+      out:
+        - '静默迁移 secret 或删除旧配置。'
+  - id: '04-packaging-artifacts'
+    name: '打包产物和发布命名'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      04-packaging-artifacts.md"
+    managed_requirements:
+      - '安装包、npm 包和 nightly artifact 使用 DeepSeekX 命名。'
+    functional_scope:
+      in:
+        - 'npm package、platform package、workflow artifact、installer。'
+      out:
+        - '正式签名发布和 release tag 策略。'
+  - id: '05-sdk-app-server-surface'
+    name: 'SDK 与 app-server 用户感知'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      05-sdk-app-server-surface.md"
+    managed_requirements:
+      - 'SDK 包装层使用 DeepSeekX，v2 wire schema 保持兼容。'
+    functional_scope:
+      in:
+        - 'SDK package surface、examples、binary lookup、client_info 默认值。'
+      out:
+        - 'v2 JSON-RPC method 和 payload 字段改名。'
+  - id: '06-compatibility-verification'
+    name: '兼容验收和回归验证'
+    status: 'planned'
+    document: "_workplan/2026-05-14-deepseekx-user-facing-surface-work-packages/\
+      06-compatibility-verification.md"
+    managed_requirements:
+      - '验证 DeepSeekX 新入口和 Codex legacy 入口同时可用。'
+    functional_scope:
+      in:
+        - 'CLI、TUI、配置、provider、SDK 和打包验收矩阵。'
+      out:
+        - '真实发布到 npm、PyPI 或 GitHub release。'

@@ -14,6 +14,8 @@
   通过本地校验门和虚拟文件 patch repair 模拟 strict 的方案。
 - `provider-profile-provider-id-analysis.md`：分析 `profile + provider`
   配置形状、`/model` 列表来源，以及 DeepSeek provider ID 命名空间。
+- `deepseekx-user-facing-surface.md`：记录 DeepSeekX 换皮的用户感知面、
+  兼容边界、内部命名保留策略和分阶段实施顺序。
 
 ## 相关快照
 
@@ -35,3 +37,7 @@ Responses 和 DeepSeek Chat Completions 在 Codex 层的可用工具行为应
 只展示当前 active provider 的模型目录，不负责切换 provider。
 DeepSeek runtime 应基于 `deepseek` / `deepseek-*` provider ID
 命名空间识别，把 API 适配行为与服务厂商展示名分离。
+
+DeepSeekX 品牌改造应优先作用于用户入口、TUI、配置、安装包和 SDK
+包装层。内部 crate、核心类型、app-server v2 wire schema 和测试夹具
+默认保留 Codex 命名，以减少后续同步上游代码的冲突面。
