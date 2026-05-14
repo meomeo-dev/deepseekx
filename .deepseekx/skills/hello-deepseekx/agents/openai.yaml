@@ -1,0 +1,4 @@
+interface:
+  display_name: "DeepSeekX Development Story"
+  short_description: "DeepSeekX project background, architecture, and DeepSeek API integration design"
+  default_prompt: "Use $hello-deepseekx to explain the DeepSeekX project architecture or DeepSeek API integration approach."
