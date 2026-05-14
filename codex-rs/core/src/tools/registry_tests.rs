@@ -23,7 +23,18 @@ impl ToolExecutor<ToolInvocation> for TestHandler {
     }
 }
 
-impl ToolHandler for TestHandler {}
+impl ToolHandler for TestHandler {
+    fn fallback_spec(&self) -> Option<ToolSpec> {
+        Some(ToolSpec::Function(codex_tools::ResponsesApiTool {
+            name: flat_tool_name(&self.tool_name).into_owned(),
+            description: "Fallback test tool.".to_string(),
+            strict: false,
+            defer_loading: None,
+            parameters: codex_tools::JsonSchema::default(),
+            output_schema: None,
+        }))
+    }
+}
 
 #[test]
 fn handler_looks_up_namespaced_aliases_explicitly() {
@@ -74,4 +85,20 @@ fn register_handler_adds_handler_and_spec() {
     assert_eq!(specs.len(), 1);
     assert_eq!(specs[0], create_get_goal_tool());
     assert!(registry.has_handler(&codex_tools::ToolName::plain(GET_GOAL_TOOL_NAME)));
+}
+
+#[test]
+fn register_namespaced_handler_adds_flat_alias() {
+    let mut builder = ToolRegistryBuilder::new();
+    builder.register_any_handler(Arc::new(TestHandler {
+        tool_name: codex_tools::ToolName::namespaced("mcp__context7__", "query_docs"),
+    }));
+
+    let (_, registry) = builder.build();
+
+    assert!(registry.has_handler(&codex_tools::ToolName::namespaced(
+        "mcp__context7__",
+        "query_docs"
+    )));
+    assert!(registry.has_handler(&codex_tools::ToolName::plain("mcp__context7__query_docs")));
 }

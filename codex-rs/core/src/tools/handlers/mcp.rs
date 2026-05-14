@@ -116,6 +116,13 @@ impl ToolExecutor<ToolInvocation> for McpHandler {
 }
 
 impl ToolHandler for McpHandler {
+    fn fallback_spec(&self) -> Option<ToolSpec> {
+        let tool_name = self.tool_name();
+        let mut tool = mcp_tool_to_responses_api_tool(&tool_name, &self.tool_info.tool).ok()?;
+        tool.name = flat_tool_name(&tool_name).into_owned();
+        Some(ToolSpec::Function(tool))
+    }
+
     fn search_info(&self) -> Option<ToolSearchInfo> {
         let source_name = self
             .tool_info

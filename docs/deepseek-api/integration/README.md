@@ -35,6 +35,9 @@ OpenAI Chat Completions 格式的 `/chat/completions`。DeepSeek 接入需要
 Chat Completions 适配器必须把 `apply_patch` 做成兼容映射。OpenAI
 Responses 和 DeepSeek Chat Completions 在 Codex 层的可用工具行为应
 保持一致，不能通过关闭 `apply_patch` 规避 provider 差异。
+MCP namespace 工具在 DeepSeek 路径下应降级为普通 function tools，
+例如 `mcp__context7__query_docs`，避免用户配置的 MCP server 因
+Responses namespace wire shape 不兼容而不可见。
 
 `profile + provider` 是多厂商 DeepSeek 接入的正确形状。`/model`
 只展示当前 active provider 的模型目录，不负责切换 provider。
