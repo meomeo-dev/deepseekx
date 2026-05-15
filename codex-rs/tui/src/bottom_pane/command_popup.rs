@@ -625,11 +625,15 @@ mod tests {
 
         assert!(!cmds.iter().any(|cmd| cmd == "logout"));
         assert!(!cmds.iter().any(|cmd| cmd == "feedback"));
+        assert!(!cmds.iter().any(|cmd| cmd == "ide"));
 
         popup.on_composer_text_change("/logout".to_string());
         assert_eq!(popup.selected_item(), None);
 
         popup.on_composer_text_change("/feedback".to_string());
+        assert_eq!(popup.selected_item(), None);
+
+        popup.on_composer_text_change("/ide".to_string());
         assert_eq!(popup.selected_item(), None);
     }
 }
