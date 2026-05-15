@@ -74,16 +74,20 @@ native payload。
 `.github/workflows/deepseekx-nightly-artifacts.yml` 是手动触发的 unsigned
 artifact workflow。它当前用于验证和分发可下载 artifact：
 
+- Linux x64：`ubuntu-24.04`
+- Linux arm64：`ubuntu-24.04-arm`
 - macOS x64：`macos-15-intel`
 - macOS arm64：`macos-latest`
 - Windows x64：`windows-latest`
 - Windows arm64：`windows-11-arm`
 
-该 workflow 当前不等于 npm platform package 产线：
+该 workflow 的单平台目标仍只产出 native artifact。`target=all` 会在
+Linux、macOS 和 Windows 六个平台 job 全部成功后，追加生成 npm
+platform staging artifact：
 
-- 不覆盖 Linux x64 和 Linux arm64。
-- 输出的是 `.dmg`、`.tar.gz`、`.zip` 和校验文件。
-- 不直接生成 npm platform tarball。
+- 6 个平台 tarball。
+- 1 个 root wrapper tarball。
+- artifact 名称：`deepseekx-npm-platform-staging`。
 - 不执行 `npm publish`。
 
 `.github/workflows/rust-release.yml` 保留了上游 Codex release 产线形状，
@@ -91,22 +95,45 @@ artifact workflow。它当前用于验证和分发可下载 artifact：
 workflow 仍带有上游语义和 release 触发规则，当前不应作为 DeepSeekX
 手动 npm 发布的直接依赖。
 
-## 推荐下一步
+## 推荐发布前流程
 
-发布 DeepSeekX npm 前，应新增或改造一个专用的 npm platform staging
-workflow。该 workflow 应：
+发布 DeepSeekX npm 前，先跑单平台目标验证，例如 Linux x64、macOS arm64
+或 Windows x64。确认 artifact 形状稳定后，再运行 `target=all`。
 
-- 支持手动触发，不挂到普通 `push` 或 `pull_request`。
-- 构建 Linux、macOS 和 Windows 的 x64/arm64 native binary。
-- 将 native binary 组装成 `--vendor-src` 可读取的目录结构。
-- 调用 `scripts/stage_npm_packages.py --package deepseekx` 或直接调用
-  `build_npm_package.py` 生成全部 npm tarball。
-- 上传 6 个平台 tarball 和 1 个 root wrapper tarball 作为 workflow
-  artifacts。
-- 不自动执行 `npm publish`，由发布人检查 tarball 后手动发布。
+`target=all` 成功后，从 workflow artifact 下载
+`deepseekx-npm-platform-staging`，检查其中 6 个平台 tarball 和 1 个 root
+wrapper tarball。发布人确认包内容后，手动执行 npm publish；workflow
+不会自动发布到 registry。
 
-推荐先跑单平台目标验证，例如 macOS arm64 或 Windows x64；确认 artifact
-形状稳定后，再运行全平台构建。
+## Nightly artifact 到 npm tarball
+
+`codex-cli/scripts/install_native_deps.py` 同时支持两种 artifact 布局：
+
+- 上游 release 风格的 `.zst` 文件，例如
+  `x86_64-unknown-linux-musl/deepseekx-x86_64-unknown-linux-musl.zst`。
+- DeepSeekX nightly 风格的目录 artifact，例如
+  `deepseekx-linux-x64/deepseekx-linux-x64/bin/deepseekx`。
+
+workflow 内部使用已下载 artifact 时，可以直接传 `--artifacts-dir`：
+
+```bash
+./scripts/stage_npm_packages.py \
+  --release-version 0.131.0-deepseekx.1 \
+  --package deepseekx \
+  --artifacts-dir artifacts \
+  --output-dir dist/npm
+```
+
+如果从一个已完成的 GitHub Actions run 复用 artifact，可以传
+`--workflow-url`，脚本会先调用 `gh run download`：
+
+```bash
+./scripts/stage_npm_packages.py \
+  --release-version 0.131.0-deepseekx.1 \
+  --package deepseekx \
+  --workflow-url https://github.com/meomeo-dev/deepseekx/actions/runs/<run-id> \
+  --output-dir dist/npm
+```
 
 ## 手动 staging 命令形状
 
@@ -144,4 +171,3 @@ artifact 伪装其他平台的 native payload。
 - root wrapper 的 `optionalDependencies` 指向同版本的平台后缀版本。
 - 平台后缀版本先于 root wrapper 发布。
 - 发布前可以在临时目录检查 tarball 内容和 package metadata。
-

@@ -12,8 +12,9 @@ Actions runner 资源，默认把用户请求理解为咨询，不自动触发�
 ## 范围
 
 - 使用 `.github/workflows/deepseekx-nightly-artifacts.yml`。
-- 目标包括 `mac-x64`、`mac-arm64`、`mac-universal`、`win-x64`、
-  `win-arm64`、`win-bundle` 和 `all`。
+- 目标包括 `linux-x64`、`linux-arm64`、`linux-bundle`、`mac-x64`、
+  `mac-arm64`、`mac-universal`、`win-x64`、`win-arm64`、`win-bundle`
+  和 `all`。
 - 查询最近 workflow runs 和 GitHub Actions billing usage。
 - 在用户明确确认后触发 workflow。
 - 调试失败 job、下载 logs 或给出下一步修复建议。
@@ -34,6 +35,9 @@ Actions runner 资源，默认把用户请求理解为咨询，不自动触发�
   和 180 分钟 timeout 提高完成率。
 - macOS arm64 已验证从旧 90 分钟超时问题恢复到约 9 分钟完成；后续如果
   再超时，优先看 dependency pre-warm、sccache stats 和 cargo timings。
+- `target=all` 会在六个平台 artifact 全部成功后额外生成
+  `deepseekx-npm-platform-staging`，包含 6 个平台 npm tarball 和 1 个
+  root wrapper tarball；该 job 不执行 `npm publish`。
 - 单目标运行时，未选中的矩阵 job 显示 skipped 是预期，不代表失败。
 - 修改 workflow 后必须先 push 到远端 ref，再触发或重跑；GitHub Actions
   使用远端 workflow 文件和 ref，不会读取本地未推送改动。
@@ -74,6 +78,16 @@ Actions runner 资源，默认把用户请求理解为咨询，不自动触发�
 .agents/skills/we-deepseekx-nightly-artifacts/scripts/trigger.sh \
   --ref deepseekx/nightly \
   --target mac-x64 \
+  --retention-days 7 \
+  --confirm RUN_NIGHTLY
+```
+
+Linux 单平台示例：
+
+```bash
+.agents/skills/we-deepseekx-nightly-artifacts/scripts/trigger.sh \
+  --ref deepseekx/nightly \
+  --target linux-x64 \
   --retention-days 7 \
   --confirm RUN_NIGHTLY
 ```

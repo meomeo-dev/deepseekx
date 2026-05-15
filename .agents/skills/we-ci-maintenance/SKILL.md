@@ -55,7 +55,8 @@ validation）、发布预检（release preflight）和免费额度成本控制
 - `.github/workflows/ci.yml` 当前在 `push` 到 `deepseekx/main` 和 PR 时运行
   维护门禁，并 staging `@meomeo-dev/deepseekx` npm 根包。
 - `deepseekx-nightly-artifacts.yml` 是手动 artifact workflow，触发和调试
-  使用 `$we-deepseekx-nightly-artifacts`。
+  使用 `$we-deepseekx-nightly-artifacts`。`target=all` 通过后会额外产出
+  `deepseekx-npm-platform-staging`，用于人工 npm 发布前检查。
 - 如果 workflow 仍监听 `main` 而目标是 `deepseekx/main`，先把事件分支
   策略作为本轮 CI 维护问题处理，不要假设远端会自动保护下游主干。
 
@@ -92,7 +93,12 @@ gh workflow run deepseekx-nightly-artifacts.yml \
 只跑 Linux：
 
 ```bash
-gh workflow run ci --repo meomeo-dev/deepseekx --ref <branch-or-sha>
+gh workflow run deepseekx-nightly-artifacts.yml \
+  --repo meomeo-dev/deepseekx \
+  --ref <branch-or-sha> \
+  -f target=linux-x64 \
+  -f confirm_run=RUN_NIGHTLY \
+  -f artifact_retention_days=7
 ```
 
 必要时全量跑：

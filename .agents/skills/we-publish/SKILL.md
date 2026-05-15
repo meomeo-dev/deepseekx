@@ -97,6 +97,19 @@ npm pack --dry-run --json "$tmp"
 - 包内不包含私有目录、任务目录、`.env`、cache 或凭据文件。
 - optional dependencies 指向 `@meomeo-dev/deepseekx-*` 平台包版本。
 
+完整平台发布应优先使用 `$we-deepseekx-nightly-artifacts target=all` 产出的
+`deepseekx-npm-platform-staging`。该 artifact 应包含：
+
+- `deepseekx-npm-linux-x64-<version>.tgz`
+- `deepseekx-npm-linux-arm64-<version>.tgz`
+- `deepseekx-npm-darwin-x64-<version>.tgz`
+- `deepseekx-npm-darwin-arm64-<version>.tgz`
+- `deepseekx-npm-win32-x64-<version>.tgz`
+- `deepseekx-npm-win32-arm64-<version>.tgz`
+- `deepseekx-npm-<version>.tgz`
+
+发布顺序必须是 6 个平台 tarball 先发布，root wrapper tarball 最后发布。
+
 ## 临时安装验证
 
 在临时目录安装本地 tarball，并验证 CLI：

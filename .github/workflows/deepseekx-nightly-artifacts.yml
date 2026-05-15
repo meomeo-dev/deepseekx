@@ -9,6 +9,9 @@ on:
         default: "mac-x64"
         type: choice
         options:
+          - linux-x64
+          - linux-arm64
+          - linux-bundle
           - mac-x64
           - mac-arm64
           - mac-universal
@@ -50,8 +53,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       retention_days: ${{ steps.retention.outputs.days }}
+      linux_matrix: ${{ steps.matrix.outputs.linux_matrix }}
       macos_matrix: ${{ steps.matrix.outputs.macos_matrix }}
       windows_matrix: ${{ steps.matrix.outputs.windows_matrix }}
+      run_linux: ${{ steps.matrix.outputs.run_linux }}
       run_macos: ${{ steps.matrix.outputs.run_macos }}
       run_windows: ${{ steps.matrix.outputs.run_windows }}
     steps:
@@ -101,6 +106,10 @@ jobs:
           set -euo pipefail
           target="${{ inputs.target }}"
 
+          linux_x64='{"package":"linux-x64","target":"x86_64-unknown-linux-musl",'
+          linux_x64+='"runner":"ubuntu-24.04"}'
+          linux_arm='{"package":"linux-arm64","target":"aarch64-unknown-linux-musl",'
+          linux_arm+='"runner":"ubuntu-24.04-arm"}'
           mac_x64='{"package":"mac-x64","target":"x86_64-apple-darwin",'
           mac_x64+='"runner":"macos-15-intel"}'
           mac_arm='{"package":"mac-arm64","target":"aarch64-apple-darwin",'
@@ -111,31 +120,53 @@ jobs:
           win_arm+='"runner":"windows-11-arm"}'
 
           case "$target" in
+            linux-x64)
+              linux_matrix="{\"include\":[$linux_x64]}"
+              macos_matrix="{\"include\":[]}"
+              windows_matrix="{\"include\":[]}"
+              ;;
+            linux-arm64)
+              linux_matrix="{\"include\":[$linux_arm]}"
+              macos_matrix="{\"include\":[]}"
+              windows_matrix="{\"include\":[]}"
+              ;;
+            linux-bundle)
+              linux_matrix="{\"include\":[$linux_x64,$linux_arm]}"
+              macos_matrix="{\"include\":[]}"
+              windows_matrix="{\"include\":[]}"
+              ;;
             mac-x64)
+              linux_matrix="{\"include\":[]}"
               macos_matrix="{\"include\":[$mac_x64]}"
               windows_matrix="{\"include\":[]}"
               ;;
             mac-arm64)
+              linux_matrix="{\"include\":[]}"
               macos_matrix="{\"include\":[$mac_arm]}"
               windows_matrix="{\"include\":[]}"
               ;;
             mac-universal)
+              linux_matrix="{\"include\":[]}"
               macos_matrix="{\"include\":[$mac_x64,$mac_arm]}"
               windows_matrix="{\"include\":[]}"
               ;;
             win-x64)
+              linux_matrix="{\"include\":[]}"
               macos_matrix="{\"include\":[]}"
               windows_matrix="{\"include\":[$win_x64]}"
               ;;
             win-arm64)
+              linux_matrix="{\"include\":[]}"
               macos_matrix="{\"include\":[]}"
               windows_matrix="{\"include\":[$win_arm]}"
               ;;
             win-bundle)
+              linux_matrix="{\"include\":[]}"
               macos_matrix="{\"include\":[]}"
               windows_matrix="{\"include\":[$win_x64,$win_arm]}"
               ;;
             all)
+              linux_matrix="{\"include\":[$linux_x64,$linux_arm]}"
               macos_matrix="{\"include\":[$mac_x64,$mac_arm]}"
               windows_matrix="{\"include\":[$win_x64,$win_arm]}"
               ;;
@@ -145,16 +176,244 @@ jobs:
               ;;
           esac
 
+          run_linux=false
           run_macos=false
           run_windows=false
+          [[ "$linux_matrix" != '{"include":[]}' ]] && run_linux=true
           [[ "$macos_matrix" != '{"include":[]}' ]] && run_macos=true
           [[ "$windows_matrix" != '{"include":[]}' ]] && run_windows=true
           {
+            echo "linux_matrix=$linux_matrix"
             echo "macos_matrix=$macos_matrix"
             echo "windows_matrix=$windows_matrix"
+            echo "run_linux=$run_linux"
             echo "run_macos=$run_macos"
             echo "run_windows=$run_windows"
           } >> "$GITHUB_OUTPUT"
+
+  linux:
+    name: Linux ${{ matrix.package }}
+    needs: preflight
+    if: ${{ needs.preflight.outputs.run_linux == 'true' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: codex-rs
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.preflight.outputs.linux_matrix) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Print runner specs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cpu_model="$(
+            lscpu | awk -F: '/Model name/ {gsub(/^[ \t]+/, "", $2); print $2; exit}'
+          )"
+          total_ram="$(
+            awk '/MemTotal/ {printf "%.1f GiB\n", $2 / 1024 / 1024}' /proc/meminfo
+          )"
+          echo "OS: $(uname -a)"
+          echo "CPU model: ${cpu_model}"
+          echo "CPU architecture: $(uname -m)"
+          echo "Logical CPUs: $(nproc)"
+          echo "Total RAM: ${total_ram}"
+          df -h .
+
+      - name: Install Linux build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            --no-install-recommends \
+            libubsan1 \
+            pkg-config \
+            libcap-dev
+
+      - uses: dtolnay/rust-toolchain@a0b273b48ed29de4470960879e8381ff45632f26 # 1.93.0
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Use hermetic Cargo home
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo_home="${GITHUB_WORKSPACE}/.cargo-home"
+          mkdir -p "${cargo_home}/bin"
+          echo "CARGO_HOME=${cargo_home}" >> "$GITHUB_ENV"
+          echo "${cargo_home}/bin" >> "$GITHUB_PATH"
+          : > "${cargo_home}/config.toml"
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2.2.1
+        with:
+          version: 0.14.0
+          use-cache: false
+
+      - name: Install musl build tools
+        env:
+          TARGET: ${{ matrix.target }}
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/install-musl-build-tools.sh"
+
+      - name: Configure rustc UBSan wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          ubsan=""
+          if command -v ldconfig >/dev/null 2>&1; then
+            ubsan="$(ldconfig -p | grep -m1 'libubsan\.so\.1' | sed -E 's/.*=> (.*)$/\1/')"
+          fi
+          wrapper_root="${RUNNER_TEMP:-/tmp}"
+          wrapper="${wrapper_root}/rustc-ubsan-wrapper"
+          cat > "${wrapper}" <<EOF
+          #!/usr/bin/env bash
+          set -euo pipefail
+          if [[ -n "${ubsan}" ]]; then
+            export LD_PRELOAD="${ubsan}\${LD_PRELOAD:+:\${LD_PRELOAD}}"
+          fi
+          exec "\$1" "\${@:2}"
+          EOF
+          chmod +x "${wrapper}"
+          echo "RUSTC_WRAPPER=${wrapper}" >> "$GITHUB_ENV"
+          echo "RUSTC_WORKSPACE_WRAPPER=" >> "$GITHUB_ENV"
+
+      - name: Clear sanitizer flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          target_no_jitter="AWS_LC_SYS_NO_JITTER_ENTROPY_${{ matrix.target }}"
+          target_no_jitter="${target_no_jitter//-/_}"
+          sanitize_flags() {
+            local input="$1"
+            input="${input//-fsanitize=undefined/}"
+            input="${input//-fno-sanitize-recover=undefined/}"
+            input="${input//-fno-sanitize-trap=undefined/}"
+            echo "$input"
+          }
+          {
+            echo "AWS_LC_SYS_NO_JITTER_ENTROPY=1"
+            echo "${target_no_jitter}=1"
+            echo "RUSTFLAGS="
+            echo "CARGO_ENCODED_RUSTFLAGS="
+            echo "RUSTDOCFLAGS="
+            echo "CARGO_BUILD_RUSTFLAGS="
+            echo "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="
+            echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS="
+            echo "CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="
+            echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="
+            echo "CFLAGS=$(sanitize_flags "${CFLAGS-}")"
+            echo "CXXFLAGS=$(sanitize_flags "${CXXFLAGS-}")"
+          } >> "$GITHUB_ENV"
+
+      - name: Configure musl rusty_v8 artifact overrides
+        uses: ./.github/actions/setup-rusty-v8-musl
+        with:
+          target: ${{ matrix.target }}
+
+      - name: Compute lockfile hash
+        id: lockhash
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo_hash="$(sha256sum Cargo.lock | cut -c1-16)"
+          toolchain_hash="$(sha256sum rust-toolchain.toml | cut -c1-16)"
+          echo "key=${cargo_hash}-${toolchain_hash}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cargo home cache
+        id: cache_cargo_home_restore
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: |
+            ${{ github.workspace }}/.cargo-home/registry/index/
+            ${{ github.workspace }}/.cargo-home/registry/cache/
+            ${{ github.workspace }}/.cargo-home/git/db/
+          key: ch-n-${{ matrix.package }}-${{ steps.lockhash.outputs.key }}
+          restore-keys: |
+            ch-n-${{ matrix.package }}-
+
+      - name: Install cargo-chef
+        uses: taiki-e/install-action@44c6d64aa62cd779e873306675c7a58e86d6d532 # v2.62.49
+        with:
+          tool: cargo-chef
+          version: 0.1.71
+
+      - name: Pre-warm dependency cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          recipe="${RUNNER_TEMP}/chef-recipe.json"
+          cargo chef prepare --recipe-path "$recipe"
+          cargo chef cook --recipe-path "$recipe" --target "${{ matrix.target }}" --release
+
+      - name: Cargo build
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          cargo build \
+            --target "$target" \
+            --release \
+            --timings \
+            --bin bwrap \
+            --bin deepseekx \
+            --bin codex-responses-api-proxy
+
+      - name: Stage Linux package
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="deepseekx-${{ matrix.package }}"
+          target="${{ matrix.target }}"
+          root="dist/$package"
+          mkdir -p "$root/bin" "$root/codex-resources"
+          cp "target/$target/release/deepseekx" "$root/bin/deepseekx"
+          cp \
+            "target/$target/release/codex-responses-api-proxy" \
+            "$root/bin/codex-responses-api-proxy"
+          cp "target/$target/release/bwrap" "$root/codex-resources/bwrap"
+          chmod 0755 \
+            "$root/bin/deepseekx" \
+            "$root/bin/codex-responses-api-proxy" \
+            "$root/codex-resources/bwrap"
+
+          tar -C dist -czf "dist/$package.tar.gz" "$package"
+          sha256sum "dist/$package.tar.gz" > "dist/$package.sha256"
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: deepseekx-${{ matrix.package }}
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: |
+            codex-rs/dist/deepseekx-${{ matrix.package }}/**
+            codex-rs/dist/deepseekx-${{ matrix.package }}.tar.gz
+            codex-rs/dist/deepseekx-${{ matrix.package }}.sha256
+
+      - name: Upload Cargo timings
+        if: ${{ always() }}
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: cargo-timings-${{ matrix.package }}
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: codex-rs/target/**/cargo-timings/cargo-timing.html
+          if-no-files-found: warn
+
+      - name: Save cargo home cache
+        if: always() && !cancelled() && steps.cache_cargo_home_restore.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: |
+            ${{ github.workspace }}/.cargo-home/registry/index/
+            ${{ github.workspace }}/.cargo-home/registry/cache/
+            ${{ github.workspace }}/.cargo-home/git/db/
+          key: ch-n-${{ matrix.package }}-${{ steps.lockhash.outputs.key }}
 
   macos:
     name: macOS ${{ matrix.package }}
@@ -632,3 +891,110 @@ jobs:
             dist/deepseekx-win-bundle/**
             dist/deepseekx-win-bundle.zip
             dist/deepseekx-win-bundle.sha256
+
+  npm-platform-staging:
+    name: npm platform staging
+    needs:
+      - preflight
+      - linux
+      - macos
+      - windows
+    if: ${{ always() &&
+      inputs.target == 'all' &&
+      needs.preflight.result == 'success' &&
+      needs.linux.result == 'success' &&
+      needs.macos.result == 'success' &&
+      needs.windows.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Download Linux x64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-linux-x64
+          path: artifacts/deepseekx-linux-x64
+
+      - name: Download Linux arm64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-linux-arm64
+          path: artifacts/deepseekx-linux-arm64
+
+      - name: Download macOS x64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-mac-x64
+          path: artifacts/deepseekx-mac-x64
+
+      - name: Download macOS arm64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-mac-arm64
+          path: artifacts/deepseekx-mac-arm64
+
+      - name: Download Windows x64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-win-x64
+          path: artifacts/deepseekx-win-x64
+
+      - name: Download Windows arm64 package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: deepseekx-win-arm64
+          path: artifacts/deepseekx-win-arm64
+
+      - name: Setup Node.js for npm packaging
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 22
+
+      - uses: facebook/install-dotslash@1e4e7b3e07eaca387acb98f1d4720e0bee8dbb6a # v2
+
+      - name: Stage npm platform packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="$(
+            node -p "require('./codex-cli/package.json').version"
+          )"
+          ./scripts/stage_npm_packages.py \
+            --release-version "$release_version" \
+            --package deepseekx \
+            --artifacts-dir artifacts \
+            --output-dir dist/npm
+
+      - name: Verify staged npm tarballs
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="$(
+            node -p "require('./codex-cli/package.json').version"
+          )"
+          required=(
+            "dist/npm/deepseekx-npm-linux-x64-${release_version}.tgz"
+            "dist/npm/deepseekx-npm-linux-arm64-${release_version}.tgz"
+            "dist/npm/deepseekx-npm-darwin-x64-${release_version}.tgz"
+            "dist/npm/deepseekx-npm-darwin-arm64-${release_version}.tgz"
+            "dist/npm/deepseekx-npm-win32-x64-${release_version}.tgz"
+            "dist/npm/deepseekx-npm-win32-arm64-${release_version}.tgz"
+            "dist/npm/deepseekx-npm-${release_version}.tgz"
+          )
+          for tarball in "${required[@]}"; do
+            test -f "$tarball" || {
+              echo "Missing npm tarball: $tarball"
+              exit 1
+            }
+          done
+          ls -lh dist/npm/*.tgz
+
+      - name: Upload npm platform staging
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: deepseekx-npm-platform-staging
+          retention-days: ${{ needs.preflight.outputs.retention_days }}
+          path: dist/npm/*.tgz

@@ -31,6 +31,23 @@ BINARY_TARGETS = (
     "aarch64-pc-windows-msvc",
 )
 
+NIGHTLY_PACKAGE_BY_TARGET = {
+    "x86_64-unknown-linux-musl": "deepseekx-linux-x64",
+    "aarch64-unknown-linux-musl": "deepseekx-linux-arm64",
+    "x86_64-apple-darwin": "deepseekx-mac-x64",
+    "aarch64-apple-darwin": "deepseekx-mac-arm64",
+    "x86_64-pc-windows-msvc": "deepseekx-win-x64",
+    "aarch64-pc-windows-msvc": "deepseekx-win-arm64",
+}
+
+NIGHTLY_COMPONENT_PATHS = {
+    "bwrap": ("codex-resources", "bwrap"),
+    "deepseekx": ("bin", "deepseekx"),
+    "codex-responses-api-proxy": ("bin", "codex-responses-api-proxy"),
+    "codex-windows-sandbox-setup": ("bin", "codex-windows-sandbox-setup"),
+    "codex-command-runner": ("bin", "codex-command-runner"),
+}
+
 
 @dataclass(frozen=True)
 class BinaryComponent:
@@ -127,12 +144,20 @@ def _gha_group(title: str):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Install native DeepSeekX binaries.")
-    parser.add_argument(
+    artifact_source = parser.add_mutually_exclusive_group()
+    artifact_source.add_argument(
         "--workflow-url",
-        required=True,
         help=(
             "GitHub Actions workflow URL from meomeo-dev/deepseekx that produced "
             "the DeepSeekX native artifacts."
+        ),
+    )
+    artifact_source.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        help=(
+            "Directory containing already-downloaded DeepSeekX native artifacts. "
+            "Use this inside a workflow after actions/download-artifact."
         ),
     )
     parser.add_argument(
@@ -173,23 +198,43 @@ def main() -> int:
         "rg",
     ]
 
-    workflow_url = args.workflow_url.strip()
-    if not workflow_url:
-        raise RuntimeError("--workflow-url is required.")
-    repo = _repo_from_workflow_url(workflow_url)
-    if repo != "meomeo-dev/deepseekx":
-        raise RuntimeError(
-            "--workflow-url must point at meomeo-dev/deepseekx so DeepSeekX "
-            "packages never vendor OpenAI Codex artifacts."
-        )
+    workflow_url = args.workflow_url.strip() if args.workflow_url else ""
+    artifacts_dir_arg = args.artifacts_dir
+    if not workflow_url and artifacts_dir_arg is None:
+        raise RuntimeError("Must specify --workflow-url or --artifacts-dir.")
 
-    workflow_id = workflow_url.rstrip("/").split("/")[-1]
-    print(f"Downloading native artifacts from workflow {workflow_id}...")
+    if workflow_url:
+        repo = _repo_from_workflow_url(workflow_url)
+        if repo != "meomeo-dev/deepseekx":
+            raise RuntimeError(
+                "--workflow-url must point at meomeo-dev/deepseekx so DeepSeekX "
+                "packages never vendor OpenAI Codex artifacts."
+            )
 
-    with _gha_group(f"Download native artifacts from workflow {workflow_id}"):
-        with tempfile.TemporaryDirectory(prefix="codex-native-artifacts-") as artifacts_dir_str:
-            artifacts_dir = Path(artifacts_dir_str)
-            _download_artifacts(workflow_id, artifacts_dir)
+        workflow_id = workflow_url.rstrip("/").split("/")[-1]
+        print(f"Downloading native artifacts from workflow {workflow_id}...")
+
+        with _gha_group(f"Download native artifacts from workflow {workflow_id}"):
+            with tempfile.TemporaryDirectory(
+                prefix="codex-native-artifacts-"
+            ) as artifacts_dir_str:
+                artifacts_dir = Path(artifacts_dir_str)
+                _download_artifacts(workflow_id, artifacts_dir)
+                install_binary_components(
+                    artifacts_dir,
+                    vendor_dir,
+                    [
+                        BINARY_COMPONENTS[name]
+                        for name in components
+                        if name in BINARY_COMPONENTS
+                    ],
+                )
+    else:
+        artifacts_dir = artifacts_dir_arg.resolve()
+        if not artifacts_dir.exists():
+            raise FileNotFoundError(f"Artifacts directory not found: {artifacts_dir}")
+        print(f"Installing native artifacts from {artifacts_dir}...")
+        with _gha_group(f"Install native artifacts from {artifacts_dir}"):
             install_binary_components(
                 artifacts_dir,
                 vendor_dir,
@@ -333,24 +378,73 @@ def _install_single_binary(
     target: str,
     component: BinaryComponent,
 ) -> Path:
-    artifact_subdir = artifacts_dir / target
-    archive_name = _archive_name_for_target(component.artifact_prefix, target)
-    archive_path = artifact_subdir / archive_name
-    if not archive_path.exists():
-        raise FileNotFoundError(f"Expected artifact not found: {archive_path}")
-
     dest_dir = vendor_dir / target / component.dest_dir
     dest_dir.mkdir(parents=True, exist_ok=True)
 
-    binary_name = (
-        f"{component.binary_basename}.exe" if "windows" in target else component.binary_basename
-    )
+    binary_name = _binary_name_for_target(component.binary_basename, target)
     dest = dest_dir / binary_name
     dest.unlink(missing_ok=True)
-    extract_archive(archive_path, "zst", None, dest)
+
+    release_archive_path = _release_archive_path(artifacts_dir, target, component)
+    if release_archive_path.exists():
+        extract_archive(release_archive_path, "zst", None, dest)
+        if "windows" not in target:
+            dest.chmod(0o755)
+        return dest
+
+    nightly_binary_path = _nightly_binary_path(artifacts_dir, target, component)
+    if nightly_binary_path is None:
+        raise FileNotFoundError(
+            "Expected release archive or nightly binary not found. "
+            f"release_archive={release_archive_path}"
+        )
+
+    shutil.copy2(nightly_binary_path, dest)
     if "windows" not in target:
         dest.chmod(0o755)
     return dest
+
+
+def _release_archive_path(
+    artifacts_dir: Path,
+    target: str,
+    component: BinaryComponent,
+) -> Path:
+    artifact_subdir = artifacts_dir / target
+    archive_name = _archive_name_for_target(component.artifact_prefix, target)
+    return artifact_subdir / archive_name
+
+
+def _nightly_binary_path(
+    artifacts_dir: Path,
+    target: str,
+    component: BinaryComponent,
+) -> Path | None:
+    package = NIGHTLY_PACKAGE_BY_TARGET[target]
+    source_parts = NIGHTLY_COMPONENT_PATHS[component.artifact_prefix]
+    source_name = _binary_name_for_target(source_parts[1], target)
+
+    package_dir = artifacts_dir / package
+    candidates = [
+        package_dir / package,
+        package_dir,
+    ]
+    if artifacts_dir.name == package:
+        candidates.append(artifacts_dir)
+
+    relative_path = Path(source_parts[0]) / source_name
+    for candidate_root in candidates:
+        source_path = candidate_root / relative_path
+        if source_path.exists():
+            return source_path
+
+    return None
+
+
+def _binary_name_for_target(binary_basename: str, target: str) -> str:
+    if "windows" in target:
+        return f"{binary_basename}.exe"
+    return binary_basename
 
 
 def _archive_name_for_target(artifact_prefix: str, target: str) -> str:
