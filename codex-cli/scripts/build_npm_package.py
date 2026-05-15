@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage and optionally package the @meomeo/deepseekx npm module."""
+"""Stage and optionally package the @meomeo-dev/deepseekx npm module."""
 
 import argparse
 import json
@@ -14,47 +14,47 @@ CODEX_CLI_ROOT = SCRIPT_DIR.parent
 REPO_ROOT = CODEX_CLI_ROOT.parent
 RESPONSES_API_PROXY_NPM_ROOT = REPO_ROOT / "codex-rs" / "responses-api-proxy" / "npm"
 CODEX_SDK_ROOT = REPO_ROOT / "sdk" / "typescript"
-CODEX_NPM_NAME = "@meomeo/deepseekx"
+CODEX_NPM_NAME = "@meomeo-dev/deepseekx"
 
 # `npm_name` is the local optional-dependency alias consumed by the npm shim.
 CODEX_PLATFORM_PACKAGES: dict[str, dict[str, str]] = {
     "deepseekx-linux-x64": {
-        "npm_name": "@meomeo/deepseekx-linux-x64",
+        "npm_name": "@meomeo-dev/deepseekx-linux-x64",
         "npm_tag": "linux-x64",
         "target_triple": "x86_64-unknown-linux-musl",
         "os": "linux",
         "cpu": "x64",
     },
     "deepseekx-linux-arm64": {
-        "npm_name": "@meomeo/deepseekx-linux-arm64",
+        "npm_name": "@meomeo-dev/deepseekx-linux-arm64",
         "npm_tag": "linux-arm64",
         "target_triple": "aarch64-unknown-linux-musl",
         "os": "linux",
         "cpu": "arm64",
     },
     "deepseekx-darwin-x64": {
-        "npm_name": "@meomeo/deepseekx-darwin-x64",
+        "npm_name": "@meomeo-dev/deepseekx-darwin-x64",
         "npm_tag": "darwin-x64",
         "target_triple": "x86_64-apple-darwin",
         "os": "darwin",
         "cpu": "x64",
     },
     "deepseekx-darwin-arm64": {
-        "npm_name": "@meomeo/deepseekx-darwin-arm64",
+        "npm_name": "@meomeo-dev/deepseekx-darwin-arm64",
         "npm_tag": "darwin-arm64",
         "target_triple": "aarch64-apple-darwin",
         "os": "darwin",
         "cpu": "arm64",
     },
     "deepseekx-win32-x64": {
-        "npm_name": "@meomeo/deepseekx-win32-x64",
+        "npm_name": "@meomeo-dev/deepseekx-win32-x64",
         "npm_tag": "win32-x64",
         "target_triple": "x86_64-pc-windows-msvc",
         "os": "win32",
         "cpu": "x64",
     },
     "deepseekx-win32-arm64": {
-        "npm_name": "@meomeo/deepseekx-win32-arm64",
+        "npm_name": "@meomeo-dev/deepseekx-win32-arm64",
         "npm_tag": "win32-arm64",
         "target_triple": "aarch64-pc-windows-msvc",
         "os": "win32",

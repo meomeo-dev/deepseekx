@@ -6,7 +6,7 @@ expression: terminal.backend()
 
   Release notes: https://github.com/meomeo-dev/deepseekx/releases/latest
 
-› 1. Update now (runs `npm install -g @meomeo/deepseekx`)                      
+› 1. Update now (runs `npm install -g @meomeo-dev/deepseekx`)
   2. Skip
   3. Skip until next version
 

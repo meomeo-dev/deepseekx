@@ -6,9 +6,9 @@ use codex_install_context::StandalonePlatform;
 /// Update action the CLI should perform after the TUI exits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UpdateAction {
-    /// Update via `npm install -g @meomeo/deepseekx@latest`.
+    /// Update via `npm install -g @meomeo-dev/deepseekx@latest`.
     NpmGlobalLatest,
-    /// Update via `bun install -g @meomeo/deepseekx@latest`.
+    /// Update via `bun install -g @meomeo-dev/deepseekx@latest`.
     BunGlobalLatest,
     /// Update via a Homebrew DeepSeekX package.
     BrewUpgrade,
@@ -36,8 +36,8 @@ impl UpdateAction {
     /// Returns the list of command-line arguments for invoking the update.
     pub fn command_args(self) -> (&'static str, &'static [&'static str]) {
         match self {
-            UpdateAction::NpmGlobalLatest => ("npm", &["install", "-g", "@meomeo/deepseekx"]),
-            UpdateAction::BunGlobalLatest => ("bun", &["install", "-g", "@meomeo/deepseekx"]),
+            UpdateAction::NpmGlobalLatest => ("npm", &["install", "-g", "@meomeo-dev/deepseekx"]),
+            UpdateAction::BunGlobalLatest => ("bun", &["install", "-g", "@meomeo-dev/deepseekx"]),
             UpdateAction::BrewUpgrade => ("brew", &["upgrade", "--cask", "deepseekx"]),
             UpdateAction::StandaloneUnix => (
                 "sh",
@@ -134,6 +134,18 @@ mod tests {
                     "Write-Error 'DeepSeekX standalone auto-update is not configured.'"
                 ][..],
             )
+        );
+    }
+
+    #[test]
+    fn npm_and_bun_update_commands_use_deepseekx_package() {
+        assert_eq!(
+            UpdateAction::NpmGlobalLatest.command_args(),
+            ("npm", &["install", "-g", "@meomeo-dev/deepseekx"][..])
+        );
+        assert_eq!(
+            UpdateAction::BunGlobalLatest.command_args(),
+            ("bun", &["install", "-g", "@meomeo-dev/deepseekx"][..])
         );
     }
 }
