@@ -79,9 +79,14 @@ Actions runner 资源，默认把用户请求理解为咨询，不自动触发�
 ## 失败调试
 
 ```bash
-gh run list --workflow deepseekx-nightly-artifacts.yml --limit 10
-gh run view <run-id> --json status,conclusion,url,headBranch,headSha,jobs
-gh run view <run-id> --log-failed
+gh run list \
+  --repo meomeo-dev/deepseekx \
+  --workflow deepseekx-nightly-artifacts.yml \
+  --limit 10
+gh run view <run-id> \
+  --repo meomeo-dev/deepseekx \
+  --json status,conclusion,url,headBranch,headSha,jobs
+gh run view <run-id> --repo meomeo-dev/deepseekx --log-failed
 ```
 
 先判断失败是代码、依赖、runner、网络还是 workflow 配置。每次远端

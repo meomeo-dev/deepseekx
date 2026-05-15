@@ -5,6 +5,7 @@ main_branch="${WE_FEATURE_MAIN:-deepseekx/main}"
 origin_name="${WE_FEATURE_ORIGIN:-origin}"
 expected_origin="${WE_PRIVATE_REMOTE_URL:-https://github.com/meomeo-dev/deepseekx.git}"
 expected_upstream="${WE_UPSTREAM_REMOTE_URL:-https://github.com/openai/codex.git}"
+expected_github_repo="${WE_PRIVATE_REPO_SLUG:-meomeo-dev/deepseekx}"
 
 section() {
   printf '\n== %s ==\n' "$1"
@@ -46,13 +47,29 @@ else
   echo "upstream_check: unexpected upstream url"
 fi
 
+section "gh default repo"
+if command -v gh >/dev/null 2>&1; then
+  gh_default="$(gh repo set-default --view 2>/dev/null || true)"
+  if [[ "$gh_default" == "$expected_github_repo" ]]; then
+    echo "gh_default_repo: ok ($gh_default)"
+  elif [[ -z "$gh_default" ]]; then
+    echo "gh_default_repo: unset"
+    echo "fix: gh repo set-default $expected_github_repo"
+  else
+    echo "gh_default_repo: unexpected ($gh_default)"
+    echo "expected: $expected_github_repo"
+  fi
+else
+  echo "gh_default_repo: gh not installed"
+fi
+
 section "worktree"
 git status --short
 
 section "tracked dirty files"
 tracked_dirty="$(
   git status --porcelain=v1 |
-    awk '$1 !~ /^\\?\\?/ { print substr($0, 4) }'
+    awk '$1 != "??" { print substr($0, 4) }'
 )"
 if [[ -z "$tracked_dirty" ]]; then
   echo "none"

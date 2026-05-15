@@ -74,14 +74,15 @@ validation）、发布预检（release preflight）和免费额度成本控制
 查看 workflow：
 
 ```bash
-gh workflow list
-gh run list --workflow CI --limit 10
+gh workflow list --repo meomeo-dev/deepseekx
+gh run list --repo meomeo-dev/deepseekx --workflow CI --limit 10
 ```
 
 只跑 Windows：
 
 ```bash
 gh workflow run deepseekx-nightly-artifacts.yml \
+  --repo meomeo-dev/deepseekx \
   --ref <branch-or-sha> \
   -f target=win-x64 \
   -f confirm_run=RUN_NIGHTLY \
@@ -91,13 +92,14 @@ gh workflow run deepseekx-nightly-artifacts.yml \
 只跑 Linux：
 
 ```bash
-gh workflow run ci --ref <branch-or-sha>
+gh workflow run ci --repo meomeo-dev/deepseekx --ref <branch-or-sha>
 ```
 
 必要时全量跑：
 
 ```bash
 gh workflow run deepseekx-nightly-artifacts.yml \
+  --repo meomeo-dev/deepseekx \
   --ref <branch-or-sha> \
   -f target=all \
   -f confirm_run=RUN_NIGHTLY \
@@ -107,14 +109,16 @@ gh workflow run deepseekx-nightly-artifacts.yml \
 查看 run：
 
 ```bash
-gh run view <run-id> --json status,conclusion,event,displayTitle,url,jobs
-gh run view <run-id> --log-failed
+gh run view <run-id> \
+  --repo meomeo-dev/deepseekx \
+  --json status,conclusion,event,displayTitle,url,jobs
+gh run view <run-id> --repo meomeo-dev/deepseekx --log-failed
 ```
 
 下载 artifact：
 
 ```bash
-gh run download <run-id> --dir tmp/ci-artifacts
+gh run download <run-id> --repo meomeo-dev/deepseekx --dir tmp/ci-artifacts
 ```
 
 ## 本地验证
