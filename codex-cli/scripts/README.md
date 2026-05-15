@@ -23,7 +23,7 @@ Inside the DeepSeekX nightly artifact workflow, use `--artifacts-dir` after
 
 ```bash
 ./scripts/stage_npm_packages.py \
-  --release-version 0.131.0-deepseekx.1 \
+  --release-version 0.131.0-deepseekx.2 \
   --package deepseekx \
   --artifacts-dir artifacts \
   --output-dir dist/npm

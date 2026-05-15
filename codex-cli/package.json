@@ -1,6 +1,6 @@
 {
   "name": "@meomeo-dev/deepseekx",
-  "version": "0.131.0-deepseekx.1",
+  "version": "0.131.0-deepseekx.2",
   "license": "Apache-2.0",
   "bin": {
     "deepseekx": "bin/deepseekx.js"

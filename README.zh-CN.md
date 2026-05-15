@@ -13,7 +13,7 @@ coding agent）工作流，同时默认使用 DeepSeek 相关的 provider、mode
 通过 npm 安装：
 
 ```shell
-npm install -g @meomeo-dev/deepseekx@0.131.0-deepseekx.1
+npm install -g @meomeo-dev/deepseekx@0.131.0-deepseekx.2
 ```
 
 启动：
@@ -25,7 +25,7 @@ deepseekx
 一次性运行可使用 npx：
 
 ```shell
-npx @meomeo-dev/deepseekx@0.131.0-deepseekx.1
+npx @meomeo-dev/deepseekx@0.131.0-deepseekx.2
 ```
 
 当前不提供 Homebrew 发布渠道。GitHub Releases 用于发布说明
