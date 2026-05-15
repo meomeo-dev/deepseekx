@@ -7,7 +7,8 @@ usage: trigger.sh --ref <ref> --target <target> --confirm RUN_NIGHTLY
                   [--retention-days <1-30>]
 
 targets:
-  mac-x64 mac-arm64 mac-universal win-x64 win-arm64 win-bundle all
+  linux-x64 linux-arm64 linux-bundle mac-x64 mac-arm64 mac-universal
+  win-x64 win-arm64 win-bundle all
 EOF
 }
 
@@ -15,6 +16,23 @@ ref=""
 target=""
 confirm=""
 retention_days="7"
+
+is_valid_target() {
+  case "$1" in
+    linux-x64|linux-arm64|linux-bundle)
+      return 0
+      ;;
+    mac-x64|mac-arm64|mac-universal)
+      return 0
+      ;;
+    win-x64|win-arm64|win-bundle|all)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -51,14 +69,10 @@ if [[ -z "$ref" || -z "$target" ]]; then
   exit 2
 fi
 
-case "$target" in
-  mac-x64|mac-arm64|mac-universal|win-x64|win-arm64|win-bundle|all)
-    ;;
-  *)
-    echo "invalid target: $target" >&2
-    exit 2
-    ;;
-esac
+if ! is_valid_target "$target"; then
+  echo "invalid target: $target" >&2
+  exit 2
+fi
 
 if [[ "$confirm" != "RUN_NIGHTLY" ]]; then
   echo "refusing to trigger; pass --confirm RUN_NIGHTLY" >&2

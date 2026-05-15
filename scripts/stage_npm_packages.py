@@ -48,6 +48,14 @@ def parse_args() -> argparse.Namespace:
         help="Optional workflow URL to reuse for native artifacts.",
     )
     parser.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        help=(
+            "Optional directory containing already-downloaded native artifacts. "
+            "Use this inside the artifact workflow after actions/download-artifact."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=None,
@@ -123,14 +131,25 @@ def resolve_workflow_url(version: str, override: str | None) -> tuple[str, str |
 
 
 def install_native_components(
-    workflow_url: str,
+    *,
+    workflow_url: str | None = None,
+    artifacts_dir: Path | None = None,
     components: set[str],
     vendor_root: Path,
 ) -> None:
     if not components:
         return
 
-    cmd = [str(INSTALL_NATIVE_DEPS), "--workflow-url", workflow_url]
+    if workflow_url and artifacts_dir is not None:
+        raise RuntimeError("Specify only one of workflow_url or artifacts_dir.")
+    if not workflow_url and artifacts_dir is None:
+        raise RuntimeError("Missing workflow_url or artifacts_dir for native components.")
+
+    cmd = [str(INSTALL_NATIVE_DEPS)]
+    if artifacts_dir is not None:
+        cmd.extend(["--artifacts-dir", str(artifacts_dir)])
+    else:
+        cmd.extend(["--workflow-url", workflow_url or ""])
     for component in sorted(components):
         cmd.extend(["--component", component])
     cmd.append(str(vendor_root))
@@ -170,11 +189,20 @@ def main() -> int:
 
     try:
         if native_components_to_install:
-            workflow_url, resolved_head_sha = resolve_workflow_url(
-                args.release_version, args.workflow_url
-            )
+            if args.artifacts_dir is not None:
+                workflow_url = None
+            else:
+                workflow_url, resolved_head_sha = resolve_workflow_url(
+                    args.release_version, args.workflow_url
+                )
+
             vendor_temp_root = Path(tempfile.mkdtemp(prefix="npm-native-", dir=runner_temp))
-            install_native_components(workflow_url, native_components_to_install, vendor_temp_root)
+            install_native_components(
+                workflow_url=workflow_url,
+                artifacts_dir=args.artifacts_dir,
+                components=native_components_to_install,
+                vendor_root=vendor_temp_root,
+            )
             vendor_src = vendor_temp_root / "vendor"
 
         if resolved_head_sha:
