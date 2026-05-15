@@ -34,7 +34,9 @@ validation）、发布预检（release preflight）和免费额度成本控制
 - workflow 必须支持 `workflow_dispatch` 按平台选择目标。
 - push 和 pull request 的默认 CI 应保持低成本，优先只跑 Linux 快速门禁。
 - 深度平台产物构建不属于普通 CI；使用 `$we-deepseekx-nightly-artifacts`。
-- 需要全平台验证时，说明原因并优先选择手动 `target=all`。
+- 需要全平台发布验证时，说明原因并优先选择一次手动 `target=all`。
+- 已验证的 artifact workflow 不要常规先跑所有单平台再跑 `target=all`；
+  单平台只用于调试、新平台或修复后的定点验证。
 
 ## Windows 必跑条件
 
@@ -68,7 +70,9 @@ validation）、发布预检（release preflight）和免费额度成本控制
 4. 根据 Windows 必跑条件决定 `linux`、`windows` 或 `all`。
 5. 优先本地运行相关检查；只在本地无法覆盖时触发远端平台。
 6. 远端调试时，只触发受影响平台。
-7. 汇报 run URL、目标平台、结论和是否还需要全量验证。
+7. 如果失败属于 runner、网络或依赖下载，优先只重跑 failed jobs。
+8. 如果失败属于代码或 workflow，push 新 commit 后开新 run。
+9. 汇报 run URL、目标平台、结论和是否还需要全量验证。
 
 ## 常用命令
 
@@ -119,6 +123,7 @@ gh run view <run-id> \
   --repo meomeo-dev/deepseekx \
   --json status,conclusion,event,displayTitle,url,jobs
 gh run view <run-id> --repo meomeo-dev/deepseekx --log-failed
+gh run rerun <run-id> --repo meomeo-dev/deepseekx --failed
 ```
 
 下载 artifact：

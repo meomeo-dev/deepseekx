@@ -1,0 +1,228 @@
+digraph WeSkillNightlyCostAudit {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Arial",
+    fontsize=12,
+    label="WE 技能审计：Nightly Artifact 成本策略",
+    labelloc=t,
+    nodesep=0.55,
+    ranksep=0.85
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=10,
+    margin="0.08,0.06",
+    color="#2563EB",
+    fillcolor="#DBEAFE"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=9,
+    color="#475569",
+    arrowsize=0.75
+  ];
+
+  subgraph cluster_professional {
+    label="Professional Baseline";
+    color="#2563EB";
+    style="rounded,dashed";
+
+    p_intake [
+      label="1. 需求记录 / issue\n验收标准、影响范围、优先级"
+    ];
+    p_design [
+      label="2. 轻量设计 / 决策记录\n风险、回滚、测试计划"
+    ];
+    p_branch [
+      label="3. 从最新 main 创建短生命周期分支"
+    ];
+    p_impl [
+      label="4. 实现 + 测试\n小提交、清晰范围"
+    ];
+    p_pr [
+      label="5. PR 必需\n代码审查和变更说明"
+    ];
+    p_ci_pr [
+      label="6. PR CI 必须通过\nlint / typecheck / test / package verify"
+    ];
+    p_protected [
+      label="7. 受保护 main\n禁止未审查直接合并"
+    ];
+    p_release_candidate [
+      label="8. release candidate\n版本、changelog、tag 策略冻结"
+    ];
+    p_release_ci [
+      label="9. 发布前必要平台 CI\n按风险选择 Linux / Windows / all"
+    ];
+    p_artifacts [
+      label="10. 发布物确认\nnpm tarball、checksum、release notes"
+    ];
+    p_publish [
+      label="11. 发布 npm / GitHub Release\n可追溯、可回滚"
+    ];
+    p_post [
+      label="12. 发布后验证和收尾\nregistry、CI、分支、产物、监控"
+    ];
+  }
+
+  p_intake -> p_design -> p_branch -> p_impl -> p_pr -> p_ci_pr;
+  p_ci_pr -> p_protected -> p_release_candidate -> p_release_ci;
+  p_release_ci -> p_artifacts -> p_publish -> p_post;
+
+  subgraph cluster_facts {
+    label="Observed Workflow Facts";
+    color="#64748B";
+    style="rounded,dashed";
+
+    f_all [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="workflow supports target=all\n"
+        + "Linux, macOS, and Windows platform jobs can run in one run"
+    ];
+    f_staging [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="npm staging only on all\n"
+        + "deepseekx-npm-platform-staging is produced after all platforms pass"
+    ];
+    f_single [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="single targets are debug tools\n"
+        + "they validate one platform but do not create final npm staging"
+    ];
+    f_rerun [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="rerun failed jobs keeps old SHA\n"
+        + "good for runner/network failures, not for code fixes"
+    ];
+  }
+
+  f_all -> f_staging -> f_single -> f_rerun [
+    style=dotted,
+    color="#94A3B8"
+  ];
+
+  subgraph cluster_coverage {
+    label="Current WE Skill Coverage";
+    color="#16A34A";
+    style="rounded,dashed";
+
+    c_release_ci [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="release platform CI: partial\n"
+        + "$we-deepseekx-nightly-artifacts documents targets and manual gates\n"
+        + "but its default advice still favors single target before all"
+    ];
+    c_cost [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="cost control: partial\n"
+        + "$we-ci-maintenance records low-cost intent\n"
+        + "but does not define code-fix vs infra-failure rerun policy"
+    ];
+    c_publish [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="publish boundary: covered\n"
+        + "$we-publish stays manual; nightly workflow does not npm publish"
+    ];
+    c_docs [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="packaging doc: partial\n"
+        + "states single-platform validation before all\n"
+        + "too expensive once the workflow is established"
+    ];
+  }
+
+  p_release_ci -> c_release_ci [style=dashed, color="#94A3B8"];
+  p_release_ci -> c_cost [style=dashed, color="#94A3B8"];
+  p_artifacts -> c_docs [style=dashed, color="#94A3B8"];
+  p_publish -> c_publish [style=dashed, color="#94A3B8"];
+
+  subgraph cluster_findings {
+    label="Audit Findings";
+    color="#0F172A";
+    style="rounded,dashed";
+
+    a_covered [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="covered\n"
+        + "workflow has the technical ability to build all platforms\n"
+        + "and produce npm staging in one manual run"
+    ];
+    a_partial [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="partial\n"
+        + "skill docs conflate first-time workflow validation\n"
+        + "with normal release staging"
+    ];
+    a_gap [
+      color="#DC2626",
+      fillcolor="#FEE2E2",
+      label="gap\n"
+        + "no explicit budget policy for code failures, infra failures,\n"
+        + "rerun failed jobs, and final all run"
+    ];
+    a_not_needed [
+      color="#64748B",
+      fillcolor="#E2E8F0",
+      label="not needed\n"
+        + "do not add a separate budget skill or all-sequential workflow now;\n"
+        + "update existing nightly and CI skills first"
+    ];
+  }
+
+  f_all -> a_covered [style=dotted, color="#94A3B8"];
+  c_release_ci -> a_partial [style=dotted, color="#94A3B8"];
+  c_cost -> a_gap [style=dotted, color="#94A3B8"];
+  c_docs -> a_gap [style=dotted, color="#94A3B8"];
+
+  subgraph cluster_policy {
+    label="Recommended Policy";
+    color="#7C3AED";
+    style="rounded,dashed";
+
+    r_normal [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="normal release staging\n"
+        + "run target=all once on the intended release ref"
+    ];
+    r_infra [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="infra or network failure\n"
+        + "use gh run rerun <run-id> --failed on the same SHA"
+    ];
+    r_code [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="code or workflow fix\n"
+        + "push a new commit, test affected target if useful,\n"
+        + "then run target=all once for final staging"
+    ];
+    r_debug [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="new platform or workflow debugging\n"
+        + "use single targets to limit failed-run cost"
+    ];
+  }
+
+  a_covered -> r_normal;
+  a_gap -> r_infra;
+  a_gap -> r_code;
+  a_partial -> r_debug;
+}

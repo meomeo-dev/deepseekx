@@ -97,8 +97,20 @@ workflow 仍带有上游语义和 release 触发规则，当前不应作为 Deep
 
 ## 推荐发布前流程
 
-发布 DeepSeekX npm 前，先跑单平台目标验证，例如 Linux x64、macOS arm64
-或 Windows x64。确认 artifact 形状稳定后，再运行 `target=all`。
+发布 DeepSeekX npm 前，正常流程是在目标 release ref 上直接运行一次
+`target=all`。该目标会构建六个平台，并在全部成功后生成最终 npm
+platform staging artifact。
+
+单平台目标用于调试和降低失败面，不是常规发布前置步骤。适用场景包括：
+
+- workflow 或平台构建逻辑刚改动。
+- 某个平台已知失败，需要验证修复。
+- 新增平台、runner 或 native component。
+
+不要常规先把所有单平台目标都跑一遍，再运行 `target=all`；这会重复消耗
+GitHub Actions runner minutes。若 `target=all` 因 runner、网络或依赖下载
+失败，优先只重跑失败 job。若失败原因是代码或 workflow，需要 push 新
+commit 后重新触发 workflow。
 
 `target=all` 成功后，从 workflow artifact 下载
 `deepseekx-npm-platform-staging`，检查其中 6 个平台 tarball 和 1 个 root

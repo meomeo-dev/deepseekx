@@ -94,7 +94,9 @@ jobs:
           set -euo pipefail
           cat <<'EOF'
           This workflow is manual-only and unsigned.
-          Prefer single targets first, then run all only after failures are fixed.
+          For established release staging, prefer one target=all run.
+          Use single targets for debugging, new platforms, or focused fixes.
+          Rerun failed jobs only for runner, network, or dependency flake failures.
           Public repositories use standard hosted runners at no charge.
           Private repositories consume included minutes or billable minutes.
           EOF
