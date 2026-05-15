@@ -15,7 +15,8 @@ This downloads the native artifacts once, hydrates `vendor/` for each package, a
 tarballs to `dist/npm/`.
 
 When `--package deepseekx` is provided, the staging helper builds the
-lightweight `@meomeo/deepseekx` meta package plus all platform-native variants.
+lightweight `@meomeo-dev/deepseekx` meta package plus all platform-native
+variants.
 that are later published under platform-specific dist-tags.
 
 If you need to invoke `build_npm_package.py` directly, run

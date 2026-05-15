@@ -1,6 +1,6 @@
 #!/usr/bin/env -S NODE_NO_WARNINGS=1 pnpm ts-node-esm --files
 
-import { DeepSeekX } from "@meomeo/deepseekx-sdk";
+import { DeepSeekX } from "@meomeo-dev/deepseekx-sdk";
 
 import { deepseekxPathOverride } from "./helpers.ts";
 

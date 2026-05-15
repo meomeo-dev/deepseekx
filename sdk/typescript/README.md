@@ -2,13 +2,13 @@
 
 Embed the DeepSeekX agent in your workflows and apps.
 
-The TypeScript SDK wraps the `deepseekx` CLI from `@meomeo/deepseekx`.
+The TypeScript SDK wraps the `deepseekx` CLI from `@meomeo-dev/deepseekx`.
 It spawns the CLI and exchanges JSONL events over stdin/stdout.
 
 ## Installation
 
 ```bash
-npm install @meomeo/deepseekx-sdk
+npm install @meomeo-dev/deepseekx-sdk
 ```
 
 Requires Node.js 18+.
@@ -16,7 +16,7 @@ Requires Node.js 18+.
 ## Quickstart
 
 ```typescript
-import { DeepSeekX } from "@meomeo/deepseekx-sdk";
+import { DeepSeekX } from "@meomeo-dev/deepseekx-sdk";
 
 const deepseekx = new DeepSeekX();
 const thread = deepseekx.startThread();

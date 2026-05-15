@@ -76,7 +76,7 @@ mod tests {
         serde_json::json!({
             "dist": {
                 "integrity": format!("sha512-{version}"),
-                "tarball": format!("https://registry.npmjs.org/@meomeo/deepseekx/-/deepseekx-{version}.tgz"),
+                "tarball": format!("https://registry.npmjs.org/@meomeo-dev/deepseekx/-/deepseekx-{version}.tgz"),
             }
         })
     }

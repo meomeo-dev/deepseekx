@@ -1,5 +1,5 @@
 {
-  "name": "@meomeo/deepseekx-sdk",
+  "name": "@meomeo-dev/deepseekx-sdk",
   "version": "0.0.0-dev",
   "description": "TypeScript SDK for DeepSeekX APIs.",
   "repository": {

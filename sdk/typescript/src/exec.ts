@@ -41,7 +41,7 @@ export type DeepSeekXExecArgs = {
 
 const INTERNAL_ORIGINATOR_ENV = "DEEPSEEKX_INTERNAL_ORIGINATOR_OVERRIDE";
 const TYPESCRIPT_SDK_ORIGINATOR = "deepseekx_sdk_ts";
-const DEEPSEEKX_NPM_NAME = "@meomeo/deepseekx";
+const DEEPSEEKX_NPM_NAME = "@meomeo-dev/deepseekx";
 const CODEX_ENV_KEYS_TO_DROP = new Set([
   "CODEX_API_KEY",
   "CODEX_ACCESS_TOKEN",
@@ -54,12 +54,12 @@ const CODEX_ENV_KEYS_TO_DROP = new Set([
 ]);
 
 const PLATFORM_PACKAGE_BY_TARGET: Record<string, string> = {
-  "x86_64-unknown-linux-musl": "@meomeo/deepseekx-linux-x64",
-  "aarch64-unknown-linux-musl": "@meomeo/deepseekx-linux-arm64",
-  "x86_64-apple-darwin": "@meomeo/deepseekx-darwin-x64",
-  "aarch64-apple-darwin": "@meomeo/deepseekx-darwin-arm64",
-  "x86_64-pc-windows-msvc": "@meomeo/deepseekx-win32-x64",
-  "aarch64-pc-windows-msvc": "@meomeo/deepseekx-win32-arm64",
+  "x86_64-unknown-linux-musl": "@meomeo-dev/deepseekx-linux-x64",
+  "aarch64-unknown-linux-musl": "@meomeo-dev/deepseekx-linux-arm64",
+  "x86_64-apple-darwin": "@meomeo-dev/deepseekx-darwin-x64",
+  "aarch64-apple-darwin": "@meomeo-dev/deepseekx-darwin-arm64",
+  "x86_64-pc-windows-msvc": "@meomeo-dev/deepseekx-win32-x64",
+  "aarch64-pc-windows-msvc": "@meomeo-dev/deepseekx-win32-arm64",
 };
 
 const moduleRequire = createRequire(import.meta.url);
@@ -225,9 +225,7 @@ export class DeepSeekXExec {
       if (code !== 0 || signal) {
         const stderrBuffer = Buffer.concat(stderrChunks);
         const detail = signal ? `signal ${signal}` : `code ${code ?? 1}`;
-        throw new Error(
-          `DeepSeekX exec exited with ${detail}: ${stderrBuffer.toString("utf8")}`,
-        );
+        throw new Error(`DeepSeekX exec exited with ${detail}: ${stderrBuffer.toString("utf8")}`);
       }
     } finally {
       rl.close();

@@ -3,8 +3,8 @@
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-import { DeepSeekX } from "@meomeo/deepseekx-sdk";
-import type { ThreadEvent, ThreadItem } from "@meomeo/deepseekx-sdk";
+import { DeepSeekX } from "@meomeo-dev/deepseekx-sdk";
+import type { ThreadEvent, ThreadItem } from "@meomeo-dev/deepseekx-sdk";
 import { deepseekxPathOverride } from "./helpers.ts";
 
 const deepseekx = new DeepSeekX({ deepseekxPathOverride: deepseekxPathOverride() });

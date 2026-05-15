@@ -13,12 +13,12 @@ const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 
 const PLATFORM_PACKAGE_BY_TARGET = {
-  "x86_64-unknown-linux-musl": "@meomeo/deepseekx-linux-x64",
-  "aarch64-unknown-linux-musl": "@meomeo/deepseekx-linux-arm64",
-  "x86_64-apple-darwin": "@meomeo/deepseekx-darwin-x64",
-  "aarch64-apple-darwin": "@meomeo/deepseekx-darwin-arm64",
-  "x86_64-pc-windows-msvc": "@meomeo/deepseekx-win32-x64",
-  "aarch64-pc-windows-msvc": "@meomeo/deepseekx-win32-arm64",
+  "x86_64-unknown-linux-musl": "@meomeo-dev/deepseekx-linux-x64",
+  "aarch64-unknown-linux-musl": "@meomeo-dev/deepseekx-linux-arm64",
+  "x86_64-apple-darwin": "@meomeo-dev/deepseekx-darwin-x64",
+  "aarch64-apple-darwin": "@meomeo-dev/deepseekx-darwin-arm64",
+  "x86_64-pc-windows-msvc": "@meomeo-dev/deepseekx-win32-x64",
+  "aarch64-pc-windows-msvc": "@meomeo-dev/deepseekx-win32-arm64",
 };
 
 const { platform, arch } = process;
@@ -95,8 +95,8 @@ try {
     const packageManager = detectPackageManager();
     const updateCommand =
       packageManager === "bun"
-        ? "bun install -g @meomeo/deepseekx@latest"
-        : "npm install -g @meomeo/deepseekx@latest";
+        ? "bun install -g @meomeo-dev/deepseekx@latest"
+        : "npm install -g @meomeo-dev/deepseekx@latest";
     throw new Error(
       `Missing optional dependency ${platformPackage}. Reinstall DeepSeekX: ${updateCommand}`,
     );
@@ -107,8 +107,8 @@ if (!vendorRoot) {
   const packageManager = detectPackageManager();
   const updateCommand =
     packageManager === "bun"
-      ? "bun install -g @meomeo/deepseekx@latest"
-      : "npm install -g @meomeo/deepseekx@latest";
+      ? "bun install -g @meomeo-dev/deepseekx@latest"
+      : "npm install -g @meomeo-dev/deepseekx@latest";
   throw new Error(
     `Missing optional dependency ${platformPackage}. Reinstall DeepSeekX: ${updateCommand}`,
   );
