@@ -45,6 +45,8 @@ description: Use when starting or continuing DeepSeekX feature development
 
 - 当前分支。
 - `origin`、`upstream` 是否符合预期。
+- `gh` 默认仓库是否为 `meomeo-dev/deepseekx`；如未设置，运行
+  `gh repo set-default meomeo-dev/deepseekx`。
 - tracked dirty files、untracked files 和 secret-like untracked paths。
 - 当前分支相对 `origin/deepseekx/main` 的 ahead/behind。
 - 本地 `deepseekx/main` 相对当前分支的关系。
@@ -169,7 +171,10 @@ PR base 使用 `deepseekx/main`，head 使用当前 `deepseekx/<slug>`：
 
 ```bash
 git push -u origin deepseekx/<slug>
-gh pr create --base deepseekx/main --head deepseekx/<slug>
+gh pr create \
+  --repo meomeo-dev/deepseekx \
+  --base deepseekx/main \
+  --head deepseekx/<slug>
 ```
 
 PR 描述包含：

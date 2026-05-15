@@ -87,7 +87,10 @@ PR 路径：
 
 ```bash
 git push -u origin deepseekx/sync/<version>
-gh pr create --base deepseekx/main --head deepseekx/sync/<version>
+gh pr create \
+  --repo meomeo-dev/deepseekx \
+  --base deepseekx/main \
+  --head deepseekx/sync/<version>
 ```
 
 本地合并路径：
