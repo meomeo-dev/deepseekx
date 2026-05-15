@@ -38,9 +38,17 @@ Actions runner 资源，默认把用户请求理解为咨询，不自动触发�
 - `target=all` 会在六个平台 artifact 全部成功后额外生成
   `deepseekx-npm-platform-staging`，包含 6 个平台 npm tarball 和 1 个
   root wrapper tarball；该 job 不执行 `npm publish`。
+- 对已经验证过的 release staging，预算优先策略是直接运行一次
+  `target=all`，不要先把每个单平台目标都跑一遍再跑 `all`。
+- 单平台目标用于新 workflow、新平台、平台特定失败或代码修复后的定点
+  验证；它们不能替代最终发布前的 `target=all` staging run。
 - 单目标运行时，未选中的矩阵 job 显示 skipped 是预期，不代表失败。
 - 修改 workflow 后必须先 push 到远端 ref，再触发或重跑；GitHub Actions
   使用远端 workflow 文件和 ref，不会读取本地未推送改动。
+- `gh run rerun <run-id> --failed` 只适合 runner、网络、依赖下载等非代码
+  失败；代码或 workflow 修复后必须 push 新 commit，再开新 workflow run。
+- `target=all` 内的平台 job 默认并行执行。顺序执行只能减少早期失败时的
+  后续启动成本，不能减少全成功时的总 runner minutes，暂不作为默认流程。
 
 ## 触发前确认
 
@@ -117,6 +125,13 @@ gh run view <run-id> --repo meomeo-dev/deepseekx --log-failed
 
 先判断失败是代码、依赖、runner、网络还是 workflow 配置。每次远端
 重跑前，先说明本地已完成哪些验证。
+
+失败处理规则：
+
+- runner、网络、依赖下载超时：优先 `gh run rerun <run-id> --failed`。
+- 代码或 workflow 问题：修复、提交并 push 新 commit，再触发受影响目标。
+- 发布前最终产物：无论前面跑过哪些单平台，仍需在目标 ref 跑一次
+  `target=all`，由同一个 run 产出 `deepseekx-npm-platform-staging`。
 
 ## Validation
 
