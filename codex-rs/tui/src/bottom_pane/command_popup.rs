@@ -609,4 +609,27 @@ mod tests {
             "expected no /debug* command in popup menu, got {cmds:?}"
         );
     }
+
+    #[test]
+    fn deepseekx_hidden_commands_are_hidden_from_popup() {
+        let mut popup = CommandPopup::new(CommandPopupFlags::default(), Vec::new());
+        popup.on_composer_text_change("/".to_string());
+        let cmds: Vec<String> = popup
+            .filtered_items()
+            .into_iter()
+            .map(|item| match item {
+                CommandItem::Builtin(cmd) => cmd.command().to_string(),
+                CommandItem::ServiceTier(command) => command.name,
+            })
+            .collect();
+
+        assert!(!cmds.iter().any(|cmd| cmd == "logout"));
+        assert!(!cmds.iter().any(|cmd| cmd == "feedback"));
+
+        popup.on_composer_text_change("/logout".to_string());
+        assert_eq!(popup.selected_item(), None);
+
+        popup.on_composer_text_change("/feedback".to_string());
+        assert_eq!(popup.selected_item(), None);
+    }
 }

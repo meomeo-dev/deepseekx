@@ -232,6 +232,12 @@ impl SlashCommand {
 
     fn is_visible(self) -> bool {
         match self {
+            // DeepSeekX keeps the upstream command variants and dispatch paths
+            // intact to reduce merge conflicts, but hides unsupported
+            // solo-maintainer flows from slash lookup and the command popup.
+            // `/feedback` owns the bug-report category, so hiding it also
+            // blocks the user-facing bug-report entry point.
+            SlashCommand::Logout | SlashCommand::Feedback => false,
             SlashCommand::SandboxReadRoot => cfg!(target_os = "windows"),
             SlashCommand::Copy => !cfg!(target_os = "android"),
             SlashCommand::Rollout | SlashCommand::TestApproval => cfg!(debug_assertions),
@@ -254,6 +260,7 @@ mod tests {
     use std::str::FromStr;
 
     use super::SlashCommand;
+    use super::built_in_slash_commands;
 
     #[test]
     fn stop_command_is_canonical_name() {
@@ -289,5 +296,16 @@ mod tests {
             SlashCommand::from_str("approve"),
             Ok(SlashCommand::AutoReview)
         );
+    }
+
+    #[test]
+    fn deepseekx_hidden_commands_do_not_appear_in_builtin_list() {
+        let commands = built_in_slash_commands()
+            .into_iter()
+            .map(|(name, _)| name)
+            .collect::<Vec<_>>();
+
+        assert!(!commands.contains(&"logout"));
+        assert!(!commands.contains(&"feedback"));
     }
 }
