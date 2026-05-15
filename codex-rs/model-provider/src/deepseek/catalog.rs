@@ -9,8 +9,10 @@ use codex_protocol::openai_models::ReasoningEffortPreset;
 use codex_protocol::openai_models::TruncationPolicyConfig;
 use codex_protocol::openai_models::WebSearchToolType;
 
-use super::model_messages::deepseek_base_instructions;
-use super::model_messages::deepseek_model_messages;
+use super::model_messages::deepseek_v4_flash_base_instructions;
+use super::model_messages::deepseek_v4_flash_model_messages;
+use super::model_messages::deepseek_v4_pro_base_instructions;
+use super::model_messages::deepseek_v4_pro_model_messages;
 
 const DEEPSEEK_V4_PRO: &str = "deepseek-v4-pro";
 const DEEPSEEK_V4_FLASH: &str = "deepseek-v4-flash";
@@ -25,6 +27,7 @@ pub(crate) fn static_model_catalog() -> ModelsResponse {
                 "DeepSeek V4 Pro",
                 "DeepSeek reasoning model for complex coding tasks.",
                 Some(ReasoningEffort::High),
+                DeepSeekInstructionFamily::Pro,
                 /*priority*/ 0,
             ),
             deepseek_model(
@@ -32,10 +35,17 @@ pub(crate) fn static_model_catalog() -> ModelsResponse {
                 "DeepSeek V4 Flash",
                 "DeepSeek fast model for lower-latency coding tasks.",
                 Some(ReasoningEffort::High),
+                DeepSeekInstructionFamily::Flash,
                 /*priority*/ 1,
             ),
         ],
     }
+}
+
+#[derive(Clone, Copy)]
+enum DeepSeekInstructionFamily {
+    Pro,
+    Flash,
 }
 
 fn deepseek_model(
@@ -43,8 +53,20 @@ fn deepseek_model(
     display_name: &str,
     description: &str,
     default_reasoning_level: Option<ReasoningEffort>,
+    instruction_family: DeepSeekInstructionFamily,
     priority: i32,
 ) -> ModelInfo {
+    let (base_instructions, model_messages) = match instruction_family {
+        DeepSeekInstructionFamily::Pro => (
+            deepseek_v4_pro_base_instructions(),
+            deepseek_v4_pro_model_messages(),
+        ),
+        DeepSeekInstructionFamily::Flash => (
+            deepseek_v4_flash_base_instructions(),
+            deepseek_v4_flash_model_messages(),
+        ),
+    };
+
     ModelInfo {
         slug: slug.to_string(),
         display_name: display_name.to_string(),
@@ -63,8 +85,8 @@ fn deepseek_model(
         service_tiers: Vec::new(),
         availability_nux: None,
         upgrade: None,
-        base_instructions: deepseek_base_instructions(),
-        model_messages: Some(deepseek_model_messages()),
+        base_instructions,
+        model_messages: Some(model_messages),
         supports_reasoning_summaries: true,
         default_reasoning_summary: ReasoningSummary::None,
         support_verbosity: false,
@@ -196,6 +218,40 @@ mod tests {
                     .contains("deeply pragmatic, effective software engineer")
             );
         }
+    }
+
+    #[test]
+    fn catalog_maps_pro_and_flash_to_distinct_instruction_families() {
+        let catalog = static_model_catalog();
+        let pro = catalog
+            .models
+            .iter()
+            .find(|model| model.slug == DEEPSEEK_V4_PRO)
+            .expect("DeepSeek catalog should include V4 Pro");
+        let flash = catalog
+            .models
+            .iter()
+            .find(|model| model.slug == DEEPSEEK_V4_FLASH)
+            .expect("DeepSeek catalog should include V4 Flash");
+
+        assert_ne!(pro.base_instructions, flash.base_instructions);
+        assert!(flash.base_instructions.len() < pro.base_instructions.len());
+
+        let pro_template = pro
+            .model_messages
+            .as_ref()
+            .and_then(|messages| messages.instructions_template.as_ref())
+            .expect("DeepSeek V4 Pro should include instructions template");
+        let flash_template = flash
+            .model_messages
+            .as_ref()
+            .and_then(|messages| messages.instructions_template.as_ref())
+            .expect("DeepSeek V4 Flash should include instructions template");
+
+        assert_ne!(pro_template, flash_template);
+        assert!(flash_template.len() < pro_template.len());
+        assert!(pro_template.contains("{{ personality }}"));
+        assert!(flash_template.contains("{{ personality }}"));
     }
 
     #[test]
