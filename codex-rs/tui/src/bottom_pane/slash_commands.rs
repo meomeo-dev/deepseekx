@@ -210,6 +210,7 @@ mod tests {
     fn deepseekx_hidden_commands_do_not_resolve_for_dispatch() {
         assert_eq!(find_builtin_command("logout", all_enabled_flags()), None);
         assert_eq!(find_builtin_command("feedback", all_enabled_flags()), None);
+        assert_eq!(find_builtin_command("ide", all_enabled_flags()), None);
     }
 
     #[test]

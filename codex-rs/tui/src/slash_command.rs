@@ -237,7 +237,10 @@ impl SlashCommand {
             // solo-maintainer flows from slash lookup and the command popup.
             // `/feedback` owns the bug-report category, so hiding it also
             // blocks the user-facing bug-report entry point.
-            SlashCommand::Logout | SlashCommand::Feedback => false,
+            // `/ide` depends on the proprietary OpenAI Codex editor
+            // extension, whose source is not available for DeepSeekX
+            // adaptation.
+            SlashCommand::Logout | SlashCommand::Feedback | SlashCommand::Ide => false,
             SlashCommand::SandboxReadRoot => cfg!(target_os = "windows"),
             SlashCommand::Copy => !cfg!(target_os = "android"),
             SlashCommand::Rollout | SlashCommand::TestApproval => cfg!(debug_assertions),
@@ -307,5 +310,6 @@ mod tests {
 
         assert!(!commands.contains(&"logout"));
         assert!(!commands.contains(&"feedback"));
+        assert!(!commands.contains(&"ide"));
     }
 }
