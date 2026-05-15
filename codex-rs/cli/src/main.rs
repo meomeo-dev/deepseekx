@@ -37,6 +37,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use supports_color::Stream;
 
+mod app_cmd;
 mod marketplace_cmd;
 mod mcp_cmd;
 #[cfg(not(windows))]
@@ -45,6 +46,7 @@ mod wsl_paths;
 use crate::marketplace_cmd::MarketplaceCli;
 use crate::mcp_cmd::McpCli;
 
+use app_cmd::AppCommand;
 use codex_core::build_models_manager;
 use codex_core::config::Config;
 use codex_core::config::ConfigOverrides;
@@ -129,7 +131,7 @@ enum Subcommand {
 
     /// [disabled] DeepSeekX desktop app integration is not configured in this build.
     #[clap(hide = true)]
-    App(DisabledAppCli),
+    App(AppCommand),
 
     /// Generate shell completion scripts.
     Completion(CompletionCommand),
@@ -363,13 +365,6 @@ enum ExecpolicySubcommand {
 #[derive(Debug, Parser)]
 #[command(name = "DeepSeekX Login", version = DEEPSEEKX_VERSION)]
 struct DisabledLoginCli {
-    #[clap(flatten)]
-    pub config_overrides: CliConfigOverrides,
-}
-
-#[derive(Debug, Parser)]
-#[command(name = "DeepSeekX App", version = DEEPSEEKX_VERSION)]
-struct DisabledAppCli {
     #[clap(flatten)]
     pub config_overrides: CliConfigOverrides,
 }
@@ -982,15 +977,12 @@ async fn cli_main(arg0_paths: Arg0DispatchPaths) -> anyhow::Result<()> {
             println!("{}", serde_json::to_string(&output)?);
         }
         Some(Subcommand::App(app_cli)) => {
-            let _ = app_cli;
             reject_remote_mode_for_subcommand(
                 root_remote.as_deref(),
                 root_remote_auth_token_env.as_deref(),
                 "app",
             )?;
-            anyhow::bail!(
-                "DeepSeekX desktop app integration is not configured. This build will not open or install external desktop apps."
-            );
+            app_cmd::run_app(app_cli).await?;
         }
         Some(Subcommand::Resume(ResumeCommand {
             session_id,
