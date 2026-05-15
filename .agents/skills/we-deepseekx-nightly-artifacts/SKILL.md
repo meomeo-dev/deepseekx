@@ -26,6 +26,18 @@ Actions runner 资源，默认把用户请求理解为咨询，不自动触发�
 - 不自动运行 `all`，除非用户明确确认。
 - 不触碰 `.env`、API key、证书、签名密钥或 billing 凭据。
 
+## 当前运行策略
+
+- workflow 是手动 unsigned artifact 构建，不是普通 PR CI。
+- 当前 release build 使用 standard hosted runners，并通过 cargo home cache、
+  sccache、cargo-chef pre-warm、`CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16`
+  和 180 分钟 timeout 提高完成率。
+- macOS arm64 已验证从旧 90 分钟超时问题恢复到约 9 分钟完成；后续如果
+  再超时，优先看 dependency pre-warm、sccache stats 和 cargo timings。
+- 单目标运行时，未选中的矩阵 job 显示 skipped 是预期，不代表失败。
+- 修改 workflow 后必须先 push 到远端 ref，再触发或重跑；GitHub Actions
+  使用远端 workflow 文件和 ref，不会读取本地未推送改动。
+
 ## 触发前确认
 
 每次准备触发 workflow 前，先用简短中文复述：
