@@ -1,8 +1,8 @@
 use codex_protocol::openai_models::ModelInstructionsVariables;
 use codex_protocol::openai_models::ModelMessages;
 
-// DeepSeekX reuses the GPT-5.4 Codex instruction metadata shape so model
-// behavior stays aligned without changing the shared models-manager catalog.
+// Seeded from the GPT-5.4 Codex instruction metadata and copied into the
+// DeepSeek provider so future DeepSeek-specific adaptation stays local.
 pub(super) fn deepseek_base_instructions() -> String {
     BASE_INSTRUCTIONS.to_string()
 }
