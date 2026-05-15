@@ -20,7 +20,7 @@ artifact 或 GitHub Release”，先使用 `$we-release-readiness`。
 - 公开镜像：`/Users/jin/projects/deepseekx-public`。
 - GitHub owner：`meomeo-dev`。
 - npm CLI 包源：`codex-cli/package.json`。
-- npm CLI 包名：`@meomeo/deepseekx`。
+- npm CLI 包名：`@meomeo-dev/deepseekx`。
 - CLI bin：`deepseekx`。
 - 包 staging 脚本：`codex-cli/scripts/build_npm_package.py`。
 - 根 `package.json` 是 private maintenance package，不是发布包。
@@ -45,7 +45,7 @@ artifact 或 GitHub Release”，先使用 `$we-release-readiness`。
 
 开始维护版本号前，应确认：
 
-- 目标版本高于 `npm view @meomeo/deepseekx version`。
+- 目标版本高于 `npm view @meomeo-dev/deepseekx version`。
 - `codex-cli/package.json` version 是本轮 CLI package version source。
 - `CHANGELOG.md` 有或将新增对应版本条目。
 - 是否需要 platform artifact 已由 `$we-release-readiness` 或用户确认。
@@ -60,7 +60,7 @@ artifact 或 GitHub Release”，先使用 `$we-release-readiness`。
 默认权威发布物是 npm package：
 
 ```text
-@meomeo/deepseekx
+@meomeo-dev/deepseekx
 ```
 
 发布准备使用 staging 脚本，而不是根 `npm pack`：
@@ -85,7 +85,7 @@ GitHub Release 页面，并且 artifact 来自已确认的 nightly workflow。
 - 版本号使用 SemVer，并写入 `codex-cli/package.json`。
 - 若 SDK 或平台包版本需要同步，必须在本轮 release plan 中明确说明。
 - tag 使用 `v<semver>`，例如 `v0.7.1`。
-- tag message 使用 `@meomeo/deepseekx v<semver>`。
+- tag message 使用 `@meomeo-dev/deepseekx v<semver>`。
 - tag 应指向已通过发布门禁的 release commit。
 - 不要在 dirty worktree、版本不一致、changelog 缺失、CI 或 staging
   检查失败时创建 tag。
@@ -104,7 +104,7 @@ git tag --list "v$version"
 创建 annotated tag：
 
 ```bash
-git tag -a "v$version" -m "@meomeo/deepseekx v$version"
+git tag -a "v$version" -m "@meomeo-dev/deepseekx v$version"
 ```
 
 推送 tag、创建 GitHub Release、同步公开仓库都需要用户明确确认。
@@ -142,7 +142,7 @@ git tag -a "v$version" -m "@meomeo/deepseekx v$version"
 
 报告：
 
-- `@meomeo/deepseekx` 版本、npm latest 和目标 tag。
+- `@meomeo-dev/deepseekx` 版本、npm latest 和目标 tag。
 - 修改过的 release 文件。
 - staging 目录、tarball 路径、sha256 和 CLI smoke 结果。
 - `$we-public-sync` 结论。

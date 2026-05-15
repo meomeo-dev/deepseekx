@@ -44,7 +44,7 @@ description: Use when preparing, checking, or validating the sanitized public
 
 - 私有和公开仓库是否存在，且不是同一路径或同一 git dir。
 - 两边 remote URL、owner 和 visibility 是否符合预期。
-- 当前分支、dirty 状态和 `@meomeo/deepseekx` package version。
+- 当前分支、dirty 状态和 `@meomeo-dev/deepseekx` package version。
 - 根 `package.json` 是否仍为 private maintenance package。
 - 公开仓库中是否存在禁止公开目录。
 - 公开仓库中是否出现私有远端、本地路径、token、secret、credential、

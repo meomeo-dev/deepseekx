@@ -20,7 +20,7 @@ CHANGELOG、不创建 tag、不推送、不发布 npm、不创建 GitHub Release
 - 公开镜像工作区：`/Users/jin/projects/deepseekx-public`。
 - GitHub owner：`meomeo-dev`。
 - npm CLI 包源：`codex-cli/package.json`。
-- npm CLI 包名：`@meomeo/deepseekx`。
+- npm CLI 包名：`@meomeo-dev/deepseekx`。
 - CLI bin：`deepseekx`。
 - 根 `package.json` 是 private maintenance package，不是发布包。
 
@@ -49,7 +49,7 @@ CHANGELOG、不创建 tag、不推送、不发布 npm、不创建 GitHub Release
 ```bash
 git status --short --branch
 node -p "require('./codex-cli/package.json').version"
-npm view @meomeo/deepseekx version dist-tags --json
+npm view @meomeo-dev/deepseekx version dist-tags --json
 git tag --list "v*"
 ```
 
@@ -94,7 +94,7 @@ node "$tmp/bin/deepseekx.js" --help
 
 报告：
 
-- `@meomeo/deepseekx` 本地版本、npm latest 和建议目标版本。
+- `@meomeo-dev/deepseekx` 本地版本、npm latest 和建议目标版本。
 - readiness 结论。
 - 是否需要 `$we-deepseekx-nightly-artifacts` 或普通 CI。
 - 是否需要 `$we-public-sync`。

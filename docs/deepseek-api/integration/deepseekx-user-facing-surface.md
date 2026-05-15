@@ -224,7 +224,7 @@ provider ID 和 runtime capability。
 推荐做法：
 
 - 下游包名使用 `deepseekx` 或组织域名下的包，例如
-  `@meomeo/deepseekx`。
+  `@meomeo-dev/deepseekx`。
 - 平台包使用 `deepseekx-darwin-arm64` 等前缀。
 - 产物内主可执行文件为 `deepseekx`。
 - 产物内主可执行文件仅为 `deepseekx`。

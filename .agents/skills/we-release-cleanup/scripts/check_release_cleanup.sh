@@ -3,7 +3,7 @@ set -euo pipefail
 
 private_root="${WE_PRIVATE_ROOT:-/Users/jin/projects/deepseekx}"
 public_root="${WE_PUBLIC_ROOT:-/Users/jin/projects/deepseekx-public}"
-package_name="${WE_PACKAGE_NAME:-@meomeo/deepseekx}"
+package_name="${WE_PACKAGE_NAME:-@meomeo-dev/deepseekx}"
 tarball_glob="${WE_PACKAGE_TARBALL_GLOB:-deepseekx-*.tgz}"
 main_branch="${WE_RELEASE_MAIN_BRANCH:-deepseekx/main}"
 

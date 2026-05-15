@@ -64,7 +64,7 @@ description: Use after release preparation, tag push, GitHub Release, or npm
    - 最新 commit；
    - 本地和远端 release tag。
 4. 查看 npm registry：
-   - `npm view @meomeo/deepseekx version dist-tags --json`；
+   - `npm view @meomeo-dev/deepseekx version dist-tags --json`；
    - 如已发布，确认 latest 等于目标版本；
    - 如未发布，明确 npm latest 仍低于目标版本。
 5. 查看 CI：
