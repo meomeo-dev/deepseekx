@@ -19,6 +19,9 @@
 - `deepseekx-mlflow-observability.md`：记录如何用本地 MLflow +
   OpenTelemetry 作为 DeepSeekX 可观测性服务，并说明与 rollout trace
   一起诊断提示词 `messages[]` 的边界。
+- `deepseekx-npm-platform-packaging.md`：记录 DeepSeekX npm 平台包的
+  native binary 编译、`--vendor-src` staging、平台后缀版本和手动发布
+  边界。
 
 ## 相关快照
 
