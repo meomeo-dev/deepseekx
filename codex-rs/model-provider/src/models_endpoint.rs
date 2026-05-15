@@ -82,7 +82,7 @@ impl ModelsEndpointClient for OpenAiModelsEndpoint {
                 .provider_info
                 .env_key
                 .as_deref()
-                .is_some_and(|key| env_var_has_value(key))
+                .is_some_and(env_var_has_value)
     }
 
     async fn uses_codex_backend(&self) -> bool {

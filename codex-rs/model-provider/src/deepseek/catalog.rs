@@ -10,6 +10,8 @@ use codex_protocol::openai_models::ReasoningEffortPreset;
 use codex_protocol::openai_models::TruncationPolicyConfig;
 use codex_protocol::openai_models::WebSearchToolType;
 
+use super::model_messages::deepseek_model_messages;
+
 const DEEPSEEK_V4_PRO: &str = "deepseek-v4-pro";
 const DEEPSEEK_V4_FLASH: &str = "deepseek-v4-flash";
 const DEFAULT_CONTEXT_WINDOW: i64 = 384_000;
@@ -62,7 +64,7 @@ fn deepseek_model(
         availability_nux: None,
         upgrade: None,
         base_instructions: BASE_INSTRUCTIONS.to_string(),
-        model_messages: None,
+        model_messages: Some(deepseek_model_messages()),
         supports_reasoning_summaries: true,
         default_reasoning_summary: ReasoningSummary::None,
         support_verbosity: false,
@@ -103,6 +105,8 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     use super::*;
+    use codex_protocol::config_types::Personality;
+    use codex_protocol::openai_models::ModelPreset;
 
     #[test]
     fn catalog_uses_deepseek_model_ids_as_slugs() {
@@ -155,6 +159,38 @@ mod tests {
                     ReasoningEffort::XHigh,
                 ]
             );
+        }
+    }
+
+    #[test]
+    fn catalog_advertises_personality_support() {
+        let catalog = static_model_catalog();
+
+        assert!(catalog.models.iter().all(ModelInfo::supports_personality));
+    }
+
+    #[test]
+    fn catalog_preserves_personality_support_in_presets() {
+        let catalog = static_model_catalog();
+        let presets = catalog
+            .models
+            .into_iter()
+            .map(ModelPreset::from)
+            .collect::<Vec<_>>();
+
+        assert!(presets.iter().all(|preset| preset.supports_personality));
+    }
+
+    #[test]
+    fn catalog_injects_personality_into_deepseek_instructions() {
+        let catalog = static_model_catalog();
+
+        for model in catalog.models {
+            let instructions = model.get_model_instructions(Some(Personality::Pragmatic));
+
+            assert!(instructions.contains("# Personality"));
+            assert!(instructions.contains("deeply pragmatic, effective software engineer"));
+            assert!(!instructions.contains("{{ personality }}"));
         }
     }
 }

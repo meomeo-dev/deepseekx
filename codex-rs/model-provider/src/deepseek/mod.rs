@@ -1,4 +1,5 @@
 mod catalog;
+mod model_messages;
 
 use std::path::PathBuf;
 use std::sync::Arc;
