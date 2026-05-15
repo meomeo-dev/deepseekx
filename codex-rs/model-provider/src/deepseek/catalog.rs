@@ -182,7 +182,7 @@ mod tests {
     }
 
     #[test]
-    fn catalog_uses_gpt_5_4_base_instructions() {
+    fn catalog_uses_local_deepseek_base_instructions() {
         let catalog = static_model_catalog();
 
         for model in catalog.models {
