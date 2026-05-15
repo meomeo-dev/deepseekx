@@ -76,7 +76,7 @@ Out of scope:
   - `codex-rs/app-server/src/request_processors/initialize_processor.rs`
   - `codex-rs/app-server/README.md`
 - TypeScript SDK drops inherited `CODEX_*` environment variables by default and
-  only resolves `deepseekx` from `@meomeo/deepseekx` optional dependencies.
+  only resolves `deepseekx` from `@meomeo-dev/deepseekx` optional dependencies.
 - Python SDK uses `deepseekx` and `deepseekx-cli-bin`; user examples use
   `DeepSeekX`, `deepseekx`, and `deepseek-v4-pro`.
 - App-server docs use `deepseekx app-server` and describe `codexHome` as a

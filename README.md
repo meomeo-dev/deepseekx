@@ -1,60 +1,168 @@
-<p align="center"><code>npm i -g @openai/codex</code><br />or <code>brew install --cask codex</code></p>
-<p align="center"><strong>Codex CLI</strong> is a coding agent from OpenAI that runs locally on your computer.
-<p align="center">
-  <img src="https://github.com/openai/codex/blob/main/.github/codex-cli-splash.png" alt="Codex CLI splash" width="80%" />
-</p>
-</br>
-If you want Codex in your code editor (VS Code, Cursor, Windsurf), <a href="https://developers.openai.com/codex/ide">install in your IDE.</a>
-</br>If you want the desktop app experience, run <code>codex app</code> or visit <a href="https://chatgpt.com/codex?app-landing-page=true">the Codex App page</a>.
-</br>If you are looking for the <em>cloud-based agent</em> from OpenAI, <strong>Codex Web</strong>, go to <a href="https://chatgpt.com/codex">chatgpt.com/codex</a>.</p>
+# DeepSeekX
 
----
+Chinese README: [README.zh-CN.md](README.zh-CN.md)
+
+DeepSeekX is a downstream adaptation of OpenAI Codex CLI for DeepSeek API
+usage. It keeps the local terminal coding-agent workflow while defaulting to
+DeepSeek-oriented provider, model, packaging, and user-facing behavior.
+
+The original upstream OpenAI Codex README is preserved as
+[CODEX_README.md](CODEX_README.md) to reduce conflicts during future upstream
+syncs.
+
+## Install
+
+Install from npm:
+
+```shell
+npm install -g @meomeo-dev/deepseekx@0.131.0-deepseekx.1
+```
+
+Run:
+
+```shell
+deepseekx
+```
+
+For one-off usage:
+
+```shell
+npx @meomeo-dev/deepseekx@0.131.0-deepseekx.1
+```
+
+Homebrew is not supported yet. GitHub Releases provide release notes and
+optional tarball downloads.
 
 ## Quickstart
 
-### Installing and running Codex CLI
-
-Install globally with your preferred package manager:
+Set a DeepSeek API key and start DeepSeekX:
 
 ```shell
-# Install using npm
-npm install -g @openai/codex
+export DEEPSEEK_API_KEY="sk-..."
+deepseekx
 ```
+
+DeepSeekX uses its own user directory and does not read the original OpenAI
+Codex user directory by default.
+
+## Configuration
+
+User-level config lives at `DEEPSEEKX_HOME/config.toml`. If `DEEPSEEKX_HOME`
+is not set, the default user directory is `~/.deepseekx`, so the default file
+is:
+
+```text
+~/.deepseekx/config.toml
+```
+
+Project-level config lives at the project root:
+
+```text
+.deepseekx/config.toml
+```
+
+Use project config for repository-specific model, sandbox, approval, MCP,
+provider, or profile settings that should not become global user defaults.
+
+Configuration precedence:
+
+```text
+command-line overrides -> project .deepseekx/config.toml ->
+user DEEPSEEKX_HOME/config.toml -> built-in defaults
+```
+
+### User Config
+
+Create `~/.deepseekx/config.toml`:
+
+```toml
+model_provider = "deepseek"
+model = "deepseek-v4-pro"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[model_providers.deepseek]
+name = "DeepSeek"
+base_url = "https://api.deepseek.com"
+env_key = "DEEPSEEK_API_KEY"
+wire_api = "chat"
+requires_openai_auth = false
+```
+
+For a custom DeepSeek-compatible provider, keep the provider id in the
+`deepseek-*` namespace:
+
+```toml
+model_provider = "deepseek-vendor-a"
+model = "deepseek-v4-flash"
+
+[model_providers.deepseek-vendor-a]
+name = "Vendor A DeepSeek"
+base_url = "https://vendor.example/v1"
+env_key = "VENDOR_DEEPSEEK_API_KEY"
+wire_api = "chat"
+requires_openai_auth = false
+```
+
+### Project Config
+
+Create `.deepseekx/config.toml` in a repository:
+
+```toml
+model = "deepseek-v4-flash"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.pro]
+model_provider = "deepseek"
+model = "deepseek-v4-pro"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.flash]
+model_provider = "deepseek"
+model = "deepseek-v4-flash"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+```
+
+Run with a profile:
 
 ```shell
-# Install using Homebrew
-brew install --cask codex
+deepseekx --profile pro
 ```
 
-Then simply run `codex` to get started.
+## Models
 
-<details>
-<summary>You can also go to the <a href="https://github.com/openai/codex/releases/latest">latest GitHub Release</a> and download the appropriate binary for your platform.</summary>
+DeepSeekX currently exposes:
 
-Each GitHub Release contains many executables, but in practice, you likely want one of these:
+- `deepseek-v4-pro`
+- `deepseek-v4-flash`
 
-- macOS
-  - Apple Silicon/arm64: `codex-aarch64-apple-darwin.tar.gz`
-  - x86_64 (older Mac hardware): `codex-x86_64-apple-darwin.tar.gz`
-- Linux
-  - x86_64: `codex-x86_64-unknown-linux-musl.tar.gz`
-  - arm64: `codex-aarch64-unknown-linux-musl.tar.gz`
+DeepSeek model metadata, base instructions, and personality templates are
+maintained inside the DeepSeek provider catalog rather than loaded from the
+OpenAI model catalog at runtime.
 
-Each archive contains a single entry with the platform baked into the name (e.g., `codex-x86_64-unknown-linux-musl`), so you likely want to rename it to `codex` after extracting it.
+## Differences From OpenAI Codex
 
-</details>
+- The CLI command is `deepseekx`.
+- The npm package is `@meomeo-dev/deepseekx`.
+- User config defaults to `~/.deepseekx`.
+- Project config defaults to `.deepseekx/config.toml`.
+- DeepSeek auth uses `DEEPSEEK_API_KEY`.
+- OpenAI login and unsupported IDE/app commands are hidden or disabled.
+- Some upstream Codex features may stay unavailable until they are adapted for
+  DeepSeekX.
 
-### Using Codex with your ChatGPT plan
+## Release Channels
 
-Run `codex` and select **Sign in with ChatGPT**. We recommend signing into your ChatGPT account to use Codex as part of your Plus, Pro, Business, Edu, or Enterprise plan. [Learn more about what's included in your ChatGPT plan](https://help.openai.com/en/articles/11369540-codex-in-chatgpt).
+- npm is the primary install channel.
+- GitHub Releases provide release notes and optional tarballs.
+- Homebrew is not currently supported.
 
-You can also use Codex with an API key, but this requires [additional setup](https://developers.openai.com/codex/auth#sign-in-with-an-api-key).
-
-## Docs
-
-- [**Codex Documentation**](https://developers.openai.com/codex)
-- [**Contributing**](./docs/contributing.md)
-- [**Installing & building**](./docs/install.md)
-- [**Open source fund**](./docs/open-source-fund.md)
+## License
 
 This repository is licensed under the [Apache-2.0 License](LICENSE).
+
+DeepSeekX is a downstream fork of OpenAI Codex. See
+[CODEX_README.md](CODEX_README.md) for the preserved upstream README.

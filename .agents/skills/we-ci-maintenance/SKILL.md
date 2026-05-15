@@ -53,7 +53,7 @@ validation）、发布预检（release preflight）和免费额度成本控制
 ## 当前 CI 策略
 
 - `.github/workflows/ci.yml` 当前在 `push` 到 `deepseekx/main` 和 PR 时运行
-  维护门禁，并 staging `@meomeo/deepseekx` npm 根包。
+  维护门禁，并 staging `@meomeo-dev/deepseekx` npm 根包。
 - `deepseekx-nightly-artifacts.yml` 是手动 artifact workflow，触发和调试
   使用 `$we-deepseekx-nightly-artifacts`。
 - 如果 workflow 仍监听 `main` 而目标是 `deepseekx/main`，先把事件分支

@@ -1,13 +1,13 @@
 ---
 name: we-publish
 description: Use when preparing, validating, or executing npm publication for
-  the DeepSeekX @meomeo/deepseekx package after release gates pass.
+  the DeepSeekX @meomeo-dev/deepseekx package after release gates pass.
 ---
 
 # we-publish
 
 用于 DeepSeekX npm 发布（npm publication）。目标是确认
-`@meomeo/deepseekx` 的包元数据、staged tarball、registry 状态、
+`@meomeo-dev/deepseekx` 的包元数据、staged tarball、registry 状态、
 认证状态和发布后验证都可解释、可复现。
 
 除非用户明确要求，不自动执行 `npm publish`。
@@ -15,10 +15,10 @@ description: Use when preparing, validating, or executing npm publication for
 ## 当前仓库事实
 
 - npm CLI 包源：`codex-cli/package.json`。
-- 当前包名（package name）：`@meomeo/deepseekx`。
+- 当前包名（package name）：`@meomeo-dev/deepseekx`。
 - CLI bin：`deepseekx -> bin/deepseekx.js`。
 - staging 脚本：`codex-cli/scripts/build_npm_package.py`。
-- npm latest 必须通过 `npm view @meomeo/deepseekx version` 实时查询。
+- npm latest 必须通过 `npm view @meomeo-dev/deepseekx version` 实时查询。
 - npm registry 当前登录用户必须用 `npm whoami` 检查。
 - 根 `package.json` 是 private maintenance package，不得作为发布包。
 - 私有/公开双仓库清洗属于 `$we-release` 和 `$we-public-sync` 范围。
@@ -41,7 +41,7 @@ description: Use when preparing, validating, or executing npm publication for
 - 不把 `_tasks/`、`_workflows/`、`.env`、`docs/notes/` 或本地 cache
   纳入 npm 包。
 - `.agents/`、`.codex/`、`.deepseekx/` 可以同步公开仓库，但不是
-  `@meomeo/deepseekx` npm 包默认内容。
+  `@meomeo-dev/deepseekx` npm 包默认内容。
 
 ## 安全边界
 
@@ -57,11 +57,11 @@ description: Use when preparing, validating, or executing npm publication for
 2. 查看包元数据：
    `node -p "require('./codex-cli/package.json')"`。
 3. 查看 registry：
-   `npm view @meomeo/deepseekx name version dist-tags --json`。
+   `npm view @meomeo-dev/deepseekx name version dist-tags --json`。
 4. 查看登录用户：`npm whoami`，失败时不要继续发布。
 5. 检查 `.npmrc` 是否含 auth-like entry，但不要打印具体值。
 6. 确认 `codex-cli/package.json`：
-   - `name` 是 `@meomeo/deepseekx`；
+   - `name` 是 `@meomeo-dev/deepseekx`；
    - `license` 与目标发布策略一致；
    - `repository` 指向公开可访问地址；
    - `bin.deepseekx` 指向 `bin/deepseekx.js`；
@@ -95,7 +95,7 @@ npm pack --dry-run --json "$tmp"
 - tarball 文件数和大小合理。
 - 包内包含 `bin/deepseekx.js`、README、package.json。
 - 包内不包含私有目录、任务目录、`.env`、cache 或凭据文件。
-- optional dependencies 指向 `@meomeo/deepseekx-*` 平台包版本。
+- optional dependencies 指向 `@meomeo-dev/deepseekx-*` 平台包版本。
 
 ## 临时安装验证
 
@@ -124,7 +124,7 @@ npm publish "$tarball" --access public
 
 - 本地版本高于 npm latest。
 - 发布访问级别与意图一致。
-- 当前包名是 `@meomeo/deepseekx`。
+- 当前包名是 `@meomeo-dev/deepseekx`。
 - 工作区没有未解释的 staged 或 dirty 发布文件。
 - 用户已接受 npm 2FA 或 registry auth 的交互要求。
 
@@ -133,15 +133,15 @@ npm publish "$tarball" --access public
 发布完成后运行：
 
 ```bash
-npm view @meomeo/deepseekx version dist-tags license repository --json
-npm view @meomeo/deepseekx dist.tarball dist.fileCount dist.unpackedSize --json
+npm view @meomeo-dev/deepseekx version dist-tags license repository --json
+npm view @meomeo-dev/deepseekx dist.tarball dist.fileCount dist.unpackedSize --json
 ```
 
 必要时在新临时目录安装 registry 版本：
 
 ```bash
 tmp="$(mktemp -d)"
-npm install --prefix "$tmp" @meomeo/deepseekx@latest
+npm install --prefix "$tmp" @meomeo-dev/deepseekx@latest
 "$tmp/node_modules/.bin/deepseekx" --help
 ```
 
