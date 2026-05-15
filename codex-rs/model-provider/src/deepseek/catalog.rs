@@ -1,4 +1,3 @@
-use codex_models_manager::model_info::BASE_INSTRUCTIONS;
 use codex_protocol::config_types::ReasoningSummary;
 use codex_protocol::openai_models::ConfigShellToolType;
 use codex_protocol::openai_models::InputModality;
@@ -10,6 +9,7 @@ use codex_protocol::openai_models::ReasoningEffortPreset;
 use codex_protocol::openai_models::TruncationPolicyConfig;
 use codex_protocol::openai_models::WebSearchToolType;
 
+use super::model_messages::deepseek_base_instructions;
 use super::model_messages::deepseek_model_messages;
 
 const DEEPSEEK_V4_PRO: &str = "deepseek-v4-pro";
@@ -63,7 +63,7 @@ fn deepseek_model(
         service_tiers: Vec::new(),
         availability_nux: None,
         upgrade: None,
-        base_instructions: BASE_INSTRUCTIONS.to_string(),
+        base_instructions: deepseek_base_instructions(),
         model_messages: Some(deepseek_model_messages()),
         supports_reasoning_summaries: true,
         default_reasoning_summary: ReasoningSummary::None,
@@ -179,6 +179,23 @@ mod tests {
             .collect::<Vec<_>>();
 
         assert!(presets.iter().all(|preset| preset.supports_personality));
+    }
+
+    #[test]
+    fn catalog_uses_gpt_5_4_base_instructions() {
+        let catalog = static_model_catalog();
+
+        for model in catalog.models {
+            assert!(model.base_instructions.starts_with(
+                "You are Codex, a coding agent based on GPT-5. \
+                 You and the user share the same workspace"
+            ));
+            assert!(
+                model
+                    .base_instructions
+                    .contains("deeply pragmatic, effective software engineer")
+            );
+        }
     }
 
     #[test]
