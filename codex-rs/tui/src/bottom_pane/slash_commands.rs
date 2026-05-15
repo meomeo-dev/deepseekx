@@ -207,6 +207,12 @@ mod tests {
     }
 
     #[test]
+    fn deepseekx_hidden_commands_do_not_resolve_for_dispatch() {
+        assert_eq!(find_builtin_command("logout", all_enabled_flags()), None);
+        assert_eq!(find_builtin_command("feedback", all_enabled_flags()), None);
+    }
+
+    #[test]
     fn service_tier_commands_are_hidden_when_disabled() {
         let mut flags = all_enabled_flags();
         flags.service_tier_commands_enabled = false;
