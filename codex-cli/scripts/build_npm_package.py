@@ -104,6 +104,12 @@ COMPONENT_DEST_DIR: dict[str, str] = {
     "rg": "path",
 }
 
+MIN_NATIVE_COMPONENT_SIZE_BYTES: dict[str, int] = {
+    # The real DeepSeekX CLI is tens of MiB in release builds. A much smaller
+    # file is usually a cargo-chef placeholder binary and must never ship.
+    "deepseekx": 5 * 1024 * 1024,
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build or stage the DeepSeekX npm package.")
@@ -435,12 +441,32 @@ def copy_native_binaries(
             if dest_component_dir.exists():
                 shutil.rmtree(dest_component_dir)
             shutil.copytree(src_component_dir, dest_component_dir)
+            validate_native_component(dest_component_dir, component, target_dir.name)
 
     if target_filter is not None:
         missing_targets = sorted(target_filter - copied_targets)
         if missing_targets:
             missing_list = ", ".join(missing_targets)
             raise RuntimeError(f"Missing target directories in vendor source: {missing_list}")
+
+
+def validate_native_component(component_dir: Path, component: str, target: str) -> None:
+    min_size = MIN_NATIVE_COMPONENT_SIZE_BYTES.get(component)
+    if min_size is None:
+        return
+
+    binary_name = f"{component}.exe" if "windows" in target else component
+    binary_path = component_dir / binary_name
+    if not binary_path.is_file():
+        raise RuntimeError(f"Missing native component binary: {binary_path}")
+
+    size = binary_path.stat().st_size
+    if size < min_size:
+        raise RuntimeError(
+            f"Native component '{component}' for {target} is only {size} bytes; "
+            f"expected at least {min_size} bytes. This usually means a placeholder "
+            "binary was staged instead of the real DeepSeekX CLI."
+        )
 
 
 def run_npm_pack(staging_dir: Path, output_path: Path) -> Path:

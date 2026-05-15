@@ -29,11 +29,11 @@ registry 的包名仍是 `@meomeo-dev/deepseekx`，但每个平台使用唯一�
 平台后缀版本，例如：
 
 ```text
-@meomeo-dev/deepseekx@0.131.0-deepseekx.1-darwin-arm64
+@meomeo-dev/deepseekx@0.131.0-deepseekx.2-darwin-arm64
 ```
 
 root wrapper 版本，例如
-`@meomeo-dev/deepseekx@0.131.0-deepseekx.1`，通过
+`@meomeo-dev/deepseekx@0.131.0-deepseekx.2`，通过
 `optionalDependencies` 使用 npm alias 指向这些平台后缀版本。这样 npm
 安装时会按 `os` 和 `cpu` 选择当前平台可安装的 native payload。
 
@@ -95,6 +95,30 @@ platform staging artifact：
 workflow 仍带有上游语义和 release 触发规则，当前不应作为 DeepSeekX
 手动 npm 发布的直接依赖。
 
+## 与上游 Codex release workflow 的关系
+
+上游 Codex 的 `rust-release.yml` 以 tag 触发，直接在目标平台执行
+`cargo build --target <target> --release --bin codex ...`，随后签名、
+压缩、上传 release artifact，并在后续 job 中用这些 artifact 生成 npm
+tarball。它没有在同一个 `target/<target>/release` 输出目录里先运行
+`cargo chef cook`。
+
+DeepSeekX 当前保留人工 npm 发布和手动 unsigned artifact workflow，不直接
+复用上游 release workflow，原因是上游流程包含 OpenAI 包名、签名密钥、
+tag 规则、发布权限和自动 publish 语义。可复用的原则是：
+
+- native binary 必须由对应平台 CI runner 编译。
+- npm staging 只封装已经产出的 native 文件。
+- staging 前必须确认 native binary 是真实 CLI，不是构建预热产生的
+  placeholder。
+- root wrapper 必须在平台后缀版本发布后再发布。
+
+`cargo-chef` 的 `cook` 阶段会用 recipe 生成 dummy crate 并预热依赖。
+如果它和正式构建共用 `target/<target>/release`，可能留下同名 placeholder
+binary。DeepSeekX nightly artifact workflow 因此不在正式 release 输出目录
+执行 `cargo chef cook`，并在平台 job 中强制检查 `deepseekx --version`、
+`deepseekx --help` 和 CLI binary size。
+
 ## 推荐发布前流程
 
 发布 DeepSeekX npm 前，正常流程是在目标 release ref 上直接运行一次
@@ -130,7 +154,7 @@ workflow 内部使用已下载 artifact 时，可以直接传 `--artifacts-dir`�
 
 ```bash
 ./scripts/stage_npm_packages.py \
-  --release-version 0.131.0-deepseekx.1 \
+  --release-version 0.131.0-deepseekx.2 \
   --package deepseekx \
   --artifacts-dir artifacts \
   --output-dir dist/npm
@@ -141,7 +165,7 @@ workflow 内部使用已下载 artifact 时，可以直接传 `--artifacts-dir`�
 
 ```bash
 ./scripts/stage_npm_packages.py \
-  --release-version 0.131.0-deepseekx.1 \
+  --release-version 0.131.0-deepseekx.2 \
   --package deepseekx \
   --workflow-url https://github.com/meomeo-dev/deepseekx/actions/runs/<run-id> \
   --output-dir dist/npm
@@ -154,9 +178,9 @@ root wrapper 示例：
 ```bash
 python3 codex-cli/scripts/build_npm_package.py \
   --package deepseekx \
-  --release-version 0.131.0-deepseekx.1 \
+  --release-version 0.131.0-deepseekx.2 \
   --staging-dir /tmp/deepseekx-npm-stage \
-  --pack-output /tmp/deepseekx-0.131.0-deepseekx.1.tgz
+  --pack-output /tmp/deepseekx-0.131.0-deepseekx.2.tgz
 ```
 
 平台包示例：
@@ -164,10 +188,10 @@ python3 codex-cli/scripts/build_npm_package.py \
 ```bash
 python3 codex-cli/scripts/build_npm_package.py \
   --package deepseekx-darwin-arm64 \
-  --release-version 0.131.0-deepseekx.1 \
+  --release-version 0.131.0-deepseekx.2 \
   --vendor-src /tmp/deepseekx-native-vendor \
   --staging-dir /tmp/deepseekx-darwin-arm64-stage \
-  --pack-output /tmp/deepseekx-0.131.0-deepseekx.1-darwin-arm64.tgz
+  --pack-output /tmp/deepseekx-0.131.0-deepseekx.2-darwin-arm64.tgz
 ```
 
 `/tmp/deepseekx-native-vendor` 必须来自对应 CI 构建产物。不能用本机
@@ -180,6 +204,9 @@ artifact 伪装其他平台的 native payload。
 - root wrapper tarball 不包含私有目录、任务目录、cache、`.env` 或凭据。
 - 每个平台 tarball 的 `package.json` 包含正确的 `os` 和 `cpu`。
 - 每个平台 tarball 的 `vendor/` 包含该平台所需 native component。
+- `deepseekx` native binary 大小合理，且 `--version` 输出 `DeepSeekX`。
+- staging 后至少在 Linux x64 tarball 上跑 root wrapper `--version` 和
+  `--help` smoke test。
 - root wrapper 的 `optionalDependencies` 指向同版本的平台后缀版本。
 - 平台后缀版本先于 root wrapper 发布。
 - 发布前可以在临时目录检查 tarball 内容和 package metadata。

@@ -339,20 +339,6 @@ jobs:
           restore-keys: |
             ch-n-${{ matrix.package }}-
 
-      - name: Install cargo-chef
-        uses: taiki-e/install-action@44c6d64aa62cd779e873306675c7a58e86d6d532 # v2.62.49
-        with:
-          tool: cargo-chef
-          version: 0.1.71
-
-      - name: Pre-warm dependency cache
-        shell: bash
-        run: |
-          set -euo pipefail
-          recipe="${RUNNER_TEMP}/chef-recipe.json"
-          cargo chef prepare --recipe-path "$recipe"
-          cargo chef cook --recipe-path "$recipe" --target "${{ matrix.target }}" --release
-
       - name: Cargo build
         shell: bash
         run: |
@@ -365,6 +351,22 @@ jobs:
             --bin bwrap \
             --bin deepseekx \
             --bin codex-responses-api-proxy
+
+      - name: Verify Linux binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          deepseekx="target/$target/release/deepseekx"
+          size="$(stat -c%s "$deepseekx")"
+          if (( size < 5000000 )); then
+            echo "deepseekx binary is unexpectedly small: $size bytes"
+            exit 1
+          fi
+          "$deepseekx" --version | tee /tmp/deepseekx-version.txt
+          grep -q '^DeepSeekX ' /tmp/deepseekx-version.txt
+          "$deepseekx" --help | tee /tmp/deepseekx-help.txt
+          grep -q 'Usage: deepseekx' /tmp/deepseekx-help.txt
 
       - name: Stage Linux package
         shell: bash
@@ -504,20 +506,6 @@ jobs:
             sc-n-${{ matrix.package }}-${{ steps.lockhash.outputs.key }}-
             sc-n-${{ matrix.package }}-
 
-      - name: Install cargo-chef
-        uses: taiki-e/install-action@44c6d64aa62cd779e873306675c7a58e86d6d532 # v2.62.49
-        with:
-          tool: cargo-chef
-          version: 0.1.71
-
-      - name: Pre-warm dependency cache
-        shell: bash
-        run: |
-          set -euo pipefail
-          recipe="${RUNNER_TEMP}/chef-recipe.json"
-          cargo chef prepare --recipe-path "$recipe"
-          cargo chef cook --recipe-path "$recipe" --target "${{ matrix.target }}" --release
-
       - name: Cargo build
         shell: bash
         run: |
@@ -529,6 +517,22 @@ jobs:
             --timings \
             --bin deepseekx \
             --bin codex-responses-api-proxy
+
+      - name: Verify macOS binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          deepseekx="target/$target/release/deepseekx"
+          size="$(stat -f%z "$deepseekx")"
+          if (( size < 5000000 )); then
+            echo "deepseekx binary is unexpectedly small: $size bytes"
+            exit 1
+          fi
+          "$deepseekx" --version | tee /tmp/deepseekx-version.txt
+          grep -q '^DeepSeekX ' /tmp/deepseekx-version.txt
+          "$deepseekx" --help | tee /tmp/deepseekx-help.txt
+          grep -q 'Usage: deepseekx' /tmp/deepseekx-help.txt
 
       - name: Stage macOS package
         shell: bash
@@ -749,20 +753,6 @@ jobs:
             sc-n-${{ matrix.package }}-${{ steps.lockhash.outputs.key }}-
             sc-n-${{ matrix.package }}-
 
-      - name: Install cargo-chef
-        uses: taiki-e/install-action@44c6d64aa62cd779e873306675c7a58e86d6d532 # v2.62.49
-        with:
-          tool: cargo-chef
-          version: 0.1.71
-
-      - name: Pre-warm dependency cache
-        shell: bash
-        run: |
-          set -euo pipefail
-          recipe="${RUNNER_TEMP}/chef-recipe.json"
-          cargo chef prepare --recipe-path "$recipe"
-          cargo chef cook --recipe-path "$recipe" --target "${{ matrix.target }}" --release
-
       - name: Cargo build
         shell: bash
         run: |
@@ -776,6 +766,33 @@ jobs:
             --bin codex-responses-api-proxy \
             --bin codex-windows-sandbox-setup \
             --bin codex-command-runner
+
+      - name: Verify Windows binaries
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $target = "${{ matrix.target }}"
+          $deepseekx = "target/$target/release/deepseekx.exe"
+          $size = (Get-Item $deepseekx).Length
+          if ($size -lt 5000000) {
+            throw "deepseekx binary is unexpectedly small: $size bytes"
+          }
+          $version = & $deepseekx --version
+          if ($LASTEXITCODE -ne 0) {
+            throw "deepseekx --version failed with exit code $LASTEXITCODE"
+          }
+          Write-Host $version
+          if ($version -notlike "DeepSeekX *") {
+            throw "unexpected deepseekx --version output: $version"
+          }
+          $help = & $deepseekx --help | Out-String
+          if ($LASTEXITCODE -ne 0) {
+            throw "deepseekx --help failed with exit code $LASTEXITCODE"
+          }
+          Write-Host $help
+          if ($help -notmatch "Usage: deepseekx") {
+            throw "unexpected deepseekx --help output"
+          }
 
       - name: Stage Windows package
         shell: pwsh
@@ -993,6 +1010,32 @@ jobs:
             }
           done
           ls -lh dist/npm/*.tgz
+
+      - name: Smoke staged Linux x64 npm package
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="$(
+            node -p "require('./codex-cli/package.json').version"
+          )"
+          root_tarball="dist/npm/deepseekx-npm-${release_version}.tgz"
+          platform_tarball="dist/npm/deepseekx-npm-linux-x64-${release_version}.tgz"
+          smoke_root="${RUNNER_TEMP}/deepseekx-npm-smoke"
+          rm -rf "$smoke_root"
+          mkdir -p \
+            "$smoke_root/node_modules/@meomeo-dev/deepseekx" \
+            "$smoke_root/node_modules/@meomeo-dev/deepseekx-linux-x64"
+          tar -xzf "$root_tarball" -C "$smoke_root/node_modules/@meomeo-dev/deepseekx" \
+            --strip-components=1
+          tar -xzf "$platform_tarball" \
+            -C "$smoke_root/node_modules/@meomeo-dev/deepseekx-linux-x64" \
+            --strip-components=1
+          node "$smoke_root/node_modules/@meomeo-dev/deepseekx/bin/deepseekx.js" \
+            --version | tee "$RUNNER_TEMP/deepseekx-npm-version.txt"
+          grep -q '^DeepSeekX ' "$RUNNER_TEMP/deepseekx-npm-version.txt"
+          node "$smoke_root/node_modules/@meomeo-dev/deepseekx/bin/deepseekx.js" \
+            --help | tee "$RUNNER_TEMP/deepseekx-npm-help.txt"
+          grep -q 'Usage: deepseekx' "$RUNNER_TEMP/deepseekx-npm-help.txt"
 
       - name: Upload npm platform staging
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
