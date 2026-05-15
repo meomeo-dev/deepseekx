@@ -64,6 +64,24 @@ WE_BRANCH_PROTECTION_APPLY=1 \
 执行前必须再次确认目标 repo、branch、required status check 名称和
 admin bypass 策略。
 
+默认 payload 跟随当前单人项目规则：要求 PR、required checks、strict
+up-to-date、linear history，禁止 force push 和删除，但 review approvals
+默认是 0。需要临时恢复团队式 approval gate 时，显式设置：
+
+```bash
+WE_BRANCH_PROTECTION_REQUIRED_APPROVALS=1 \
+  .agents/skills/we-branch-protection/scripts/configure_branch_protection.sh
+```
+
+required checks 默认包含当前 `deepseekx/main` 的硬门禁：
+
+```text
+build-test, Blob size policy, cargo-deny, CI results (required)
+```
+
+如果远端 required checks 变化，先运行检查脚本确认名称，再用
+`WE_BRANCH_PROTECTION_REQUIRED_CHECKS` 覆盖；不要在未知 check 名称下 apply。
+
 ## Recommended Protection
 
 专业流程建议 `deepseekx/main` 至少满足：

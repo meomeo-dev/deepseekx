@@ -1,0 +1,260 @@
+digraph WeSkillCiReadinessAudit {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Arial",
+    fontsize=12,
+    label="WE 技能审计：CI 完成度和发布门禁",
+    labelloc=t,
+    nodesep=0.55,
+    ranksep=0.85
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=10,
+    margin="0.08,0.06",
+    color="#2563EB",
+    fillcolor="#DBEAFE"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=9,
+    color="#475569",
+    arrowsize=0.75
+  ];
+
+  subgraph cluster_professional {
+    label="Professional Baseline";
+    color="#2563EB";
+    style="rounded,dashed";
+
+    p_intake [
+      label="1. 需求记录 / issue\n验收标准、影响范围、优先级"
+    ];
+    p_design [
+      label="2. 轻量设计 / 决策记录\n风险、回滚、测试计划"
+    ];
+    p_branch [
+      label="3. 从最新 main 创建短生命周期分支"
+    ];
+    p_impl [
+      label="4. 实现 + 测试\n小提交、清晰范围"
+    ];
+    p_pr [
+      label="5. PR 必需\n代码审查和变更说明"
+    ];
+    p_ci_pr [
+      label="6. PR CI 必须通过\nlint / typecheck / test / package verify"
+    ];
+    p_protected [
+      label="7. 受保护 main\n禁止未审查直接合并"
+    ];
+    p_release_candidate [
+      label="8. release candidate\n版本、changelog、tag 策略冻结"
+    ];
+    p_release_ci [
+      label="9. 发布前必要平台 CI\n按风险选择 Linux / Windows / all"
+    ];
+    p_artifacts [
+      label="10. 发布物确认\nnpm tarball、checksum、release notes"
+    ];
+    p_publish [
+      label="11. 发布 npm / GitHub Release\n可追溯、可回滚"
+    ];
+    p_post [
+      label="12. 发布后验证和收尾\nregistry、CI、分支、产物、监控"
+    ];
+  }
+
+  p_intake -> p_design -> p_branch -> p_impl -> p_pr -> p_ci_pr;
+  p_ci_pr -> p_protected -> p_release_candidate -> p_release_ci;
+  p_release_ci -> p_artifacts -> p_publish -> p_post;
+
+  subgraph cluster_facts {
+    label="Observed CI Facts";
+    color="#64748B";
+    style="rounded,dashed";
+
+    fact_pr [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="PR #2: clean\nbase deepseekx/main, head release branch\n"
+        + "required checks passing; skipped jobs are expected filters"
+    ];
+    fact_ci [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="ci.yml: aligned\npull_request enabled\n"
+        + "push listens to deepseekx/main"
+    ];
+    fact_nightly [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="nightly mac-arm64: success\nrun 25918473870 finished in about 9m\n"
+        + "after cache, sccache, cargo-chef, 180m timeout"
+    ];
+    fact_branch [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="branch protection: partial\nchecks, strict, linear history enabled\n"
+        + "review approval count is 0 for solo cost control"
+    ];
+  }
+
+  fact_pr -> fact_ci -> fact_nightly -> fact_branch [
+    style=dotted,
+    color="#94A3B8"
+  ];
+
+  subgraph cluster_current {
+    label="Current WE Skill Coverage";
+    color="#16A34A";
+    style="rounded,dashed";
+
+    c_intake_design [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="intake / design: covered\n"
+        + "$we-requirement-intake and $we-design-note route risk"
+    ];
+    c_branch_impl [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="branch / implementation: covered\n"
+        + "$we-feature-dev checks branch, remotes, gh default repo, dirty state"
+    ];
+    c_pr_ci [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="PR CI operation: covered\n"
+        + "$we-ci-maintenance covers low-cost PR CI and platform runs"
+    ];
+    c_artifact_ci [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="platform artifact CI: partial\n"
+        + "$we-deepseekx-nightly-artifacts covers unsigned artifacts\n"
+        + "but skill text has not recorded the timeout/cache lesson"
+    ];
+    c_release_publish [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="release / publish / cleanup: covered\n"
+        + "$we-release-readiness, $we-release, $we-publish,\n"
+        + "$we-release-cleanup cover registry and local hygiene"
+    ];
+    c_public [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="public mirror: covered\n"
+        + "$we-public-sync covers leak checks and public metadata"
+    ];
+    c_protection [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="branch protection skill: partial\n"
+        + "read-only check is accurate\n"
+        + "configure payload is stale against current required checks"
+    ];
+  }
+
+  p_intake -> c_intake_design [style=dashed, color="#94A3B8"];
+  p_design -> c_intake_design [style=dashed, color="#94A3B8"];
+  p_branch -> c_branch_impl [style=dashed, color="#94A3B8"];
+  p_impl -> c_branch_impl [style=dashed, color="#94A3B8"];
+  p_pr -> c_pr_ci [style=dashed, color="#94A3B8"];
+  p_ci_pr -> c_pr_ci [style=dashed, color="#94A3B8"];
+  p_protected -> c_protection [style=dashed, color="#94A3B8"];
+  p_release_candidate -> c_release_publish [style=dashed, color="#94A3B8"];
+  p_release_ci -> c_artifact_ci [style=dashed, color="#94A3B8"];
+  p_artifacts -> c_release_publish [style=dashed, color="#94A3B8"];
+  p_publish -> c_release_publish [style=dashed, color="#94A3B8"];
+  p_post -> c_release_publish [style=dashed, color="#94A3B8"];
+
+  c_intake_design -> c_branch_impl -> c_pr_ci -> c_protection;
+  c_protection -> c_artifact_ci -> c_release_publish -> c_public;
+
+  subgraph cluster_findings {
+    label="Audit Findings For CI Completion";
+    color="#0F172A";
+    style="rounded,dashed";
+
+    f_covered [
+      color="#16A34A",
+      fillcolor="#DCFCE7",
+      label="covered\n"
+        + "current PR CI is green and deepseekx/main push trigger is correct\n"
+        + "gh default repo checks prevent opening upstream PRs by accident"
+    ];
+    f_branch_payload [
+      color="#DC2626",
+      fillcolor="#FEE2E2",
+      label="needs maintenance\n"
+        + "branch-protection configure script only requires build-test\n"
+        + "current remote also requires Blob size policy, cargo-deny,\n"
+        + "and CI results (required)"
+    ];
+    f_nightly_doc [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="needs maintenance\n"
+        + "nightly artifact skill should document known timeout controls,\n"
+        + "expected skipped matrix jobs, and remote-ref rerun discipline"
+    ];
+    f_npm_platform [
+      color="#D97706",
+      fillcolor="#FEF3C7",
+      label="release gap\n"
+        + "npm platform tarball staging is documented but not a workflow yet\n"
+        + "not required for current PR CI, required before full npm release"
+    ];
+    f_not_needed [
+      color="#64748B",
+      fillcolor="#E2E8F0",
+      label="not needed\n"
+        + "no separate CI-timeout skill; keep this in ci-maintenance\n"
+        + "and nightly-artifacts to avoid process duplication"
+    ];
+  }
+
+  fact_pr -> f_covered [style=dotted, color="#94A3B8"];
+  fact_ci -> f_covered [style=dotted, color="#94A3B8"];
+  fact_branch -> f_branch_payload [style=dotted, color="#94A3B8"];
+  fact_nightly -> f_nightly_doc [style=dotted, color="#94A3B8"];
+  c_artifact_ci -> f_npm_platform [style=dotted, color="#94A3B8"];
+  c_pr_ci -> f_not_needed [style=dotted, color="#94A3B8"];
+
+  subgraph cluster_actions {
+    label="Recommended Maintenance";
+    color="#7C3AED";
+    style="rounded,dashed";
+
+    a_branch [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="1. update we-branch-protection\n"
+        + "make dry-run payload match current required checks\n"
+        + "or require explicit check list before apply"
+    ];
+    a_nightly [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="2. update we-deepseekx-nightly-artifacts\n"
+        + "record cache/sccache/cargo-chef policy and skipped-job meaning"
+    ];
+    a_publish [
+      color="#7C3AED",
+      fillcolor="#F3E8FF",
+      label="3. later add npm platform staging workflow\n"
+        + "then update we-publish / we-release routing"
+    ];
+  }
+
+  f_branch_payload -> a_branch;
+  f_nightly_doc -> a_nightly;
+  f_npm_platform -> a_publish;
+}
