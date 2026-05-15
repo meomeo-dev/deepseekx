@@ -149,6 +149,7 @@ jobs:
     runs-on: ${{ matrix.runs_on || matrix.runner }}
     timeout-minutes: ${{ matrix.timeout_minutes }}
     needs: changed
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       fail-fast: false
       matrix:
@@ -225,7 +226,7 @@ jobs:
             [[ '${{ needs.argument_comment_lint_package.result }}' == 'success' ]] || { echo 'argument_comment_lint_package failed'; exit 1; }
           fi
 
-          if [[ "${NEEDS_CHANGED_OUTPUTS_ARGUMENT_COMMENT_LINT}" == 'true' || "${NEEDS_CHANGED_OUTPUTS_WORKFLOWS}" == 'true' ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == 'workflow_dispatch' && ( "${NEEDS_CHANGED_OUTPUTS_ARGUMENT_COMMENT_LINT}" == 'true' || "${NEEDS_CHANGED_OUTPUTS_WORKFLOWS}" == 'true' ) ]]; then
             [[ '${{ needs.argument_comment_lint_prebuilt.result }}' == 'success' ]] || { echo 'argument_comment_lint_prebuilt failed'; exit 1; }
           fi
 

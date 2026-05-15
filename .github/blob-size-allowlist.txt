@@ -2,6 +2,7 @@
 # Keep this list short and limited to intentional large checked-in assets.
 
 .github/codex-cli-splash.png
+.agents/skills/we-deepseek-cache-bench/data/20260513-095109-real-guided-dashboard-cache/experiment/state.json
 MODULE.bazel.lock
 codex-rs/app-server-protocol/schema/json/codex_app_server_protocol.schemas.json
 codex-rs/app-server-protocol/schema/json/codex_app_server_protocol.v2.schemas.json
