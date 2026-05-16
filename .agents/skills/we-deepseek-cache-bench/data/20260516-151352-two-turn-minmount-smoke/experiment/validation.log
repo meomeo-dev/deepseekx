@@ -1,0 +1,168 @@
+validationUtc=2026-05-16T07:47:39Z
+
+> revenue-command-center@1.0.0 test
+> node scripts/validate.mjs
+
+
+=== Phase 1: File Inventory ===
+  ✓ File exists: package.json
+  ✓ File exists: server.mjs
+  ✓ File exists: public/index.html
+  ✓ File exists: public/css/styles.css
+  ✓ File exists: public/js/data.js
+  ✓ File exists: public/js/utils.js
+  ✓ File exists: public/js/components.js
+  ✓ File exists: public/js/app.js
+  ✓ File exists: scripts/validate.mjs
+
+=== Phase 2: package.json ===
+  ✓ package.json has "start" script
+  ✓ package.json has "test" script
+  ✓ package.json start points to server.mjs
+  ✓ package.json test points to validate.mjs
+
+=== Phase 3: Server ===
+  ✓ File content: Binds to 0.0.0.0 in server.mjs
+  ✓ File content: Port 5173 in server.mjs
+  ✓ File content: Uses http.createServer in server.mjs
+  ✓ File content: Serves public/ directory in server.mjs
+
+=== Phase 4: HTML ===
+  ✓ File content: Title tag in public/index.html
+  ✓ File content: Loads data.js in public/index.html
+  ✓ File content: Loads utils.js in public/index.html
+  ✓ File content: Loads components.js in public/index.html
+  ✓ File content: Loads app.js in public/index.html
+  ✓ File content: Loads styles.css in public/index.html
+  ✓ File content: Has metrics row in public/index.html
+  ✓ File content: Has account list in public/index.html
+  ✓ File content: Has search input in public/index.html
+  ✓ File content: Has risk filter in public/index.html
+  ✓ File content: Has error container in public/index.html
+  ✓ File content: Has empty state in public/index.html
+  ✓ File content: Has loading state in public/index.html
+  ✓ File content: Has lang attribute in public/index.html
+  ✓ File content: Has viewport meta in public/index.html
+
+=== Phase 5: Data Structure ===
+  ✓ Data has accounts array
+  ✓ Data has renewals array
+  ✓ Data has invoices array
+  ✓ Data has tickets array
+  ✓ Data has usage array
+  ✓ Data has incidents array
+  ✓ Data has riskProfiles
+  ✓ Data has getMetrics function
+  ✓ Accounts have "id" field
+  ✓ Accounts have "name" field
+  ✓ Accounts have "arr" field
+  ✓ Accounts have "healthScore" field
+  ✓ Accounts have "csm" field
+  ✓ Accounts have "tier" field
+  ✓ Accounts have "domain" field
+  ✓ Renewals have "status" field
+  ✓ Renewals have "amount" field
+  ✓ Renewals have "riskFlags" field
+  ✓ Invoices have "status" field (Overdue)
+  ✓ Invoices have "daysOverdue" field
+  ✓ Tickets have "severity" field (P1)
+  ✓ Tickets have "status" field
+  ✓ Usage has "trend" field (down)
+  ✓ Usage has "activeUsers" field
+  ✓ Incidents have "severity" field
+  ✓ Incidents have "status" field
+
+=== Phase 6: Business Rules ===
+  ✓ At least 10 accounts exist
+  ✓ At least 5 renewals exist
+  ✓ At least 5 invoices exist
+  ✓ At least 5 tickets exist
+  ✓ At least 5 usage records exist
+  ✓ At least 3 incidents exist
+  ✓ At least one critical risk renewal
+  ✓ At least one overdue invoice
+  ✓ At least one P1 ticket
+  ✓ At least one usage decline
+  ✓ At least 2 accounts with low health score (<40)
+  ✓ At least 2 accounts with high health score (>=70)
+
+=== Phase 7: CSS ===
+  ✓ File content: CSS custom properties in public/css/styles.css
+  ✓ File content: Dark background var in public/css/styles.css
+  ✓ File content: Green accent var in public/css/styles.css
+  ✓ File content: Amber accent var in public/css/styles.css
+  ✓ File content: Red accent var in public/css/styles.css
+  ✓ File content: Responsive styles in public/css/styles.css
+  ✓ File content: Empty state styles in public/css/styles.css
+  ✓ File content: Error banner styles in public/css/styles.css
+  ✓ File content: Critical risk badge in public/css/styles.css
+  ✓ File content: Detail panel styles in public/css/styles.css
+
+=== Phase 8: Security & Constraints ===
+  ✓ File content: no 'API key in server' in server.mjs
+  ✓ File content: no 'api_key in server' in server.mjs
+  ✓ File content: no '.env reference in server' in server.mjs
+  ✓ File content: no 'API key in data' in public/js/data.js
+  ✓ File content: no 'password credential in data' in public/js/data.js
+  ✓ File content: Charset specified in server in server.mjs
+  ✓ File content: Charset in HTML in public/index.html
+
+=== Phase 9: Offline Compliance ===
+  ✓ File content: no 'Google Fonts in HTML' in public/index.html
+  ✓ File content: no 'Google Fonts CDN in HTML' in public/index.html
+  ✓ File content: no 'External HTTPS URLs in HTML' in public/index.html
+  ✓ File content: no 'Google Fonts in CSS' in public/css/styles.css
+  ✓ File content: no 'Google Fonts CDN in CSS' in public/css/styles.css
+  ✓ File content: no 'Google Font Inter in CSS' in public/css/styles.css
+  ✓ File content: no 'Google Font JetBrains in CSS' in public/css/styles.css
+  ✓ File content: System font stack present in public/css/styles.css
+
+=== Phase 10: Round 2 HTML Features ===
+  ✓ File content: Tab navigation present in public/index.html
+  ✓ File content: Dashboard panel in public/index.html
+  ✓ File content: Actions panel in public/index.html
+  ✓ File content: Playbook panel in public/index.html
+  ✓ File content: Action list container in public/index.html
+  ✓ File content: Playbook list container in public/index.html
+  ✓ File content: Export button in public/index.html
+  ✓ File content: Actions owner filter in public/index.html
+  ✓ File content: Actions status filter in public/index.html
+  ✓ File content: Playbook account filter in public/index.html
+  ✓ File content: Round 2 badge in public/index.html
+  ✓ File content: Utils loads before data in public/index.html
+  ✓ utils.js loads before data.js
+
+=== Phase 11: Round 2 Data Features ===
+  ✓ File content: Playbooks data array in public/js/data.js
+  ✓ File content: buildActions function in public/js/data.js
+  ✓ File content: getActions function in public/js/data.js
+  ✓ File content: updateActionStatus function in public/js/data.js
+  ✓ File content: getPlaybooksForAccount function in public/js/data.js
+  ✓ File content: Executive Save playbook in public/js/data.js
+  ✓ File content: Payment Recovery playbook in public/js/data.js
+  ✓ File content: Adoption Rescue playbook in public/js/data.js
+
+=== Phase 12: Round 2 CSS Features ===
+  ✓ File content: Tab nav styles in public/css/styles.css
+  ✓ File content: Tab panel styles in public/css/styles.css
+  ✓ File content: Action table styles in public/css/styles.css
+  ✓ File content: Action status styles in public/css/styles.css
+  ✓ File content: Small button styles in public/css/styles.css
+  ✓ File content: Playbook card styles in public/css/styles.css
+  ✓ File content: Playbook step list styles in public/css/styles.css
+  ✓ File content: Playbook impact styles in public/css/styles.css
+  ✓ File content: Export area styles in public/css/styles.css
+  ✓ File content: Domain dot styles in public/css/styles.css
+
+=== Phase 13: Project Report ===
+  ✓ File exists: REPORT.md
+  ✓ File content: Startup instructions in REPORT.md
+  ✓ File content: Test instructions in REPORT.md
+  ✓ File content: 2-round mention in REPORT.md
+  ✓ File content: Dashboard mentioned in REPORT.md
+  ✓ File content: Actions mentioned in REPORT.md
+  ✓ File content: Playbook mentioned in REPORT.md
+  ✓ File content: 10k line reference in REPORT.md
+
+=== Results: 134 passed, 0 failed ===
+ALL CHECKS PASSED

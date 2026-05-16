@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeekX 2-Turn Cache Smoke Benchmark</title>
+<style>
+:root {
+  --ink: #17202a;
+  --muted: #5d6773;
+  --line: #d7dde5;
+  --paper: #f7f9fc;
+  --panel: #ffffff;
+  --brand: #0f766e;
+  --accent: #b45309;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+section {
+  min-height: 100vh;
+  padding: 48px clamp(24px, 6vw, 76px);
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  border-bottom: 1px solid var(--line);
+}
+h1, h2 { margin: 0; letter-spacing: 0; line-height: 1.04; }
+h1 { font-size: clamp(42px, 7vw, 84px); max-width: 980px; }
+h2 { font-size: clamp(32px, 5vw, 54px); }
+p, li { color: var(--muted); font-size: 20px; }
+.kicker {
+  color: var(--brand);
+  font-size: 14px;
+  font-weight: 760;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.grid { display: grid; gap: 18px; }
+.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+}
+.metric b { display: block; font-size: clamp(32px, 4vw, 54px); }
+.metric span { color: var(--muted); }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { border-bottom: 1px solid var(--line); padding: 10px; }
+th, td { text-align: right; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) {
+  text-align: left;
+}
+th { color: var(--muted); background: #f8fafc; }
+.note {
+  border-left: 4px solid var(--accent);
+  background: #fff8ed;
+  color: #5f3b12;
+  padding: 16px 18px;
+}
+@media (max-width: 860px) {
+  .cols-4, .cols-2 { grid-template-columns: 1fr; }
+  section { padding: 32px 18px; }
+}
+</style>
+</head>
+<body>
+<section>
+  <div class="kicker">DeepSeek Cache Benchmark</div>
+  <h1>DeepSeekX 2-Turn Cache Smoke Benchmark</h1>
+  <p>Minimal-mount Docker run using npm-installed DeepSeekX; final website is Revenue Command Center.</p>
+  <div class="grid cols-4">
+    <div class="card metric"><b>2</b><span>turns</span></div>
+    <div class="card metric"><b>2,133</b><span>lines</span></div>
+    <div class="card metric"><b>10</b><span>files</span></div>
+    <div class="card metric"><b>99.0540%</b><span>cache hit</span></div>
+  </div>
+  <div class="grid cols-2">
+    <div class="card metric"><b>high</b><span>think effort</span></div>
+    <div class="card metric">
+      <b>364,800</b><span>context window</span>
+    </div>
+  </div>
+  <div class="note">目标为 10,000+ first-party lines，且必须完整可运行。</div>
+</section>
+<section>
+  <div class="kicker">Method</div>
+  <h2>动态监督式执行</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>执行约束</h3>
+      <ul>
+        <li>Docker 隔离环境，只读挂载 benchmark 技能目录。</li>
+        <li>DeepSeekX app-server server mode 驱动 deepseek-v4-pro。</li>
+        <li>每轮由监督者验收当前产物后再写下一轮 prompt。</li>
+        <li>逐轮记录 think effort 和 modelContextWindow。</li>
+        <li>禁止用固定 prompt pack 或生成器替代真实产品开发。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>报告口径</h3>
+      <ul>
+        <li>统计 thread/tokenUsage/updated 中的 cachedInputTokens。</li>
+        <li>first-party 行数排除 node_modules、dist、build、coverage。</li>
+        <li>最终产物必须包含启动命令、源码、实验日志和 HTML 报告。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="kicker">Cache</div>
+  <h2>逐轮缓存统计</h2>
+  <div class="grid cols-4">
+    <div class="card metric"><b>3,793,323</b><span>input</span></div>
+    <div class="card metric"><b>3,757,440</b><span>cached</span></div>
+    <div class="card metric"><b>35,883</b><span>miss</span></div>
+    <div class="card metric"><b>not recorded</b><span>validation</span></div>
+  </div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Turn</th><th>Name</th><th>Effort</th><th>Context</th>
+          <th>Requests</th><th>Input</th><th>Cached</th>
+          <th>Miss</th><th>Hit rate</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr><td>1</td><td>initial-product-slice</td><td>high</td><td>364,800</td><td>34</td><td>893,781</td><td>879,872</td><td>13,909</td><td>98.4438%</td></tr>
+<tr><td>2</td><td>final-smoke-polish</td><td>high</td><td>364,800</td><td>46</td><td>2,899,542</td><td>2,877,568</td><td>21,974</td><td>99.2422%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="kicker">Artifact</div>
+  <h2>产物与边界</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>最大文件</h3>
+      <table>
+        <thead><tr><th>File</th><th>Lines</th></tr></thead>
+        <tbody>
+<tr><td>public/css/styles.css</td><td>546</td></tr>
+<tr><td>public/js/data.js</td><td>334</td></tr>
+<tr><td>public/js/app.js</td><td>323</td></tr>
+<tr><td>public/js/components.js</td><td>300</td></tr>
+<tr><td>scripts/validate.mjs</td><td>284</td></tr>
+<tr><td>public/index.html</td><td>112</td></tr>
+<tr><td>REPORT.md</td><td>109</td></tr>
+<tr><td>public/js/utils.js</td><td>71</td></tr>
+<tr><td>server.mjs</td><td>41</td></tr>
+<tr><td>package.json</td><td>13</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>复现信息</h3>
+      <ul>
+        <li>model: deepseek-v4-pro</li>
+        <li>modelProvider: deepseek</li>
+        <li>threadId: 019e2fa3-65fc-7381-a85d-304bffcc8f7b</li>
+        <li>previewPort: 5173</li>
+        <li>think effort: high</li>
+        <li>modelContextWindow: 364,800</li>
+        <li>validationUtc: 2026-05-16T07:47:39Z</li>
+        <li>failed assertions: n/a</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</body>
+</html>

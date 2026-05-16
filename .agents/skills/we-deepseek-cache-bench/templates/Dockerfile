@@ -21,8 +21,7 @@ RUN mkdir -p \
   /bench/cache-benchmark \
   /bench/codex-home \
   /bench/dashboard-workspace \
-  /bench/target/debug \
-  /src
+  /skill
 
 WORKDIR /bench
 

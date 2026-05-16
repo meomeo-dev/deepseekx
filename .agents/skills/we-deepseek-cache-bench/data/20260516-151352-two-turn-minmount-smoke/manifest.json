@@ -1,0 +1,61 @@
+{
+  "caseId": "20260516-151352-two-turn-minmount-smoke",
+  "model": "deepseek-v4-pro",
+  "modelProvider": "deepseek",
+  "threadId": "019e2fa3-65fc-7381-a85d-304bffcc8f7b",
+  "previewPort": 5173,
+  "reasoningEfforts": [
+    "high"
+  ],
+  "modelContextWindow": 364800,
+  "lineCount": {
+    "lineCount": 2133,
+    "fileCount": 10,
+    "topFiles": [
+      [
+        546,
+        "public/css/styles.css"
+      ],
+      [
+        334,
+        "public/js/data.js"
+      ],
+      [
+        323,
+        "public/js/app.js"
+      ],
+      [
+        300,
+        "public/js/components.js"
+      ],
+      [
+        284,
+        "scripts/validate.mjs"
+      ],
+      [
+        112,
+        "public/index.html"
+      ],
+      [
+        109,
+        "REPORT.md"
+      ],
+      [
+        71,
+        "public/js/utils.js"
+      ],
+      [
+        41,
+        "server.mjs"
+      ],
+      [
+        13,
+        "package.json"
+      ]
+    ]
+  },
+  "workspaceSource": "/private/tmp/deepseek-cache-bench-export-20260516-151352-two-turn-minmount-smoke/workspace",
+  "reportSource": "/private/tmp/deepseek-cache-bench-export-20260516-151352-two-turn-minmount-smoke/experiment",
+  "startCommand": "npm start",
+  "notes": "Two-turn smoke benchmark using minimal /skill mount and npm-installed @meomeo-dev/deepseekx@latest; not a full 10k-line run."
+}

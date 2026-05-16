@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revenue Command Center</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>Revenue Command Center</h1>
+    <nav class="tab-nav" id="tab-nav">
+      <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="actions">Actions <span class="tab-count" id="actions-count">0</span></button>
+      <button class="tab-btn" data-tab="playbook">Playbook</button>
+    </nav>
+    <span class="badge">Round 2</span>
+  </header>
+
+  <main class="app-main">
+    <div id="error-container"></div>
+
+    <!-- ===== DASHBOARD TAB ===== -->
+    <section class="tab-panel active" id="panel-dashboard">
+      <section class="metrics-row" id="metrics-row">
+        <div class="metric-card"><div class="metric-label">Loading…</div></div>
+      </section>
+
+      <div class="toolbar">
+        <input type="search" id="search-input" placeholder="Search accounts, CSM, or account ID…" aria-label="Search accounts">
+        <select id="risk-filter" aria-label="Filter by risk level">
+          <option value="all">All Risks</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select id="domain-filter" aria-label="Filter by domain">
+          <option value="all">All Domains</option>
+          <option value="renewals">Renewals</option>
+          <option value="billing">Billing</option>
+          <option value="support">Support</option>
+          <option value="usage">Usage</option>
+          <option value="incidents">Incidents</option>
+        </select>
+        <div class="filter-group">
+          <span class="filter-chip" data-domain="renewals">Renewals</span>
+          <span class="filter-chip" data-domain="billing">Billing</span>
+          <span class="filter-chip" data-domain="support">Support</span>
+          <span class="filter-chip" data-domain="usage">Usage</span>
+          <span class="filter-chip" data-domain="incidents">Incidents</span>
+        </div>
+        <span class="summary-text" id="results-summary"></span>
+      </div>
+
+      <section class="account-list" id="account-list">
+        <div class="empty-state"><div class="empty-icon">⏳</div><p>Loading account data…</p></div>
+      </section>
+    </section>
+
+    <!-- ===== ACTIONS TAB ===== -->
+    <section class="tab-panel" id="panel-actions">
+      <div class="toolbar">
+        <select id="actions-owner-filter" aria-label="Filter by owner">
+          <option value="all">All Owners</option>
+        </select>
+        <select id="actions-status-filter" aria-label="Filter by status">
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+          <option value="deferred">Deferred</option>
+        </select>
+        <select id="actions-domain-filter" aria-label="Filter by domain">
+          <option value="all">All Domains</option>
+          <option value="renewals">Renewals</option>
+          <option value="billing">Billing</option>
+          <option value="support">Support</option>
+          <option value="usage">Usage</option>
+          <option value="incidents">Incidents</option>
+        </select>
+        <button class="btn primary" id="export-actions-btn">Export Text</button>
+        <span class="summary-text" id="actions-summary"></span>
+      </div>
+      <div id="actions-export-area" style="display:none;">
+        <pre id="actions-export-text"></pre>
+      </div>
+      <section class="action-list" id="action-list">
+        <div class="empty-state"><div class="empty-icon">⏳</div><p>Loading actions…</p></div>
+      </section>
+    </section>
+
+    <!-- ===== PLAYBOOK TAB ===== -->
+    <section class="tab-panel" id="panel-playbook">
+      <div class="toolbar">
+        <select id="playbook-account-filter" aria-label="Filter by account">
+          <option value="all">All High-Risk Accounts</option>
+        </select>
+        <span class="summary-text" id="playbook-summary"></span>
+      </div>
+      <section class="playbook-list" id="playbook-list">
+        <div class="empty-state"><div class="empty-icon">⏳</div><p>Loading playbooks…</p></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/data.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

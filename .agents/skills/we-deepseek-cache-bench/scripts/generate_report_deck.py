@@ -204,7 +204,7 @@ th {{ color: var(--muted); background: #f8fafc; }}
     <div class="card">
       <h3>执行约束</h3>
       <ul>
-        <li>Docker 隔离环境，项目 checkout 只读挂载。</li>
+        <li>Docker 隔离环境，只读挂载 benchmark 技能目录。</li>
         <li>DeepSeekX app-server server mode 驱动 deepseek-v4-pro。</li>
         <li>每轮由监督者验收当前产物后再写下一轮 prompt。</li>
         <li>逐轮记录 think effort 和 modelContextWindow。</li>

@@ -1,0 +1,13 @@
+{
+  "name": "revenue-command-center",
+  "version": "1.0.0",
+  "description": "Revenue Command Center — customer success, revenue ops, and support risk dashboard",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node scripts/validate.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

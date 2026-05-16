@@ -1,0 +1,5 @@
+
+> revenue-command-center@1.0.0 start
+> node server.mjs
+
+Revenue Command Center → http://localhost:5173
