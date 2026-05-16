@@ -1,0 +1,48 @@
+/* ============================================================
+   Evoing Brand & Media Kit
+   ============================================================ */
+.brand-principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); margin-bottom: var(--space-4xl); }
+
+.brand-principle { text-align: center; padding: var(--space-xl); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); background: var(--color-bg-alt); transition: all var(--duration-normal) var(--ease-out); }
+.brand-principle:hover { border-color: var(--color-accent); box-shadow: var(--shadow-sm); }
+.brand-principle__label { font-family: var(--font-display); font-size: 1rem; font-weight: var(--fw-semibold); margin-bottom: var(--space-sm); }
+.brand-principle__desc { font-size: var(--fs-small); color: var(--color-text-secondary); line-height: var(--lh-relaxed); }
+
+.visual-identity { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2xl); margin-bottom: var(--space-4xl); }
+
+.color-swatches { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+.color-swatch { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); border: 1px solid var(--color-border-light); border-radius: var(--radius-sm); background: var(--color-bg-alt); }
+.color-swatch__preview { width: 40px; height: 40px; border-radius: var(--radius-sm); flex-shrink: 0; }
+.color-swatch__info { font-size: var(--fs-xs); }
+.color-swatch__name { font-weight: var(--fw-semibold); }
+.color-swatch__hex { font-family: var(--font-mono); color: var(--color-slate-500); }
+.color-swatch__usage { color: var(--color-text-secondary); margin-top: var(--space-2xs); }
+
+.type-samples { display: flex; flex-direction: column; gap: var(--space-lg); }
+.type-sample { padding: var(--space-md); border: 1px solid var(--color-border-light); border-radius: var(--radius-sm); }
+.type-sample__family { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--color-accent); margin-bottom: var(--space-xs); text-transform: uppercase; letter-spacing: var(--ls-wider); }
+.type-sample__role { font-size: var(--fs-xs); color: var(--color-slate-400); margin-bottom: var(--space-sm); }
+.type-sample__specimen { font-size: 1.25rem; color: var(--color-text); }
+
+.presentation-modules { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); margin-bottom: var(--space-4xl); }
+.pres-module { padding: var(--space-lg); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); background: var(--color-bg-alt); text-align: center; }
+.pres-module__label { font-weight: var(--fw-semibold); margin-bottom: var(--space-xs); }
+.pres-module__slides { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--color-accent); margin-bottom: var(--space-sm); }
+.pres-module__desc { font-size: var(--fs-xs); color: var(--color-text-secondary); line-height: var(--lh-relaxed); }
+
+.downloads-grid { display: flex; flex-wrap: wrap; gap: var(--space-md); justify-content: center; margin-top: var(--space-4xl); padding-top: var(--space-3xl); border-top: 1px solid var(--color-border-light); }
+.download-card { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-xl); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all var(--duration-fast) var(--ease-out); background: var(--color-bg-alt); }
+.download-card:hover { border-color: var(--color-accent); background: rgba(201,169,110,0.05); }
+.download-card__icon { font-size: 1.5rem; }
+.download-card__label { font-size: var(--fs-small); font-weight: var(--fw-medium); }
+.download-card__meta { font-size: var(--fs-xs); color: var(--color-slate-400); font-family: var(--font-mono); }
+.download-card__state { font-size: var(--fs-xs); color: var(--color-accent); margin-left: var(--space-sm); }
+
+@media (max-width: 900px) {
+  .brand-principles { grid-template-columns: repeat(2, 1fr); }
+  .visual-identity { grid-template-columns: 1fr; }
+  .presentation-modules { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .brand-principles, .presentation-modules { grid-template-columns: 1fr; }
+}

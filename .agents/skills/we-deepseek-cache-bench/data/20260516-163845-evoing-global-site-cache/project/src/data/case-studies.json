@@ -1,0 +1,1316 @@
+[
+  {
+    "id": "bank-ai-platform",
+    "clientArchetype": {
+      "zh": "欧洲顶级全能银行（资产 > 5000 亿欧元）",
+      "en": "Top European universal bank (assets > EUR 500B)"
+    },
+    "region": "emea",
+    "industry": "financial-services",
+    "capabilities": [
+      "ai-strategy",
+      "data-intelligence"
+    ],
+    "overview": {
+      "zh": "该银行 AI 项目分散在 12 条业务线中，缺乏统一平台与治理。Evoing 设计并交付了企业级 AI 平台，将模型上线时间从 9 个月缩短至 8 周。",
+      "en": "AI projects scattered across 12 business lines with no unified platform or governance. Evoing designed and delivered an enterprise AI platform, reducing model time-to-production from 9 months to 8 weeks."
+    },
+    "challengeBullets": {
+      "zh": [
+        "200+ 独立数据源，数据质量参差不齐",
+        "AI 项目缺乏中央治理与优先级排序",
+        "模型从开发到上线平均耗时 9 个月",
+        "监管对 AI 模型的可解释性要求日益严格",
+        "各业务线重复建设 ML 基础设施"
+      ],
+      "en": [
+        "200+ independent data sources with inconsistent quality",
+        "No central AI governance or prioritization",
+        "Average model time-to-production: 9 months",
+        "Increasing regulatory demands for model explainability",
+        "Duplicate ML infrastructure across business lines"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：诊断与战略（8 周）",
+          "desc": "全行 AI 就绪度评估，识别 47 个高价值用例，建立 AI 治理委员会"
+        },
+        {
+          "phase": "第 2 阶段：平台建设（16 周）",
+          "desc": "基于 Kubernetes 的多租户 ML 平台，集成特征存储、模型注册中心与实时推理管道"
+        },
+        {
+          "phase": "第 3 阶段：用例规模化（24 周）",
+          "desc": "分批次上线 47 个用例，建立联邦学习架构保护业务线数据隐私"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Diagnosis & Strategy (8 wks)",
+          "desc": "Bank-wide AI readiness assessment, identified 47 high-value use cases, established AI governance council"
+        },
+        {
+          "phase": "Phase 2: Platform Build (16 wks)",
+          "desc": "Kubernetes-based multi-tenant ML platform with feature store, model registry, and real-time inference pipelines"
+        },
+        {
+          "phase": "Phase 3: Use Case Scaling (24 wks)",
+          "desc": "Rolled out 47 use cases in waves, established federated learning architecture for data privacy"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "多租户 Kubernetes ML 平台部署在混合云环境（私有云 + AWS）。特征存储基于 Feast，模型注册中心基于 MLflow，推理管道使用 KServe。联邦学习架构确保各业务线数据不出域。AI 治理仪表板实时展示模型公平性、漂移和合规状态。",
+      "en": "Multi-tenant Kubernetes ML platform on hybrid cloud (private + AWS). Feature store: Feast. Model registry: MLflow. Inference: KServe. Federated learning architecture keeps business-line data local. AI governance dashboard displays model fairness, drift, and compliance status in real-time."
+    },
+    "results": {
+      "zh": [
+        "模型推理延迟降低 60%",
+        "AI 用例上线时间从 9 个月缩短至 8 周",
+        "平台承载 12 条业务线、47 个活跃模型",
+        "AI 治理合规覆盖率达到 100%",
+        "年度 AI 基础设施成本降低 25%"
+      ],
+      "en": [
+        "Model inference latency reduced 60%",
+        "AI use-case time-to-production: 9 months → 8 weeks",
+        "Platform serving 12 business lines, 47 active models",
+        "AI governance compliance coverage at 100%",
+        "Annual AI infrastructure cost reduced 25%"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"Evoing 不仅交付了技术平台，更重要的是帮助我们建立了 AI 治理文化。这是真正的变革。\" — 集团 CTO",
+      "en": "\"Evoing didn't just deliver a technology platform — they helped us build an AI governance culture. This is real transformation.\" — Group CTO"
+    },
+    "teamModel": {
+      "zh": "联合团队 45 人：Evoing 12 人（AI 架构师 ×3、ML 工程师 ×5、治理顾问 ×2、项目经理 ×2）+ 银行 33 人",
+      "en": "Joint team of 45: Evoing 12 (AI architects ×3, ML engineers ×5, governance consultants ×2, PMs ×2) + Bank 33"
+    },
+    "timeline": "2024-09 至 2025-12（16 个月）",
+    "milestones": {
+      "zh": [
+        "2024-09：启动 AI 就绪度评估",
+        "2024-11：AI 治理委员会成立",
+        "2025-02：ML 平台 MVP 上线",
+        "2025-06：首批 12 个用例上线",
+        "2025-12：全部 47 个用例稳定运行"
+      ],
+      "en": [
+        "2024-09: AI readiness assessment launched",
+        "2024-11: AI governance council formed",
+        "2025-02: ML platform MVP live",
+        "2025-06: First 12 use cases live",
+        "2025-12: All 47 use cases stable"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "推理延迟降低",
+          "en": "Latency reduction"
+        },
+        "value": "60%"
+      },
+      {
+        "label": {
+          "zh": "用例上线时间",
+          "en": "Time-to-production"
+        },
+        "value": "8 周"
+      },
+      {
+        "label": {
+          "zh": "活跃模型数",
+          "en": "Active models"
+        },
+        "value": "47"
+      }
+    ]
+  },
+  {
+    "id": "retail-platform-migration",
+    "clientArchetype": {
+      "zh": "北美零售巨头（年营收 > 500 亿美元）",
+      "en": "North American retail giant (revenue > USD 50B)"
+    },
+    "region": "amer",
+    "industry": "retail-consumer",
+    "capabilities": [
+      "code-modernization",
+      "data-intelligence"
+    ],
+    "overview": {
+      "zh": "核心交易系统运行在 20 年前的大型机单体架构上。Evoing 以绞杀者模式渐进迁移至云原生微服务，部署频率提升至每日 20+ 次。",
+      "en": "Core transaction system ran on a 20-year-old mainframe monolith. Evoing migrated it to cloud-native microservices using the strangler-fig pattern, achieving 20+ deploys/day."
+    },
+    "challengeBullets": {
+      "zh": [
+        "20 年历史的大型机单体系统，每次变更需 6 周冻结期",
+        "黑色星期五流量峰值时系统多次濒临崩溃",
+        "超过 300 万行 COBOL 代码，文档严重缺失",
+        "数据库耦合导致任何修改都需要全量回归测试",
+        "运维团队 7×24 待命但缺乏自动化工具"
+      ],
+      "en": [
+        "20-year-old mainframe monolith with 6-week change freeze periods",
+        "System nearly collapsed during Black Friday peaks multiple times",
+        "3M+ lines of COBOL with severely lacking documentation",
+        "Database coupling requiring full regression testing for any change",
+        "Ops team on 7×24 standby but lacking automation tools"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：依赖拓扑分析（4 周）",
+          "desc": "绘制系统依赖图，识别可独立拆分的业务域边界"
+        },
+        {
+          "phase": "第 2 阶段：绞杀者迁移（40 周）",
+          "desc": "从结账服务开始，逐步将库存、定价、促销拆分为云原生微服务"
+        },
+        {
+          "phase": "第 3 阶段：平台工程化（12 周）",
+          "desc": "建设 GitOps CI/CD、混沌工程和服务网格，完成遗留系统退役"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Dependency Topology (4 wks)",
+          "desc": "Mapped system dependencies, identified independently extractable domain boundaries"
+        },
+        {
+          "phase": "Phase 2: Strangler Migration (40 wks)",
+          "desc": "Starting with checkout, progressively extracted inventory, pricing, promotions into cloud-native microservices"
+        },
+        {
+          "phase": "Phase 3: Platform Engineering (12 wks)",
+          "desc": "Built GitOps CI/CD, chaos engineering, and service mesh. Completed legacy system retirement"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "基于 AWS EKS 的事件驱动微服务架构。Kafka 实现异步解耦（日均处理 20 亿事件），DynamoDB 处理峰值事务（黑色星期五 50 万 TPS），Istio 服务网格管理金丝雀发布与流量路由。GitOps 通过 ArgoCD 实现，所有基础设施以 Terraform 代码化管理。",
+      "en": "Event-driven microservices on AWS EKS. Kafka handles async decoupling (2B events/day). DynamoDB for peak transactions (500K TPS on Black Friday). Istio service mesh for canary releases and traffic routing. GitOps via ArgoCD. All infrastructure managed as code with Terraform."
+    },
+    "results": {
+      "zh": [
+        "部署频率从每月 2 次提升至每日 20+ 次",
+        "黑色星期五系统可用性 99.99%",
+        "变更失败率从 35% 降至 2%",
+        "基础设施成本降低 30%",
+        "平均恢复时间（MTTR）从 4 小时缩短至 15 分钟"
+      ],
+      "en": [
+        "Deploy frequency: 2/month → 20+/day",
+        "Black Friday availability: 99.99%",
+        "Change failure rate: 35% → 2%",
+        "Infrastructure cost reduced 30%",
+        "MTTR: 4 hours → 15 minutes"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"这是我在零售 IT 领域 30 年来见过的最干净的系统迁移。零停机。\" — CIO",
+      "en": "\"The cleanest system migration I've seen in 30 years of retail IT. Zero downtime.\" — CIO"
+    },
+    "teamModel": {
+      "zh": "联合团队 60 人：Evoing 18 人（架构师 ×4、平台工程师 ×8、QA ×3、PM ×3）+ 客户 42 人",
+      "en": "Joint team of 60: Evoing 18 (architects ×4, platform engineers ×8, QA ×3, PMs ×3) + Client 42"
+    },
+    "timeline": "2024-03 至 2025-09（18 个月）",
+    "milestones": {
+      "zh": [
+        "2024-03：系统依赖拓扑分析",
+        "2024-06：结账服务微服务上线",
+        "2024-11：首个黑色星期五验证",
+        "2025-03：库存与定价迁移完成",
+        "2025-09：遗留系统退役"
+      ],
+      "en": [
+        "2024-03: Dependency topology mapped",
+        "2024-06: Checkout microservice live",
+        "2024-11: First Black Friday validation",
+        "2025-03: Inventory & pricing migration done",
+        "2025-09: Legacy system decommissioned"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "部署频率",
+          "en": "Deploy freq"
+        },
+        "value": "20+/day"
+      },
+      {
+        "label": {
+          "zh": "可用性",
+          "en": "Availability"
+        },
+        "value": "99.99%"
+      },
+      {
+        "label": {
+          "zh": "变更失败率",
+          "en": "Change failure"
+        },
+        "value": "2%"
+      }
+    ]
+  },
+  {
+    "id": "manufacturing-operating-model",
+    "clientArchetype": {
+      "zh": "中国先进制造企业（全球 50+ 工厂）",
+      "en": "Chinese advanced manufacturer (50+ factories)"
+    },
+    "region": "apac",
+    "industry": "manufacturing",
+    "capabilities": [
+      "operating-model",
+      "code-modernization"
+    ],
+    "overview": {
+      "zh": "2,000+ 工程师按职能组织的团队导致交付缓慢。Evoing 设计并推动了向产品型组织的全面转型，交付周期从 12 周缩短至 4 周。",
+      "en": "2,000+ engineers organized functionally caused slow delivery. Evoing designed and drove a full transformation to product-oriented org, reducing delivery cycle from 12 to 4 weeks."
+    },
+    "challengeBullets": {
+      "zh": [
+        "前端/后端/QA/运维按职能分团队，跨团队协调成本极高",
+        "季度发布周期无法满足业务对快速迭代的需求",
+        "工程师满意度调查得分处于行业后 25%",
+        "85 个跨团队依赖项导致任何功能都需要多团队协调",
+        "缺乏统一的技术平台，每个团队自行维护工具链"
+      ],
+      "en": [
+        "Functional silos (FE/BE/QA/Ops) with extremely high cross-team coordination costs",
+        "Quarterly release cycles couldn't meet business demand for rapid iteration",
+        "Engineer satisfaction scores in bottom 25th percentile",
+        "85 cross-team dependencies made every feature a multi-team coordination exercise",
+        "No unified tech platform — each team maintained its own toolchain"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：组织诊断（4 周）",
+          "desc": "评估当前组织效能，识别 18 个产品领域和团队边界"
+        },
+        {
+          "phase": "第 2 阶段：试点转型（12 周）",
+          "desc": "选取 6 个产品领域试点产品型团队模式，建立 OKR 节奏"
+        },
+        {
+          "phase": "第 3 阶段：规模化推广（24 周）",
+          "desc": "将产品型模式推广至全部 18 个领域，建设 IDP 支持团队自治"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Org Diagnostic (4 wks)",
+          "desc": "Assessed current org effectiveness, identified 18 product domains and team boundaries"
+        },
+        {
+          "phase": "Phase 2: Pilot Transformation (12 wks)",
+          "desc": "Piloted product team model in 6 domains, established OKR cadence"
+        },
+        {
+          "phase": "Phase 3: Scale-Out (24 wks)",
+          "desc": "Extended product model to all 18 domains, built IDP to support team autonomy"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "产品型组织架构：4 个业务单元 × 18 个产品领域。每个产品团队 8–12 人，配备产品经理、技术负责人和交付经理。IDP 基于 Backstage 构建，提供自服务基础设施、CI/CD 黄金路径和开发者门户。季度 OKR 与产品运营委员会确保战略对齐。",
+      "en": "Product-oriented org: 4 BUs × 18 product domains. Each product team 8–12 people with PM, tech lead, delivery manager. IDP built on Backstage providing self-service infra, CI/CD golden paths, and developer portal. Quarterly OKRs and product ops council ensure strategic alignment."
+    },
+    "results": {
+      "zh": [
+        "功能交付周期从 12 周缩短至 4 周",
+        "工程师满意度得分提升 35%",
+        "跨团队依赖项从 85 个减少至 15 个",
+        "部署频率从每月 2 次提升至每周 5 次",
+        "产品团队在 6 个月内实现全面自治"
+      ],
+      "en": [
+        "Feature delivery cycle: 12 wks → 4 wks",
+        "Engineer satisfaction +35%",
+        "Cross-team dependencies: 85 → 15",
+        "Deploy frequency: 2/month → 5/week",
+        "Product teams fully autonomous in 6 months"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"这次转型改变了我们的工程文化。团队现在主动承担业务结果，而不是等待任务分配。\" — CTO",
+      "en": "\"This transformation changed our engineering culture. Teams now proactively own business outcomes instead of waiting for task assignments.\" — CTO"
+    },
+    "teamModel": {
+      "zh": "Evoing 核心团队 10 人（组织设计顾问 ×3、平台工程师 ×4、变革管理 ×2、PM ×1）",
+      "en": "Evoing core team 10 (org design consultants ×3, platform engineers ×4, change management ×2, PM ×1)"
+    },
+    "timeline": "2024-06 至 2025-06（12 个月）",
+    "milestones": {
+      "zh": [
+        "2024-06：组织诊断启动",
+        "2024-09：首批 6 个产品团队组建",
+        "2025-01：18 个产品领域全面转型",
+        "2025-06：IDP 上线并全面自治"
+      ],
+      "en": [
+        "2024-06: Org diagnostic launched",
+        "2024-09: First 6 product teams formed",
+        "2025-01: All 18 domains transformed",
+        "2025-06: IDP live and full autonomy"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "交付周期",
+          "en": "Delivery cycle"
+        },
+        "value": "4 周"
+      },
+      {
+        "label": {
+          "zh": "工程师满意度",
+          "en": "Eng. satisfaction"
+        },
+        "value": "+35%"
+      },
+      {
+        "label": {
+          "zh": "跨团队依赖",
+          "en": "Cross-team deps"
+        },
+        "value": "15"
+      }
+    ]
+  },
+  {
+    "id": "healthcare-fhir-platform",
+    "clientArchetype": {
+      "zh": "北美大型医疗集团（50+ 医院网络）",
+      "en": "Large North American healthcare network (50+ hospitals)"
+    },
+    "region": "amer",
+    "industry": "healthcare",
+    "capabilities": [
+      "data-intelligence",
+      "ai-strategy",
+      "cyber-resilience"
+    ],
+    "overview": {
+      "zh": "患者数据分散在 18 个 EHR 系统中。Evoing 构建了 FHIR 统一临床数据平台与 AI 辅助决策系统，将医生诊断准备时间从 15 分钟降至 2 分钟。",
+      "en": "Patient data scattered across 18 EHR systems. Evoing built a FHIR unified clinical data platform with AI-assisted decision support, reducing physician prep time from 15 min to 2 min."
+    },
+    "challengeBullets": {
+      "zh": [
+        "18 个不同 EHR 系统，患者数据完全碎片化",
+        "医生诊断前平均需查阅 3 个系统，耗时 15 分钟",
+        "跨院区转诊时患者信息丢失率高达 30%",
+        "HIPAA 合规要求极其严格，数据共享面临法律障碍",
+        "AI 辅助诊断缺乏监管审批路径"
+      ],
+      "en": [
+        "18 different EHR systems with completely fragmented patient data",
+        "Physicians consulted 3 systems on average before diagnosis, taking 15 min",
+        "30% patient information loss rate during inter-facility referrals",
+        "Extremely strict HIPAA compliance creating legal barriers to data sharing",
+        "No regulatory approval pathway for AI-assisted diagnosis"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：互操作层建设（12 周）",
+          "desc": "基于 FHIR R4 构建统一临床数据平台，连接全部 18 个 EHR 系统"
+        },
+        {
+          "phase": "第 2 阶段：AI 临床决策支持（16 周）",
+          "desc": "开发 AI 辅助诊断和药物相互作用预警系统，在 HIPAA 沙箱中验证"
+        },
+        {
+          "phase": "第 3 阶段：零信任安全架构（8 周）",
+          "desc": "实施零信任数据访问，确保 PHI 端到端保护"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Interoperability Layer (12 wks)",
+          "desc": "Built unified clinical data platform on FHIR R4, connecting all 18 EHR systems"
+        },
+        {
+          "phase": "Phase 2: AI Clinical Decision Support (16 wks)",
+          "desc": "Developed AI-assisted diagnosis and drug interaction alert system, validated in HIPAA sandbox"
+        },
+        {
+          "phase": "Phase 3: Zero Trust Security (8 wks)",
+          "desc": "Implemented zero-trust data access ensuring end-to-end PHI protection"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "FHIR 互操作层基于 HAPI FHIR 构建，通过 MLLP/HL7v2 适配器连接遗留 EHR。临床数据湖采用 AWS Lake Formation 确保列级访问控制。AI 模型在 HIPAA 合规 VPC 中运行，使用 Amazon SageMaker + 专用 HSM 密钥管理。零信任数据访问通过 OPA 策略引擎实施。",
+      "en": "FHIR interoperability layer on HAPI FHIR with MLLP/HL7v2 adapters for legacy EHR. Clinical data lake on AWS Lake Formation for column-level access control. AI models run in HIPAA-compliant VPC using SageMaker + dedicated HSM key management. Zero-trust data access enforced via OPA policy engine."
+    },
+    "results": {
+      "zh": [
+        "医生诊断准备时间从 15 分钟降至 2 分钟",
+        "跨系统数据共享时间从数天降至近实时",
+        "AI 辅助诊断准确率达专家水平（95% 一致性）",
+        "12 个月运行期间零数据泄露事件",
+        "跨院区转诊信息完整率从 70% 提升至 99%"
+      ],
+      "en": [
+        "Physician prep time: 15 min → 2 min",
+        "Cross-system data sharing: days → near real-time",
+        "AI diagnosis accuracy at expert level (95% concordance)",
+        "Zero data breach incidents over 12-month run",
+        "Inter-facility referral info completeness: 70% → 99%"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"现在我在诊室里就能看到患者在所有院区的完整病史。这改变了我行医的方式。\" — 首席医疗官",
+      "en": "\"Now I can see a patient's complete history across all facilities right in the exam room. This changed how I practice medicine.\" — Chief Medical Officer"
+    },
+    "teamModel": {
+      "zh": "联合团队 40 人：Evoing 14 人（FHIR 工程师 ×4、AI 工程师 ×4、安全架构师 ×3、医疗顾问 ×2、PM ×1）+ 医院 IT 团队 26 人",
+      "en": "Joint team of 40: Evoing 14 (FHIR eng ×4, AI eng ×4, security architects ×3, clinical advisors ×2, PM ×1) + Hospital IT 26"
+    },
+    "timeline": "2024-01 至 2025-06（18 个月）",
+    "milestones": {
+      "zh": [
+        "2024-01：FHIR 平台建设启动",
+        "2024-06：首批 5 家医院上线",
+        "2024-12：全部 50+ 医院接入",
+        "2025-03：AI 临床决策支持上线",
+        "2025-06：零信任安全架构全面部署"
+      ],
+      "en": [
+        "2024-01: FHIR platform construction started",
+        "2024-06: First 5 hospitals live",
+        "2024-12: All 50+ hospitals connected",
+        "2025-03: AI clinical decision support live",
+        "2025-06: Zero-trust security fully deployed"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "诊断准备时间",
+          "en": "Prep time"
+        },
+        "value": "2 分钟"
+      },
+      {
+        "label": {
+          "zh": "AI 一致性",
+          "en": "AI concordance"
+        },
+        "value": "95%"
+      },
+      {
+        "label": {
+          "zh": "安全事件",
+          "en": "Security incidents"
+        },
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "id": "energy-digital-twin",
+    "clientArchetype": {
+      "zh": "中东国家能源公司",
+      "en": "Middle Eastern national energy company"
+    },
+    "region": "emea",
+    "industry": "energy",
+    "capabilities": [
+      "data-intelligence",
+      "ai-strategy",
+      "cyber-resilience"
+    ],
+    "overview": {
+      "zh": "老化 SCADA 系统与碎片化碳排放数据使碳减排目标缺乏基线。Evoing 构建了端到端数字孪生平台，实现年减排 120,000 吨 CO2。",
+      "en": "Aging SCADA systems and fragmented carbon data left emissions reduction targets without a baseline. Evoing built an end-to-end digital twin platform achieving 120,000 tonnes annual CO2 reduction."
+    },
+    "challengeBullets": {
+      "zh": [
+        "上游钻井与下游炼化由 15 年以上的 SCADA 系统控制",
+        "碳排放数据分散在 6 个不同系统中，无法审计",
+        "承诺 2030 年前碳减排 30% 但缺乏量化基线",
+        "非计划停机每年造成约 2 亿美元损失",
+        "OT 环境安全防护严重不足"
+      ],
+      "en": [
+        "Upstream drilling and downstream refining controlled by 15+ year-old SCADA",
+        "Carbon data scattered across 6 different systems, unauditable",
+        "Committed to 30% carbon reduction by 2030 but lacked quantified baseline",
+        "Unplanned downtime costing ~USD 200M annually",
+        "OT environment severely under-protected"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：碳排放基线（8 周）",
+          "desc": "建立覆盖上游到下游的碳排放数据采集与审计体系"
+        },
+        {
+          "phase": "第 2 阶段：数字孪生平台（20 周）",
+          "desc": "构建端到端数字孪生，集成实时 SCADA 数据与 AI 预测模型"
+        },
+        {
+          "phase": "第 3 阶段：OT 安全升级（12 周）",
+          "desc": "部署边缘安全网关与 IEC 62443 合规安全架构"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Carbon Baseline (8 wks)",
+          "desc": "Established end-to-end carbon data collection and audit system"
+        },
+        {
+          "phase": "Phase 2: Digital Twin Platform (20 wks)",
+          "desc": "Built end-to-end digital twin integrating real-time SCADA with AI prediction models"
+        },
+        {
+          "phase": "Phase 3: OT Security Upgrade (12 wks)",
+          "desc": "Deployed edge security gateways and IEC 62443-compliant security architecture"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "边缘计算网关运行在 ARM 架构工业计算机上，通过 OPC-UA 采集 SCADA 数据并通过加密 MQTT 传入云端数字孪生引擎。云端基于 Azure Digital Twins + ADX 时序数据库。AI 优化引擎（强化学习模型）在气隙环境中运行，碳排放仪表板连接至国家 ESG 报告 API。",
+      "en": "Edge computing gateways on ARM industrial computers collecting SCADA via OPC-UA, streaming through encrypted MQTT to cloud digital twin engine. Cloud: Azure Digital Twins + ADX time-series DB. AI optimization (RL models) runs in air-gapped environment. Carbon dashboard connects to national ESG reporting API."
+    },
+    "results": {
+      "zh": [
+        "碳排放预测准确率达到 95%",
+        "非计划停机减少 35%",
+        "能耗降低 18%（年减排 120,000 吨 CO2）",
+        "OT 安全合规达到 IEC 62443 标准",
+        "年度运营成本节省 1.5 亿美元"
+      ],
+      "en": [
+        "Carbon forecast accuracy: 95%",
+        "Unplanned downtime reduced 35%",
+        "Energy consumption reduced 18% (120K tonnes CO2/year)",
+        "OT security compliance: IEC 62443",
+        "Annual operational cost savings: USD 150M"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"我们第一次能够实时看到每一桶油的碳足迹。这对于实现我们的净零承诺至关重要。\" — CEO",
+      "en": "\"For the first time, we can see the carbon footprint of every barrel in real time. This is critical to meeting our net-zero commitment.\" — CEO"
+    },
+    "teamModel": {
+      "zh": "Evoing 团队 15 人（工业 IoT 工程师 ×4、数据科学家 ×3、OT 安全专家 ×3、PM ×2、能源行业顾问 ×3）",
+      "en": "Evoing team 15 (Industrial IoT eng ×4, data scientists ×3, OT security ×3, PMs ×2, energy industry advisors ×3)"
+    },
+    "timeline": "2024-04 至 2025-12（20 个月）",
+    "milestones": {
+      "zh": [
+        "2024-04：碳排放基线评估",
+        "2024-09：数字孪生 MVP",
+        "2025-03：AI 预测维护上线",
+        "2025-09：安全架构升级完成",
+        "2025-12：全面运营"
+      ],
+      "en": [
+        "2024-04: Carbon baseline assessment",
+        "2024-09: Digital twin MVP",
+        "2025-03: AI predictive maintenance live",
+        "2025-09: Security upgrade complete",
+        "2025-12: Full operations"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "碳预测准确率",
+          "en": "Carbon accuracy"
+        },
+        "value": "95%"
+      },
+      {
+        "label": {
+          "zh": "能耗降低",
+          "en": "Energy reduction"
+        },
+        "value": "18%"
+      },
+      {
+        "label": {
+          "zh": "年减排",
+          "en": "Annual CO2 reduction"
+        },
+        "value": "120K 吨"
+      }
+    ]
+  },
+  {
+    "id": "gov-digital-platform",
+    "clientArchetype": {
+      "zh": "东南亚国家数字化政府机构",
+      "en": "Southeast Asian national digital government agency"
+    },
+    "region": "apac",
+    "industry": "public-sector",
+    "capabilities": [
+      "strategy-advisory",
+      "code-modernization",
+      "cyber-resilience"
+    ],
+    "overview": {
+      "zh": "200+ 公民服务分散在 40 个部门网站上。Evoing 建设了统一数字服务平台，公民满意度从 52% 提升至 84%，日活超 200 万。",
+      "en": "200+ citizen services across 40 agency websites. Evoing built a unified digital service platform, lifting citizen satisfaction from 52% to 84% with 2M+ DAU."
+    },
+    "challengeBullets": {
+      "zh": [
+        "200+ 服务在 40 个不同网站，UX 完全碎片化",
+        "公民完成跨部门服务平均需访问 3 个不同网站",
+        "缺乏统一身份认证，每个系统独立注册",
+        "政府采购流程传统，不适应敏捷交付",
+        "公民数字服务体验远落后于商业标准"
+      ],
+      "en": [
+        "200+ services on 40 different websites with completely fragmented UX",
+        "Citizens visited 3 different sites on average for one cross-agency service",
+        "No unified identity — every system required separate registration",
+        "Traditional procurement processes incompatible with agile delivery",
+        "Citizen digital experience far behind commercial standards"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：平台战略（4 周）",
+          "desc": "设计国家数字服务平台战略和架构蓝图"
+        },
+        {
+          "phase": "第 2 阶段：首批服务上线（24 周）",
+          "desc": "以敏捷方式交付首批 20 项高频公民服务"
+        },
+        {
+          "phase": "第 3 阶段：规模化推广（28 周）",
+          "desc": "接入 40+ 政府部门，扩展至 200+ 服务"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Platform Strategy (4 wks)",
+          "desc": "Designed national digital service platform strategy and architecture blueprint"
+        },
+        {
+          "phase": "Phase 2: First Services Live (24 wks)",
+          "desc": "Agile delivery of first 20 high-frequency citizen services"
+        },
+        {
+          "phase": "Phase 3: Scale-Out (28 wks)",
+          "desc": "Onboarded 40+ agencies, expanded to 200+ services"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "基于 Kubernetes 的微服务政府平台。统一公民身份基于 OAuth 2.0/OIDC，支持 SingPass 集成。API 网关（Kong）连接 40+ 部门后端系统。事件驱动架构（Kafka）实现跨部门业务流程编排。所有服务遵循政府云安全标准，数据主权完全在境内。",
+      "en": "Kubernetes-based microservices government platform. Unified citizen identity via OAuth 2.0/OIDC with SingPass integration. API gateway (Kong) connecting 40+ agency backends. Event-driven architecture (Kafka) for cross-agency process orchestration. All services follow government cloud security standards with full data sovereignty."
+    },
+    "results": {
+      "zh": [
+        "公民满意度从 52% 提升至 84%",
+        "跨部门服务完成时间从平均 7 天缩短至 2 小时",
+        "首批 20 项服务在 6 个月内上线",
+        "日活跃用户超 200 万",
+        "年度政府 IT 运维成本降低 40%"
+      ],
+      "en": [
+        "Citizen satisfaction: 52% → 84%",
+        "Cross-agency service time: 7 days → 2 hours",
+        "First 20 services live in 6 months",
+        "DAU > 2M",
+        "Annual government IT ops cost reduced 40%"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"这是我国数字政府建设的一个里程碑。公民终于可以在一个平台上完成所有事情。\" — 数字政府部长",
+      "en": "\"This is a milestone for our nation's digital government. Citizens can finally do everything on one platform.\" — Minister for Digital Government"
+    },
+    "teamModel": {
+      "zh": "联合团队 80 人：Evoing 22 人（架构师 ×5、全栈工程师 ×10、安全顾问 ×3、PM ×4）+ 政府 IT 团队 58 人",
+      "en": "Joint team of 80: Evoing 22 (architects ×5, full-stack eng ×10, security advisors ×3, PMs ×4) + Government IT 58"
+    },
+    "timeline": "2024-02 至 2025-08（18 个月）",
+    "milestones": {
+      "zh": [
+        "2024-02：平台战略设计",
+        "2024-05：首批 5 项服务 MVP",
+        "2024-10：首批 20 项服务全面上线",
+        "2025-03：40 部门全部接入",
+        "2025-08：200+ 服务稳定运行"
+      ],
+      "en": [
+        "2024-02: Platform strategy designed",
+        "2024-05: First 5 service MVPs",
+        "2024-10: 20 services fully live",
+        "2025-03: All 40 agencies onboarded",
+        "2025-08: 200+ services stable"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "公民满意度",
+          "en": "Citizen sat."
+        },
+        "value": "84%"
+      },
+      {
+        "label": {
+          "zh": "服务时间",
+          "en": "Service time"
+        },
+        "value": "2 小时"
+      },
+      {
+        "label": {
+          "zh": "日活用户",
+          "en": "DAU"
+        },
+        "value": "200 万+"
+      }
+    ]
+  },
+  {
+    "id": "automotive-sdv-platform",
+    "clientArchetype": {
+      "zh": "欧洲豪华汽车制造商",
+      "en": "European luxury automotive manufacturer"
+    },
+    "region": "emea",
+    "industry": "automotive",
+    "capabilities": [
+      "code-modernization",
+      "operating-model",
+      "cyber-resilience"
+    ],
+    "overview": {
+      "zh": "从硬件定义向软件定义汽车转型，传统 V 模型开发与敏捷软件文化冲突。Evoing 建立了 SDV 参考架构，将 OTA 审批从 3 个月压缩至 3 天。",
+      "en": "Transitioning from hardware-defined to software-defined vehicles, traditional V-model conflicted with agile software. Evoing established an SDV reference architecture, compressing OTA approval from 3 months to 3 days."
+    },
+    "challengeBullets": {
+      "zh": [
+        "传统 V 模型/ASPICE 流程与敏捷软件开发存在根本冲突",
+        "OTA 更新审批流程长达 3 个月",
+        "缺乏统一的整车软件架构标准",
+        "3 个车型团队各自为政，软件复用率低于 10%",
+        "功能安全（ISO 26262）与网络安全（ISO 21434）合规复杂"
+      ],
+      "en": [
+        "Traditional V-model/ASPICE fundamentally conflicted with agile software development",
+        "OTA update approval process took 3 months",
+        "No unified vehicle software architecture standard",
+        "3 vehicle program teams working in silos with <10% software reuse",
+        "Complex functional safety (ISO 26262) and cybersecurity (ISO 21434) compliance"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：SDV 参考架构（8 周）",
+          "desc": "设计整车计算平台架构与 SOA 服务模型"
+        },
+        {
+          "phase": "第 2 阶段：安全 CI/CD 流水线（16 周）",
+          "desc": "建立符合 ISO 26262/21434 的 CI/CD，自动化安全验证门禁"
+        },
+        {
+          "phase": "第 3 阶段：组织转型（12 周）",
+          "desc": "将 3 个车型团队转型为产品型模式，建立车云一体化开发平台"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: SDV Reference Architecture (8 wks)",
+          "desc": "Designed vehicle computing platform architecture and SOA service model"
+        },
+        {
+          "phase": "Phase 2: Safety CI/CD Pipeline (16 wks)",
+          "desc": "Built ISO 26262/21434-compliant CI/CD with automated safety verification gates"
+        },
+        {
+          "phase": "Phase 3: Org Transformation (12 wks)",
+          "desc": "Transformed 3 vehicle program teams to product model, established vehicle-cloud unified dev platform"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "集中式车辆计算机 + 区域控制器架构。车端运行 AUTOSAR Adaptive 容器化运行时。云端 CI/CD 包含 ASPICE 合规检查、MISRA 静态分析、HIL 自动化测试和安全验证门禁。OTA 管道基于 TUF/Uptane 框架，支持差分更新和回滚。",
+      "en": "Central vehicle computer + zonal controller architecture. On-vehicle: AUTOSAR Adaptive containerized runtime. Cloud CI/CD includes ASPICE compliance checks, MISRA static analysis, HIL automated testing, and safety verification gates. OTA pipeline on TUF/Uptane framework with delta updates and rollback."
+    },
+    "results": {
+      "zh": [
+        "新功能上市时间从 18 个月缩短至 6 个月",
+        "OTA 合规审批从 3 个月压缩至 3 天",
+        "软件缺陷密度降低 60%",
+        "跨车型软件复用率从 8% 提升至 45%",
+        "3 个车型团队全面转型为产品型模式"
+      ],
+      "en": [
+        "Feature time-to-market: 18 months → 6 months",
+        "OTA compliance approval: 3 months → 3 days",
+        "Software defect density reduced 60%",
+        "Cross-vehicle software reuse: 8% → 45%",
+        "3 vehicle program teams fully product-model"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"Evoing 帮助我们理解了软件定义汽车不仅是技术变革，更是组织和文化变革。\" — 首席数字官",
+      "en": "\"Evoing helped us understand that SDV is not just a technology transformation — it's an organizational and cultural one.\" — Chief Digital Officer"
+    },
+    "teamModel": {
+      "zh": "Evoing 核心团队 12 人（汽车软件架构师 ×3、安全工程师 ×3、组织顾问 ×3、DevOps 工程师 ×2、PM ×1）",
+      "en": "Evoing core team 12 (automotive software architects ×3, safety engineers ×3, org consultants ×3, DevOps ×2, PM ×1)"
+    },
+    "timeline": "2024-05 至 2025-11（18 个月）",
+    "milestones": {
+      "zh": [
+        "2024-05：SDV 架构设计",
+        "2024-09：CI/CD 流水线 MVP",
+        "2025-02：首个车型 OTA 上线",
+        "2025-08：3 车型全部迁移",
+        "2025-11：全面运营"
+      ],
+      "en": [
+        "2024-05: SDV architecture designed",
+        "2024-09: CI/CD pipeline MVP",
+        "2025-02: First vehicle OTA live",
+        "2025-08: All 3 vehicles migrated",
+        "2025-11: Full operations"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "上市时间",
+          "en": "Time-to-market"
+        },
+        "value": "6 个月"
+      },
+      {
+        "label": {
+          "zh": "OTA 审批",
+          "en": "OTA approval"
+        },
+        "value": "3 天"
+      },
+      {
+        "label": {
+          "zh": "缺陷密度",
+          "en": "Defect density"
+        },
+        "value": "-60%"
+      }
+    ]
+  },
+  {
+    "id": "tmt-ad-platform",
+    "clientArchetype": {
+      "zh": "亚太头部电信与流媒体集团",
+      "en": "Leading APAC telco and streaming group"
+    },
+    "region": "apac",
+    "industry": "tmt",
+    "capabilities": [
+      "ai-strategy",
+      "data-intelligence",
+      "code-modernization"
+    ],
+    "overview": {
+      "zh": "3 亿用户但广告系统架构已服役 10 年，CPM 持续下滑。Evoing 以深度学习重建广告与推荐引擎，CPM 提升 28%，留存率提升 18%。",
+      "en": "300M users but ad system architecture 10 years old with declining CPM. Evoing rebuilt ad and recommendation engines with deep learning, lifting CPM 28% and retention 18%."
+    },
+    "challengeBullets": {
+      "zh": [
+        "广告系统架构服役 10 年，延迟超过 200ms 导致竞价流失",
+        "内容推荐基于协同过滤，准确率低于行业平均 20%",
+        "3 亿用户数据分散在 5 个孤岛中，无法构建统一用户画像",
+        "基础设施单用户成本持续上升，威胁利润率",
+        "用户流失率逐年上升，缺乏有效的个性化挽留机制"
+      ],
+      "en": [
+        "Ad system 10 years old with 200ms+ latency causing bid loss",
+        "Content recommendations based on collaborative filtering, 20% below industry accuracy",
+        "300M user data scattered across 5 silos — no unified user profile possible",
+        "Per-user infrastructure cost rising, threatening margins",
+        "Churn rate climbing year over year with no effective personalized retention"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：数据平台统一（8 周）",
+          "desc": "统一 3 亿用户数据至实时数据平台，构建 360 度用户画像"
+        },
+        {
+          "phase": "第 2 阶段：AI 引擎重建（16 周）",
+          "desc": "以图神经网络和深度学习重建广告竞价与内容推荐引擎"
+        },
+        {
+          "phase": "第 3 阶段：成本优化（8 周）",
+          "desc": "基础设施现代化，通过 Graviton 实例和 Spot 实例降低单位成本"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Data Platform Unification (8 wks)",
+          "desc": "Unified 300M user data into real-time data platform, built 360-degree user profiles"
+        },
+        {
+          "phase": "Phase 2: AI Engine Rebuild (16 wks)",
+          "desc": "Rebuilt ad bidding and content recommendation engines with GNNs and deep learning"
+        },
+        {
+          "phase": "Phase 3: Cost Optimization (8 wks)",
+          "desc": "Infrastructure modernization using Graviton and Spot instances to reduce unit costs"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "实时特征管道基于 Spark/Flink on EKS，日均处理 50 亿事件。图神经网络推荐模型在 p4d GPU 集群上运行，广告竞价延迟低于 50ms。用户数据平台（基于 Apache Pinot）支持亚秒级 OLAP 查询。基础设施全面迁移至 Graviton 实例，配合 Spot 实例降低 40% 成本。",
+      "en": "Real-time feature pipeline on Spark/Flink on EKS processing 5B events/day. GNN recommendation models on p4d GPU clusters with ad bidding <50ms. User data platform (Apache Pinot) for sub-second OLAP queries. Full infra migration to Graviton + Spot instances cutting 40% cost."
+    },
+    "results": {
+      "zh": [
+        "广告 CPM 提升 28%",
+        "用户留存率提升 18%",
+        "内容推荐 CTR 提升 35%",
+        "基础设施单用户成本降低 40%",
+        "广告竞价延迟从 200ms 降至 45ms"
+      ],
+      "en": [
+        "Ad CPM +28%",
+        "User retention +18%",
+        "Content recommendation CTR +35%",
+        "Per-user infra cost -40%",
+        "Ad bidding latency: 200ms → 45ms"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"我们从未想过推荐系统可以做到这么精准。用户平均观看时长增长了 40%。\" — CPO",
+      "en": "\"We never imagined recommendations could be this precise. Average watch time increased 40%.\" — CPO"
+    },
+    "teamModel": {
+      "zh": "Evoing 团队 14 人（ML 工程师 ×6、数据工程师 ×4、平台工程师 ×2、PM ×2）",
+      "en": "Evoing team 14 (ML eng ×6, data eng ×4, platform eng ×2, PMs ×2)"
+    },
+    "timeline": "2024-07 至 2025-10（15 个月）",
+    "milestones": {
+      "zh": [
+        "2024-07：数据平台统一启动",
+        "2024-11：实时特征管道上线",
+        "2025-03：新推荐引擎 A/B 测试",
+        "2025-08：全量切换完成",
+        "2025-10：成本优化全面达成"
+      ],
+      "en": [
+        "2024-07: Data platform unification started",
+        "2024-11: Real-time feature pipeline live",
+        "2025-03: New recommendation engine A/B test",
+        "2025-08: Full cutover complete",
+        "2025-10: Cost optimization targets met"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "CPM 提升",
+          "en": "CPM lift"
+        },
+        "value": "+28%"
+      },
+      {
+        "label": {
+          "zh": "留存率提升",
+          "en": "Retention lift"
+        },
+        "value": "+18%"
+      },
+      {
+        "label": {
+          "zh": "CTR 提升",
+          "en": "CTR lift"
+        },
+        "value": "+35%"
+      }
+    ]
+  },
+  {
+    "id": "insurtech-ai-underwriting",
+    "clientArchetype": {
+      "zh": "全球再保险公司",
+      "en": "Global reinsurance company"
+    },
+    "region": "emea",
+    "industry": "financial-services",
+    "capabilities": [
+      "ai-strategy",
+      "data-intelligence"
+    ],
+    "overview": {
+      "zh": "传统核保流程依赖人工审核数百页文件，平均耗时 3 周。Evoing 构建了 AI 核保引擎，将核保时间压缩至 2 小时，同时提升风险定价准确率。",
+      "en": "Traditional underwriting relied on manual review of hundreds of pages, averaging 3 weeks. Evoing built an AI underwriting engine, compressing time to 2 hours while improving risk pricing accuracy."
+    },
+    "challengeBullets": {
+      "zh": [
+        "人工核保平均 3 周，无法满足数字渠道的实时报价需求",
+        "核保决策一致性低：同一案例不同核保人评估差异达 30%",
+        "历史理赔数据为非结构化 PDF，难以用于模型训练",
+        "监管对 AI 核保的可解释性有严格要求",
+        "多语言文件（英语、法语、德语、日语）增加处理复杂度"
+      ],
+      "en": [
+        "Manual underwriting averaged 3 weeks, cannot meet real-time quoting needs",
+        "Low decision consistency: 30% variance between underwriters on same case",
+        "Historical claims data in unstructured PDFs, unusable for model training",
+        "Regulatory requirements for AI underwriting explainability",
+        "Multi-language documents (EN, FR, DE, JP) adding complexity"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：数据工程（10 周）",
+          "desc": "NLP 管道提取 10 年历史理赔数据，构建结构化训练集"
+        },
+        {
+          "phase": "第 2 阶段：AI 核保模型（14 周）",
+          "desc": "训练多模态核保模型（文本+结构化数据），建立可解释性层"
+        },
+        {
+          "phase": "第 3 阶段：核保工作台（8 周）",
+          "desc": "构建 AI 辅助核保工作台，核保人确认/修改/驳回 AI 建议"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Data Engineering (10 wks)",
+          "desc": "NLP pipeline extracted 10 years of claims data into structured training sets"
+        },
+        {
+          "phase": "Phase 2: AI Underwriting Model (14 wks)",
+          "desc": "Trained multimodal underwriting model (text + structured), built explainability layer"
+        },
+        {
+          "phase": "Phase 3: Underwriting Workbench (8 wks)",
+          "desc": "Built AI-assisted underwriting workbench with human-in-the-loop confirmation/override"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "NLP 管道基于 spaCy + 自定义 Transformer 模型，支持 4 种语言的文档理解。核保模型采用 XGBoost + 神经网络集成架构，SHAP 值提供逐条可解释性。核保工作台将 AI 置信度分级：绿色（>95%）自动通过、黄色（80-95%）人工复核、红色（<80%）升级至高级核保人。",
+      "en": "NLP pipeline on spaCy + custom Transformer models supporting 4-language document understanding. Underwriting model: XGBoost + neural ensemble with SHAP values for per-decision explainability. Workbench tiers AI confidence: green (>95%) auto-approve, yellow (80-95%) human review, red (<80%) escalate to senior underwriter."
+    },
+    "results": {
+      "zh": [
+        "核保时间从 3 周缩短至 2 小时",
+        "核保决策一致性从 70% 提升至 97%",
+        "风险定价准确率提升 15%（以损失率衡量）",
+        "65% 的标准保单实现自动核保",
+        "多语言 NLP 准确率达到 94%"
+      ],
+      "en": [
+        "Underwriting time: 3 wks → 2 hours",
+        "Decision consistency: 70% → 97%",
+        "Risk pricing accuracy +15% (measured by loss ratio)",
+        "65% of standard policies auto-underwritten",
+        "Multi-language NLP accuracy at 94%"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"AI 没有取代我们的核保人——它让他们能够专注于复杂案例，把标准保单交给算法。\" — 首席核保官",
+      "en": "\"AI didn't replace our underwriters — it freed them to focus on complex cases while algorithms handle standard policies.\" — Chief Underwriting Officer"
+    },
+    "teamModel": {
+      "zh": "Evoing 团队 11 人（NLP 工程师 ×3、ML 工程师 ×4、精算顾问 ×2、PM ×2）",
+      "en": "Evoing team 11 (NLP eng ×3, ML eng ×4, actuarial advisors ×2, PMs ×2)"
+    },
+    "timeline": "2024-08 至 2025-10（14 个月）",
+    "milestones": {
+      "zh": [
+        "2024-08：NLP 管道开发",
+        "2024-12：训练数据集完成",
+        "2025-03：核保模型验证",
+        "2025-07：核保工作台上线",
+        "2025-10：全面推广"
+      ],
+      "en": [
+        "2024-08: NLP pipeline development",
+        "2024-12: Training dataset complete",
+        "2025-03: Underwriting model validated",
+        "2025-07: Workbench live",
+        "2025-10: Full rollout"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "核保时间",
+          "en": "Underwriting time"
+        },
+        "value": "2 小时"
+      },
+      {
+        "label": {
+          "zh": "一致性",
+          "en": "Consistency"
+        },
+        "value": "97%"
+      },
+      {
+        "label": {
+          "zh": "自动核保率",
+          "en": "Auto-rate"
+        },
+        "value": "65%"
+      }
+    ]
+  },
+  {
+    "id": "logistics-digital-control-tower",
+    "clientArchetype": {
+      "zh": "全球第三方物流巨头（年营收 > 600 亿欧元）",
+      "en": "Global 3PL giant (revenue > EUR 60B)"
+    },
+    "region": "amer",
+    "industry": "retail-consumer",
+    "capabilities": [
+      "data-intelligence",
+      "ai-strategy",
+      "code-modernization"
+    ],
+    "overview": {
+      "zh": "全球物流网络调度依赖 Excel 和电话。Evoing 构建了 AI 驱动的物流控制塔，准点率从 82% 提升至 97%，年省 3 亿欧元。",
+      "en": "Global logistics dispatching relied on Excel and phone calls. Evoing built an AI-driven logistics control tower, lifting on-time rate from 82% to 97% with EUR 300M annual savings."
+    },
+    "challengeBullets": {
+      "zh": [
+        "全球 200+ 仓库和 50,000+ 车辆的调度依赖人工",
+        "准点交付率仅 82%，远低于行业竞品",
+        "异常处理（天气、交通、海关）平均响应时间 4 小时",
+        "缺乏实时可视性：客户投诉后才知道出了问题",
+        "调度员每天处理 300+ Excel 表格，效率极低"
+      ],
+      "en": [
+        "Global dispatching of 200+ warehouses and 50K+ vehicles relied on manual processes",
+        "On-time delivery at only 82%, far below competitors",
+        "Exception handling (weather, traffic, customs) averaged 4-hour response",
+        "No real-time visibility: learned of problems only after customer complaints",
+        "Dispatchers processed 300+ Excel sheets daily — extremely inefficient"
+      ]
+    },
+    "interventionPhases": {
+      "zh": [
+        {
+          "phase": "第 1 阶段：实时数据层（10 周）",
+          "desc": "集成 GPS、交通、天气、海关数据，建立统一物流数据湖"
+        },
+        {
+          "phase": "第 2 阶段：AI 优化引擎（16 周）",
+          "desc": "构建动态调度、路线优化和异常预测 AI 模型"
+        },
+        {
+          "phase": "第 3 阶段：控制塔仪表板（8 周）",
+          "desc": "构建实时可视控制塔，自主调度与人工干预结合"
+        }
+      ],
+      "en": [
+        {
+          "phase": "Phase 1: Real-Time Data Layer (10 wks)",
+          "desc": "Integrated GPS, traffic, weather, customs data into unified logistics data lake"
+        },
+        {
+          "phase": "Phase 2: AI Optimization Engine (16 wks)",
+          "desc": "Built dynamic dispatching, route optimization, and exception prediction AI models"
+        },
+        {
+          "phase": "Phase 3: Control Tower Dashboard (8 wks)",
+          "desc": "Built real-time visibility control tower with autonomous dispatching + human override"
+        }
+      ]
+    },
+    "architectureDetail": {
+      "zh": "流处理架构基于 Kafka + Flink，日均处理 100 万+ 物流事件。路线优化使用 OR-Tools + 定制约束求解器。异常检测采用时间序列异常检测 + 天气/交通外部信号集成。控制塔基于 React + Deck.gl 提供全球地图可视化。调度决策分为三级：全自动（85%）、建议+确认（12%）、人工决策（3%）。",
+      "en": "Streaming architecture on Kafka + Flink processing 1M+ logistics events/day. Route optimization: OR-Tools + custom constraint solver. Anomaly detection: time-series + external weather/traffic signals. Control tower: React + Deck.gl for global map visualization. Dispatch decisions tiered: fully auto (85%), recommend+confirm (12%), manual (3%)."
+    },
+    "results": {
+      "zh": [
+        "准点交付率从 82% 提升至 97%",
+        "异常响应时间从 4 小时缩短至 15 分钟",
+        "年度运营成本节省 3 亿欧元",
+        "空驶率从 22% 降低至 8%",
+        "客户投诉减少 60%"
+      ],
+      "en": [
+        "On-time delivery: 82% → 97%",
+        "Exception response: 4 hours → 15 min",
+        "Annual ops cost savings: EUR 300M",
+        "Empty miles: 22% → 8%",
+        "Customer complaints reduced 60%"
+      ]
+    },
+    "clientQuote": {
+      "zh": "\"控制塔让我们第一次能够实时看到每一辆卡车的状态。这改变了我们的运营方式。\" — COO",
+      "en": "\"The control tower lets us see the status of every truck in real time for the first time. It changed how we operate.\" — COO"
+    },
+    "teamModel": {
+      "zh": "联合团队 55 人：Evoing 18 人（数据工程师 ×6、ML 工程师 ×4、全栈工程师 ×5、PM ×3）+ 客户 37 人",
+      "en": "Joint team of 55: Evoing 18 (data eng ×6, ML eng ×4, full-stack ×5, PMs ×3) + Client 37"
+    },
+    "timeline": "2024-10 至 2026-02（16 个月）",
+    "milestones": {
+      "zh": [
+        "2024-10：数据集成启动",
+        "2025-02：路线优化引擎 MVP",
+        "2025-06：控制塔 1.0 上线",
+        "2025-10：85% 自动化调度达成",
+        "2026-02：全面运营"
+      ],
+      "en": [
+        "2024-10: Data integration started",
+        "2025-02: Route optimization MVP",
+        "2025-06: Control tower 1.0 live",
+        "2025-10: 85% auto-dispatching achieved",
+        "2026-02: Full operations"
+      ]
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "准点率",
+          "en": "On-time rate"
+        },
+        "value": "97%"
+      },
+      {
+        "label": {
+          "zh": "响应时间",
+          "en": "Response time"
+        },
+        "value": "15 分钟"
+      },
+      {
+        "label": {
+          "zh": "年节省",
+          "en": "Annual savings"
+        },
+        "value": "EUR 300M"
+      }
+    ]
+  }
+]

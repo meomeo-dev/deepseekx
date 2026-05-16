@@ -1,8 +1,8 @@
 ---
 name: we-branch-protection
 description: Use when checking or explaining GitHub branch protection and PR
-  gate requirements for deepseekx/main before professional mode, release, or public
-  workflow demonstrations.
+  gate requirements for deepseekx/main before professional mode, release, or
+  public workflow demonstrations.
 ---
 
 # we-branch-protection
@@ -16,7 +16,8 @@ description: Use when checking or explaining GitHub branch protection and PR
 
 ## 范围
 
-- 检查私有或公开 GitHub 仓库的 `deepseekx/main` 分支保护状态。
+- 检查公开 GitHub 仓库 `meomeo-dev/deepseekx` 的 `deepseekx/main`
+  分支保护状态。
 - 判断 professional mode 是否有真实远端硬门禁支撑。
 - 发布前确认 release commit 和 tag 是否受合理分支策略保护。
 - 给出缺失保护规则的风险和建议。
@@ -40,7 +41,7 @@ description: Use when checking or explaining GitHub branch protection and PR
 
 - 当前 remote URL。
 - `gh auth status` 是否可用。
-- 私有仓库和公开仓库 `deepseekx/main` 的 branch protection 关键字段。
+- 公开仓库 `deepseekx/main` 的 branch protection 关键字段。
 - 最近 CI workflow 名称，供 required status checks 对照。
 
 如果 `gh` 未登录或 API 权限不足，报告阻塞项，不要继续猜测。

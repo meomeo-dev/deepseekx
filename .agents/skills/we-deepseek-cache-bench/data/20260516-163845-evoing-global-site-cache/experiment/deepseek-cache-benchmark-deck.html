@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeekX 缓存基准测试</title>
+<style>
+:root {
+  --ink: #18212a;
+  --ink-soft: #2e4054;
+  --muted: #5e6872;
+  --paper: #e6ebee;
+  --paper-warm: #f4eadf;
+  --panel: #fff8ec;
+  --panel-cool: #dbe9f3;
+  --cyan: #6aa8ca;
+  --coral: #f06f4f;
+  --red: #cf3f35;
+  --gold: #d9a441;
+  --line: #18212a;
+  --shadow: rgba(24, 33, 42, .22);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 10% 12%, rgba(240, 111, 79, .32) 0 9%,
+      transparent 10%),
+    radial-gradient(circle at 92% 8%, rgba(106, 168, 202, .3) 0 11%,
+      transparent 12%),
+    linear-gradient(135deg, rgba(255, 255, 255, .24) 0 25%,
+      transparent 25% 50%, rgba(24, 33, 42, .05) 50% 75%,
+      transparent 75%),
+    var(--paper);
+  background-size: auto, auto, 18px 18px, auto;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  content: "";
+  opacity: .55;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 6px,
+      rgba(24, 33, 42, .04) 7px),
+    repeating-linear-gradient(90deg, transparent 0 10px,
+      rgba(207, 63, 53, .05) 11px),
+    radial-gradient(circle at 24% 26%, rgba(24, 33, 42, .12) 0 1px,
+      transparent 1.5px);
+  background-size: auto, auto, 10px 10px;
+}
+body::after {
+  position: fixed;
+  inset: auto 3vw 3vh auto;
+  z-index: -1;
+  width: min(380px, 42vw);
+  aspect-ratio: 1;
+  pointer-events: none;
+  content: "";
+  border: 3px solid rgba(24, 33, 42, .24);
+  border-radius: 48% 52% 49% 51%;
+  background:
+    radial-gradient(circle, transparent 0 34%, rgba(24, 33, 42, .18) 35% 38%,
+      transparent 39%),
+    conic-gradient(from 12deg, rgba(240, 111, 79, .28),
+      rgba(106, 168, 202, .24), rgba(217, 164, 65, .2),
+      rgba(240, 111, 79, .28));
+  transform: rotate(-9deg);
+}
+section {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  padding: 48px clamp(24px, 6vw, 76px);
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  border-bottom: 4px solid var(--line);
+  overflow: hidden;
+}
+section::before,
+section::after {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+}
+section::before {
+  inset: 20px clamp(16px, 4vw, 52px);
+  border: 2px solid rgba(24, 33, 42, .18);
+  border-radius: 22px 10px 26px 14px;
+  background:
+    linear-gradient(120deg, rgba(255, 248, 236, .76),
+      rgba(219, 233, 243, .64)),
+    repeating-linear-gradient(-8deg, transparent 0 15px,
+      rgba(24, 33, 42, .035) 16px 17px);
+  box-shadow: 10px 10px 0 rgba(24, 33, 42, .1);
+}
+section::after {
+  top: 36px;
+  right: clamp(20px, 6vw, 82px);
+  width: 150px;
+  aspect-ratio: 1.9;
+  border: 3px solid var(--line);
+  border-radius: 52% 48% 46% 54%;
+  background: var(--coral);
+  box-shadow: 5px 5px 0 var(--line), -18px 42px 0 -12px var(--cyan),
+    24px 86px 0 -20px var(--gold);
+  transform: rotate(7deg);
+  opacity: .86;
+}
+h1, h2 { margin: 0; letter-spacing: 0; line-height: 1.04; }
+h1 {
+  max-width: 1020px;
+  color: #14212b;
+  font-family: "Arial Black", Impact, Inter, ui-sans-serif, system-ui,
+    sans-serif;
+  font-size: clamp(42px, 7vw, 92px);
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 var(--panel), 6px 6px 0 var(--coral),
+    9px 9px 0 rgba(24, 33, 42, .2);
+}
+h2 { font-size: clamp(32px, 5vw, 54px); }
+p, li { color: var(--ink-soft); font-size: 20px; }
+h3 {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: 23px;
+}
+ul { margin: 0; padding-left: 22px; }
+li + li { margin-top: 8px; }
+.kicker {
+  width: fit-content;
+  color: var(--panel);
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: var(--ink);
+  border: 3px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: 4px 4px 0 var(--coral);
+  transform: rotate(-1.8deg);
+}
+.grid { display: grid; gap: 18px; }
+.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card {
+  position: relative;
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .44), transparent 46%),
+    var(--panel);
+  border: 3px solid var(--line);
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 7px 7px 0 var(--line), 13px 13px 0 rgba(240, 111, 79, .42);
+  overflow-x: auto;
+}
+.card::before {
+  position: absolute;
+  inset: 7px;
+  pointer-events: none;
+  content: "";
+  border: 1px dashed rgba(24, 33, 42, .24);
+  border-radius: 3px;
+}
+.card:nth-child(2n) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .34), transparent 48%),
+    var(--panel-cool);
+  box-shadow: 7px 7px 0 var(--line), 13px 13px 0 rgba(106, 168, 202, .44);
+}
+.metric {
+  min-height: 148px;
+  display: grid;
+  align-content: space-between;
+}
+.metric::after {
+  width: 52px;
+  height: 10px;
+  content: "";
+  border-radius: 999px;
+  background: repeating-linear-gradient(90deg, var(--coral) 0 8px,
+    var(--line) 8px 11px, var(--cyan) 11px 19px);
+}
+.metric b {
+  display: block;
+  color: var(--red);
+  font-family: "Arial Black", Impact, Inter, ui-sans-serif, system-ui,
+    sans-serif;
+  font-size: clamp(32px, 3.4vw, 54px);
+  line-height: .95;
+  overflow-wrap: anywhere;
+  text-shadow: 2px 2px 0 var(--panel), 4px 4px 0 rgba(24, 33, 42, .2);
+}
+.cols-4 .metric b { font-size: clamp(30px, 2.7vw, 44px); }
+.metric span {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+table {
+  width: 100%;
+  min-width: 820px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 248, 236, .9);
+}
+th, td {
+  border-bottom: 2px solid rgba(24, 33, 42, .2);
+  padding: 12px 10px;
+}
+th, td { text-align: right; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) {
+  text-align: left;
+}
+th {
+  color: var(--panel);
+  background: var(--ink);
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+td {
+  color: var(--ink-soft);
+  font-weight: 650;
+}
+tr:nth-child(even) td { background: rgba(106, 168, 202, .12); }
+.note {
+  width: fit-content;
+  max-width: 760px;
+  border: 3px solid var(--line);
+  border-radius: 3px;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 14px 18px;
+  font-size: 20px;
+  font-weight: 850;
+  box-shadow: 5px 5px 0 var(--line);
+  transform: rotate(.8deg);
+}
+.sticker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.sticker {
+  color: var(--ink);
+  background: var(--panel);
+  border: 3px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 850;
+  text-transform: uppercase;
+  box-shadow: 3px 3px 0 var(--line);
+}
+.sticker:nth-child(2n) { background: var(--cyan); }
+.sticker:nth-child(3n) { background: var(--coral); color: var(--panel); }
+section:first-of-type {
+  background:
+    radial-gradient(circle at 74% 26%, rgba(255, 248, 236, .92) 0 7%,
+      transparent 8%),
+    radial-gradient(circle at 81% 28%, rgba(24, 33, 42, .35) 0 1.3%,
+      transparent 1.6%),
+    linear-gradient(110deg, rgba(106, 168, 202, .36), transparent 42%),
+    repeating-linear-gradient(0deg, rgba(24, 33, 42, .08) 0 2px,
+      transparent 2px 58px);
+}
+section:first-of-type::after {
+  top: auto;
+  right: clamp(20px, 6vw, 74px);
+  bottom: 52px;
+  width: min(340px, 35vw);
+  aspect-ratio: .78;
+  border-radius: 46% 54% 44% 56%;
+  background:
+    radial-gradient(circle at 52% 21%, var(--cyan) 0 17%,
+      transparent 18%),
+    linear-gradient(28deg, transparent 0 28%, var(--ink) 29% 31%,
+      transparent 32%),
+    linear-gradient(142deg, transparent 0 38%, var(--coral) 39% 51%,
+      transparent 52%),
+    var(--panel-cool);
+  box-shadow: 7px 7px 0 var(--line), -16px -20px 0 -8px var(--coral),
+    22px -30px 0 -10px var(--gold);
+  opacity: .9;
+  transform: rotate(5deg);
+}
+@media (max-width: 860px) {
+  .cols-4, .cols-2 { grid-template-columns: 1fr; }
+  section { padding: 34px 18px; }
+  section::before { inset: 12px; }
+  section::after { opacity: .24; }
+  section:first-of-type::after {
+    right: -70px;
+    bottom: 24px;
+    width: 230px;
+  }
+  h1 {
+    font-size: clamp(34px, 11vw, 48px);
+    text-shadow: 2px 2px 0 var(--panel), 4px 4px 0 var(--coral),
+      6px 6px 0 rgba(24, 33, 42, .18);
+  }
+  p, li { font-size: 17px; }
+  .metric { min-height: 126px; }
+  table { min-width: 720px; }
+}
+</style>
+</head>
+<body>
+<section>
+  <div class="kicker">DeepSeek Cache Benchmark</div>
+  <h1>DeepSeekX 缓存基准测试</h1>
+  <p>完整基准测试：商业咨询公司网站，智能及代码，代码及智能。</p>
+  <div class="sticker-row">
+    <span class="sticker">真实 API（Real API）</span>
+    <span class="sticker">缓存命中（Cache Hit）</span>
+    <span class="sticker">智能及代码</span>
+  </div>
+  <div class="grid cols-4">
+    <div class="card metric"><b>5</b><span>轮次（Turns）</span></div>
+    <div class="card metric"><b>12,321</b><span>代码行数（Lines）</span></div>
+    <div class="card metric"><b>69</b><span>文件数（Files）</span></div>
+    <div class="card metric"><b>99.4579%</b><span>缓存命中率（Cache Hit）</span></div>
+  </div>
+  <div class="grid cols-2">
+    <div class="card metric"><b>high</b><span>思考强度（Think Effort）</span></div>
+    <div class="card metric">
+      <b>364,800</b><span>上下文窗口（Context Window）</span>
+    </div>
+  </div>
+  <div class="note">目标为 10,000+ first-party lines，且必须完整可运行。</div>
+</section>
+<section>
+  <div class="kicker">Method</div>
+  <h2>动态监督式执行</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>执行约束</h3>
+      <ul>
+        <li>Docker 隔离环境，只读挂载 benchmark 技能目录。</li>
+        <li>DeepSeekX app-server server mode 驱动 deepseek-v4-pro。</li>
+        <li>每轮由监督者验收当前产物后再写下一轮 prompt。</li>
+        <li>逐轮记录 think effort 和 modelContextWindow。</li>
+        <li>禁止用固定 prompt pack 或生成器替代真实产品开发。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>报告口径</h3>
+      <ul>
+        <li>统计 thread/tokenUsage/updated 中的 cachedInputTokens。</li>
+        <li>first-party 行数排除 node_modules、dist、build、coverage。</li>
+        <li>最终产物必须包含启动命令、源码、实验日志和 HTML 报告。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="kicker">Cache</div>
+  <h2>逐轮缓存统计</h2>
+  <div class="grid cols-4">
+    <div class="card metric"><b>14,820,821</b><span>输入令牌（Input）</span></div>
+    <div class="card metric"><b>14,740,480</b><span>缓存令牌（Cached）</span></div>
+    <div class="card metric"><b>80,341</b><span>未命中令牌（Miss）</span></div>
+    <div class="card metric"><b>not recorded</b><span>验收记录（Validation）</span></div>
+  </div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>轮次（Turn）</th><th>名称（Name）</th>
+          <th>强度（Effort）</th><th>上下文（Context）</th>
+          <th>请求数（Requests）</th><th>输入（Input）</th>
+          <th>缓存（Cached）</th><th>未命中（Miss）</th>
+          <th>命中率（Hit Rate）</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr><td>1</td><td>foundation-brand-system</td><td>high</td><td>364,800</td><td>17</td><td>527,371</td><td>516,224</td><td>11,147</td><td>97.8863%</td></tr>
+<tr><td>2</td><td>content-architecture-expansion</td><td>high</td><td>364,800</td><td>20</td><td>1,649,086</td><td>1,624,320</td><td>24,766</td><td>98.4982%</td></tr>
+<tr><td>3</td><td>solutions-cases-insights-expansion</td><td>high</td><td>364,800</td><td>19</td><td>2,849,571</td><td>2,832,640</td><td>16,931</td><td>99.4058%</td></tr>
+<tr><td>4</td><td>trust-resources-journeys-expansion</td><td>high</td><td>364,800</td><td>16</td><td>3,321,944</td><td>3,302,528</td><td>19,416</td><td>99.4155%</td></tr>
+<tr><td>5</td><td>deep-content-and-interaction-buildout</td><td>high</td><td>364,800</td><td>24</td><td>6,472,849</td><td>6,464,768</td><td>8,081</td><td>99.8752%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="kicker">Artifact</div>
+  <h2>产物与边界</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>最大文件</h3>
+      <table>
+        <thead><tr><th>文件（File）</th><th>行数（Lines）</th></tr></thead>
+        <tbody>
+<tr><td>src/data/case-studies.json</td><td>1,316</td></tr>
+<tr><td>src/data/articles.json</td><td>706</td></tr>
+<tr><td>src/css/components.css</td><td>618</td></tr>
+<tr><td>src/data/service-catalog.json</td><td>557</td></tr>
+<tr><td>src/data/client-journeys.json</td><td>476</td></tr>
+<tr><td>src/data/solutions.json</td><td>472</td></tr>
+<tr><td>src/data/offices.json</td><td>440</td></tr>
+<tr><td>src/data/resources.json</td><td>410</td></tr>
+<tr><td>src/data/delivery-model.json</td><td>394</td></tr>
+<tr><td>src/data/value-models.json</td><td>383</td></tr>
+<tr><td>src/data/partners.json</td><td>327</td></tr>
+<tr><td>src/data/careers.json</td><td>327</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>复现信息</h3>
+      <ul>
+        <li>model: deepseek-v4-pro</li>
+        <li>modelProvider: deepseek</li>
+        <li>threadId: 019e2ff1-213e-7f10-918e-56ff4313a1e6</li>
+        <li>previewPort: 5173</li>
+        <li>think effort: high</li>
+        <li>modelContextWindow: 364,800</li>
+        <li>validationUtc: 2026-05-16T11:00:36Z</li>
+        <li>failed assertions: n/a</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</body>
+</html>

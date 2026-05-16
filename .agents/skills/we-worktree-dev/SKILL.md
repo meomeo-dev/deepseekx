@@ -31,7 +31,7 @@ Codex 支持多 agent 协作，但只有用户明确要求多 agent、并行 age
 
 - 不替代 `$we-feature-dev` 的普通单分支开发。
 - 不发布 npm；发布使用 `$we-publish`。
-- 不同步公开仓库；公开镜像使用 `$we-release`。
+- 不做公开仓库安全扫描；发布前公开检查使用 `$we-public-sync`。
 - 不自动删除 worktree、branch、stash 或用户文件。
 - 不在未审查情况下批量合并多个 agent 的输出。
 

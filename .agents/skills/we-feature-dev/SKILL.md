@@ -24,14 +24,15 @@ description: Use when starting or continuing DeepSeekX feature development
 
 ## 分支模型
 
-- 私有工作区：`/Users/jin/projects/deepseekx`。
+- 公开工作区：`/Users/jin/projects/deepseekx`。
 - `origin` 必须指向 `https://github.com/meomeo-dev/deepseekx.git`。
 - `upstream` 应指向 `https://github.com/openai/codex.git`。
 - 下游主干（downstream trunk）：`deepseekx/main`。
 - 普通开发分支：`deepseekx/<slug>`。
 - 上游同步分支：`deepseekx/sync/<version>`，不在本技能内维护。
 - `origin/main` 和 `upstream/main` 是上游主线语义，不是本仓库开发主干。
-- 公开仓库 `/Users/jin/projects/deepseekx-public` 不在本技能中修改。
+- 当前仓库本身就是公开发布仓库，提交前必须避免纳入凭据、本地 cache
+  或未授权任务内容。
 
 ## 硬入口门禁
 
@@ -107,7 +108,7 @@ PR 只在用户明确要求审查记录、远端 CI、发布前协作确认，�
 以下任一条件成立时，使用 professional mode：
 
 - 用户明确要求专业流程、PR、review、团队协作或展示给他人。
-- 改动影响公开 CLI 行为、npm 包内容、CI、release、tag 或公开仓库。
+- 改动影响公开 CLI 行为、npm 包内容、CI、release、tag 或公开仓库状态。
 - 改动风险高，直接合并到 `deepseekx/main` 会难以解释或回滚。
 
 professional mode 规则：
@@ -160,7 +161,8 @@ git diff --cached --name-only
 确认：
 
 - 没有 `.env`、key、token、credential、cache、tarball 或临时目录。
-- 没有 `_tasks/`、`_workflows/` 私有工作流被误纳入公开发布路径。
+- 没有 `_tasks/`、`_workflows/`、`.deep-research`、凭据或本地 cache
+  被误纳入公开仓库。
 - 没有无关用户改动被 stage。
 - generated files 是有意产物。
 - npm 发布包以 `codex-cli/package.json` 和 staging 脚本输出为准。
@@ -183,7 +185,7 @@ PR 描述包含：
 - 关键行为变化。
 - 检查命令和结果。
 - 跳过的检查及原因。
-- 是否影响 npm 包内容、发布流程、DeepSeek runtime 或公开镜像。
+- 是否影响 npm 包内容、发布流程、DeepSeek runtime 或公开仓库安全边界。
 
 ## 最终答复
 

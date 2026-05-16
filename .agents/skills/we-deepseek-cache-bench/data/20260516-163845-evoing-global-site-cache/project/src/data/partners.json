@@ -1,0 +1,327 @@
+{
+  "title": {
+    "zh": "合作伙伴生态",
+    "en": "Partner Ecosystem"
+  },
+  "subtitle": {
+    "zh": "与全球领先技术平台协同，为客户创造最大价值",
+    "en": "Collaborating with leading global technology platforms to maximize client value"
+  },
+  "categories": [
+    {
+      "id": "cloud-platforms",
+      "label": {
+        "zh": "云平台",
+        "en": "Cloud Platforms"
+      },
+      "partners": [
+        {
+          "name": "AWS",
+          "tier": {
+            "zh": "高级咨询合作伙伴",
+            "en": "Advanced Consulting Partner"
+          },
+          "competencies": {
+            "zh": [
+              "AI/ML",
+              "DevOps",
+              "迁移"
+            ],
+            "en": [
+              "AI/ML",
+              "DevOps",
+              "Migration"
+            ]
+          }
+        },
+        {
+          "name": "Microsoft Azure",
+          "tier": {
+            "zh": "解决方案合作伙伴",
+            "en": "Solutions Partner"
+          },
+          "competencies": {
+            "zh": [
+              "数据与 AI",
+              "数字与应用创新",
+              "基础设施"
+            ],
+            "en": [
+              "Data & AI",
+              "Digital & App Innovation",
+              "Infrastructure"
+            ]
+          }
+        },
+        {
+          "name": "Google Cloud",
+          "tier": {
+            "zh": "首要合作伙伴",
+            "en": "Premier Partner"
+          },
+          "competencies": {
+            "zh": [
+              "数据分析",
+              "ML 平台",
+              "云迁移"
+            ],
+            "en": [
+              "Data Analytics",
+              "ML Platform",
+              "Cloud Migration"
+            ]
+          }
+        },
+        {
+          "name": "Alibaba Cloud",
+          "tier": {
+            "zh": "全球战略合作伙伴",
+            "en": "Global Strategic Partner"
+          },
+          "competencies": {
+            "zh": [
+              "企业云",
+              "数据智能",
+              "安全合规"
+            ],
+            "en": [
+              "Enterprise Cloud",
+              "Data Intelligence",
+              "Security & Compliance"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "data-ai-platforms",
+      "label": {
+        "zh": "数据与 AI 平台",
+        "en": "Data & AI Platforms"
+      },
+      "partners": [
+        {
+          "name": "Databricks",
+          "tier": {
+            "zh": "精英合作伙伴",
+            "en": "Elite Partner"
+          },
+          "competencies": {
+            "zh": [
+              "湖仓一体",
+              "MLOps",
+              "数据工程"
+            ],
+            "en": [
+              "Lakehouse",
+              "MLOps",
+              "Data Engineering"
+            ]
+          }
+        },
+        {
+          "name": "Snowflake",
+          "tier": {
+            "zh": "首要合作伙伴",
+            "en": "Premier Partner"
+          },
+          "competencies": {
+            "zh": [
+              "数据云",
+              "数据共享",
+              "AI/ML"
+            ],
+            "en": [
+              "Data Cloud",
+              "Data Sharing",
+              "AI/ML"
+            ]
+          }
+        },
+        {
+          "name": "Dataiku",
+          "tier": {
+            "zh": "金牌合作伙伴",
+            "en": "Gold Partner"
+          },
+          "competencies": {
+            "zh": [
+              "全民 AI",
+              "MLOps",
+              "治理"
+            ],
+            "en": [
+              "Everyday AI",
+              "MLOps",
+              "Governance"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "label": {
+        "zh": "安全",
+        "en": "Security"
+      },
+      "partners": [
+        {
+          "name": "Palo Alto Networks",
+          "tier": {
+            "zh": "钻石合作伙伴",
+            "en": "Diamond Partner"
+          },
+          "competencies": {
+            "zh": [
+              "零信任",
+              "云安全",
+              "SOC"
+            ],
+            "en": [
+              "Zero Trust",
+              "Cloud Security",
+              "SOC"
+            ]
+          }
+        },
+        {
+          "name": "Wiz",
+          "tier": {
+            "zh": "精英合作伙伴",
+            "en": "Elite Partner"
+          },
+          "competencies": {
+            "zh": [
+              "云安全态势",
+              "漏洞管理",
+              "容器安全"
+            ],
+            "en": [
+              "Cloud Security Posture",
+              "Vulnerability Mgmt",
+              "Container Security"
+            ]
+          }
+        },
+        {
+          "name": "CrowdStrike",
+          "tier": {
+            "zh": "高级合作伙伴",
+            "en": "Advanced Partner"
+          },
+          "competencies": {
+            "zh": [
+              "端点保护",
+              "威胁情报",
+              "事件响应"
+            ],
+            "en": [
+              "Endpoint Protection",
+              "Threat Intelligence",
+              "Incident Response"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "technology",
+      "label": {
+        "zh": "技术基础设施",
+        "en": "Technology Infrastructure"
+      },
+      "partners": [
+        {
+          "name": "HashiCorp",
+          "tier": {
+            "zh": "系统集成合作伙伴",
+            "en": "Systems Integrator Partner"
+          },
+          "competencies": {
+            "zh": [
+              "基础设施即代码",
+              "安全秘密管理",
+              "服务网格"
+            ],
+            "en": [
+              "Infrastructure as Code",
+              "Secrets Management",
+              "Service Mesh"
+            ]
+          }
+        },
+        {
+          "name": "GitLab",
+          "tier": {
+            "zh": "金牌合作伙伴",
+            "en": "Gold Partner"
+          },
+          "competencies": {
+            "zh": [
+              "DevSecOps",
+              "CI/CD",
+              "合规"
+            ],
+            "en": [
+              "DevSecOps",
+              "CI/CD",
+              "Compliance"
+            ]
+          }
+        },
+        {
+          "name": "Confluent",
+          "tier": {
+            "zh": "首要合作伙伴",
+            "en": "Premier Partner"
+          },
+          "competencies": {
+            "zh": [
+              "数据流处理",
+              "事件驱动架构",
+              "Kafka 运维"
+            ],
+            "en": [
+              "Data Streaming",
+              "Event-Driven Architecture",
+              "Kafka Ops"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "collaborationModels": [
+    {
+      "label": {
+        "zh": "联合解决方案",
+        "en": "Joint Solutions"
+      },
+      "desc": {
+        "zh": "与技术伙伴共同开发和交付行业解决方案",
+        "en": "Co-develop and deliver industry solutions with technology partners"
+      }
+    },
+    {
+      "label": {
+        "zh": "能力共建",
+        "en": "Capability Co-Build"
+      },
+      "desc": {
+        "zh": "在新技术领域联合培训团队并建立认证体系",
+        "en": "Jointly train teams and build certification in new technology areas"
+      }
+    },
+    {
+      "label": {
+        "zh": "客户共创",
+        "en": "Client Co-Creation"
+      },
+      "desc": {
+        "zh": "三方（Evoing + 伙伴 + 客户）创新实验室",
+        "en": "Three-party (Evoing + Partner + Client) innovation labs"
+      }
+    }
+  ]
+}

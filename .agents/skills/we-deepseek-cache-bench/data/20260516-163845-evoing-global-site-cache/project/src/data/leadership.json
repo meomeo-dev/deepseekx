@@ -1,0 +1,302 @@
+[
+  {
+    "id": "leader-01",
+    "name": {
+      "zh": "陈思远",
+      "en": "Siyuan Chen"
+    },
+    "title": {
+      "zh": "首席执行官 · 联合创始人",
+      "en": "CEO · Co-Founder"
+    },
+    "location": "shanghai",
+    "region": "apac",
+    "expertise": {
+      "zh": [
+        "AI 战略",
+        "企业转型",
+        "技术并购"
+      ],
+      "en": [
+        "AI Strategy",
+        "Enterprise Transformation",
+        "Tech M&A"
+      ]
+    },
+    "languages": [
+      "zh",
+      "en"
+    ],
+    "bio": {
+      "zh": "前麦肯锡全球董事合伙人，20 年技术战略与管理咨询经验。麻省理工学院计算机科学博士。",
+      "en": "Former McKinsey Global Managing Partner. 20 years in technology strategy and management consulting. MIT PhD in Computer Science."
+    }
+  },
+  {
+    "id": "leader-02",
+    "name": {
+      "zh": "Sarah Mitchell",
+      "en": "Sarah Mitchell"
+    },
+    "title": {
+      "zh": "全球总裁 · 联合创始人",
+      "en": "President · Co-Founder"
+    },
+    "location": "london",
+    "region": "emea",
+    "expertise": {
+      "zh": [
+        "运营模式",
+        "组织设计",
+        "数字化转型"
+      ],
+      "en": [
+        "Operating Model",
+        "Org Design",
+        "Digital Transformation"
+      ]
+    },
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "bio": {
+      "zh": "前 BCG 资深合伙人，领导过 50+ 全球企业转型项目。剑桥大学 MBA。",
+      "en": "Former BCG Senior Partner, led 50+ global enterprise transformation projects. Cambridge MBA."
+    }
+  },
+  {
+    "id": "leader-03",
+    "name": {
+      "zh": "James Park",
+      "en": "James Park"
+    },
+    "title": {
+      "zh": "首席技术官",
+      "en": "Chief Technology Officer"
+    },
+    "location": "san-francisco",
+    "region": "amer",
+    "expertise": {
+      "zh": [
+        "平台工程",
+        "云原生架构",
+        "开发者体验"
+      ],
+      "en": [
+        "Platform Engineering",
+        "Cloud-Native Architecture",
+        "Developer Experience"
+      ]
+    },
+    "languages": [
+      "en",
+      "ko"
+    ],
+    "bio": {
+      "zh": "前 Google 云平台工程总监，开源项目 Kubeflow 核心贡献者。斯坦福大学计算机科学硕士。",
+      "en": "Former Google Cloud Platform Engineering Director, core contributor to Kubeflow. Stanford MSc in Computer Science."
+    }
+  },
+  {
+    "id": "leader-04",
+    "name": {
+      "zh": "王敏",
+      "en": "Min Wang"
+    },
+    "title": {
+      "zh": "亚太区总裁",
+      "en": "President, Asia-Pacific"
+    },
+    "location": "shanghai",
+    "region": "apac",
+    "expertise": {
+      "zh": [
+        "制造业转型",
+        "AI 落地",
+        "跨境战略"
+      ],
+      "en": [
+        "Manufacturing Transformation",
+        "AI Implementation",
+        "Cross-Border Strategy"
+      ]
+    },
+    "languages": [
+      "zh",
+      "en",
+      "ja"
+    ],
+    "bio": {
+      "zh": "前华为企业 BG 副总裁，领导亚洲制造业数字化转型项目超 100 个。清华大学 MBA。",
+      "en": "Former Huawei Enterprise BG VP, led 100+ manufacturing digital transformation projects in Asia. Tsinghua MBA."
+    }
+  },
+  {
+    "id": "leader-05",
+    "name": {
+      "zh": "Anna Lindström",
+      "en": "Anna Lindström"
+    },
+    "title": {
+      "zh": "欧洲区总裁",
+      "en": "President, Europe"
+    },
+    "location": "berlin",
+    "region": "emea",
+    "expertise": {
+      "zh": [
+        "数据战略",
+        "金融科技",
+        "GDPR 合规"
+      ],
+      "en": [
+        "Data Strategy",
+        "Fintech",
+        "GDPR Compliance"
+      ]
+    },
+    "languages": [
+      "en",
+      "de",
+      "sv"
+    ],
+    "bio": {
+      "zh": "前德意志银行首席数据官，推动欧洲最大银行的数据平台现代化。斯德哥尔摩经济学院博士。",
+      "en": "Former Deutsche Bank CDO, drove data platform modernization at one of Europe's largest banks. Stockholm School of Economics PhD."
+    }
+  },
+  {
+    "id": "leader-06",
+    "name": {
+      "zh": "David Okonkwo",
+      "en": "David Okonkwo"
+    },
+    "title": {
+      "zh": "首席信息安全官",
+      "en": "Chief Information Security Officer"
+    },
+    "location": "dubai",
+    "region": "emea",
+    "expertise": {
+      "zh": [
+        "零信任架构",
+        "网络韧性",
+        "关键基础设施保护"
+      ],
+      "en": [
+        "Zero Trust Architecture",
+        "Cyber Resilience",
+        "Critical Infrastructure Protection"
+      ]
+    },
+    "languages": [
+      "en",
+      "ar",
+      "fr"
+    ],
+    "bio": {
+      "zh": "前国际刑警组织网络安全顾问，主导非洲与中东多国国家网络安全战略制定。",
+      "en": "Former INTERPOL cybersecurity advisor, led national cybersecurity strategy development across Africa and the Middle East."
+    }
+  },
+  {
+    "id": "leader-07",
+    "name": {
+      "zh": "Emily Chen",
+      "en": "Emily Chen"
+    },
+    "title": {
+      "zh": "美洲区总裁",
+      "en": "President, Americas"
+    },
+    "location": "new-york",
+    "region": "amer",
+    "expertise": {
+      "zh": [
+        "开发者体验",
+        "产品运营",
+        "SaaS 增长"
+      ],
+      "en": [
+        "Developer Experience",
+        "Product Operations",
+        "SaaS Growth"
+      ]
+    },
+    "languages": [
+      "en",
+      "zh"
+    ],
+    "bio": {
+      "zh": "前 Stripe 开发者平台副总裁，将 DevEx 实践引入金融服务与零售行业。加州大学伯克利分校 MBA。",
+      "en": "Former Stripe VP of Developer Platform, bringing DevEx practices to financial services and retail. UC Berkeley MBA."
+    }
+  },
+  {
+    "id": "leader-08",
+    "name": {
+      "zh": "Rahul Kapoor",
+      "en": "Rahul Kapoor"
+    },
+    "title": {
+      "zh": "印度与南亚区董事总经理",
+      "en": "Managing Director, India & South Asia"
+    },
+    "location": "mumbai",
+    "region": "apac",
+    "expertise": {
+      "zh": [
+        "IT 服务转型",
+        "全球交付",
+        "AI 工程化"
+      ],
+      "en": [
+        "IT Service Transformation",
+        "Global Delivery",
+        "AI Engineering"
+      ]
+    },
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "bio": {
+      "zh": "前 Infosys 高级副总裁，将 AI 工程化实践引入全球交付中心。印度理工学院德里分校学士。",
+      "en": "Former Infosys SVP, bringing AI engineering practices to global delivery centers. IIT Delhi BTech."
+    }
+  },
+  {
+    "id": "leader-09",
+    "name": {
+      "zh": "林小燕",
+      "en": "Xiaoyan Lin"
+    },
+    "title": {
+      "zh": "首席研究官",
+      "en": "Chief Research Officer"
+    },
+    "location": "singapore",
+    "region": "apac",
+    "expertise": {
+      "zh": [
+        "技术趋势研究",
+        "行业分析",
+        "创新方法论"
+      ],
+      "en": [
+        "Tech Trend Research",
+        "Industry Analysis",
+        "Innovation Methodology"
+      ]
+    },
+    "languages": [
+      "zh",
+      "en"
+    ],
+    "bio": {
+      "zh": "前 Gartner 研究副总裁，发表过 200+ 技术趋势报告。新加坡国立大学博士。",
+      "en": "Former Gartner Research VP, published 200+ technology trend reports. NUS PhD."
+    }
+  }
+]

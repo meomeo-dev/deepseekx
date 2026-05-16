@@ -1,0 +1,17 @@
+.briefing-builder { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3xl); }
+.briefing-selectors { display: flex; flex-direction: column; gap: var(--space-xl); }
+.briefing-selector__label { font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wider); text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-sm); }
+.briefing-selector__options { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.briefing-option { font-size: var(--fs-small); padding: var(--space-sm) var(--space-lg); border: 1px solid var(--color-border); border-radius: var(--radius-full); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all var(--duration-fast) var(--ease-out); font-family: var(--font-sans); }
+.briefing-option:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.briefing-option--active { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-primary); }
+.briefing-result { background: var(--color-bg-dark); color: var(--color-text-inverse); border-radius: var(--radius-lg); padding: var(--space-3xl); }
+.briefing-result__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2xl); padding-bottom: var(--space-lg); border-bottom: 1px solid var(--color-navy-500); }
+.briefing-result__title { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-semibold); }
+.briefing-result__duration { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--color-gold-400); }
+.briefing-result__agenda { display: flex; flex-direction: column; gap: var(--space-md); }
+.briefing-agenda-item { display: flex; gap: var(--space-md); padding: var(--space-md); background: var(--color-navy-800); border-radius: var(--radius-sm); border-left: 3px solid var(--color-accent); }
+.briefing-agenda-item__num { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--color-accent); min-width: 28px; font-weight: var(--fw-bold); }
+.briefing-agenda-item__text { font-size: var(--fs-body); }
+.briefing-result__cta { margin-top: var(--space-2xl); text-align: center; }
+@media (max-width:768px) { .briefing-builder { grid-template-columns: 1fr; } }

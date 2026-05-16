@@ -1,0 +1,320 @@
+[
+  {
+    "id": "financial-services",
+    "painPoints": {
+      "zh": [
+        "遗留核心银行系统难以集成 AI 能力",
+        "监管合规成本逐年攀升",
+        "实时风控对延迟要求极为苛刻",
+        "开放银行与 API 经济带来架构压力"
+      ],
+      "en": [
+        "Legacy core banking systems resist AI integration",
+        "Regulatory compliance costs rising year over year",
+        "Real-time risk controls demand ultra-low latency",
+        "Open banking and API economy create architectural strain"
+      ]
+    },
+    "approach": {
+      "zh": "以 AI 就绪度和架构现代化为双轨，先评估核心系统约束，再分阶段解耦关键业务流程，同步搭建合规自动化流水线。",
+      "en": "Dual-track approach: assess core system constraints for AI readiness, progressively decouple critical business flows, and build compliance automation pipelines in parallel."
+    },
+    "outcomes": {
+      "zh": [
+        "AI 推理延迟降低 40–70%",
+        "合规报告生成时间从周缩短至小时",
+        "核心系统可用性达到 99.995%"
+      ],
+      "en": [
+        "AI inference latency reduced 40–70%",
+        "Compliance report generation from weeks to hours",
+        "Core system availability reaching 99.995%"
+      ]
+    },
+    "caseRefs": [
+      "bank-ai-platform"
+    ],
+    "relatedCaps": [
+      "ai-strategy",
+      "code-modernization",
+      "cyber-resilience"
+    ]
+  },
+  {
+    "id": "retail-consumer",
+    "painPoints": {
+      "zh": [
+        "线上线下渠道数据割裂",
+        "个性化推荐引擎实时性不足",
+        "供应链预测准确率低",
+        "促销高峰系统弹性不够"
+      ],
+      "en": [
+        "Online-offline channel data silos",
+        "Real-time personalization engine latency",
+        "Low supply-chain forecast accuracy",
+        "Insufficient system elasticity during peak promotions"
+      ]
+    },
+    "approach": {
+      "zh": "以数据平台统一为起点，构建实时特征工程与推荐管道，同时将核心交易系统迁移至弹性云原生架构。",
+      "en": "Start with unified data platform, build real-time feature engineering and recommendation pipelines, while migrating core transaction systems to elastic cloud-native architecture."
+    },
+    "outcomes": {
+      "zh": [
+        "推荐点击率提升 15–25%",
+        "供应链预测误差降低 30%",
+        "峰值吞吐能力提升 6–10 倍"
+      ],
+      "en": [
+        "Recommendation CTR lift of 15–25%",
+        "Supply-chain forecast error reduced 30%",
+        "Peak throughput capacity increased 6–10x"
+      ]
+    },
+    "caseRefs": [
+      "retail-platform-migration"
+    ],
+    "relatedCaps": [
+      "data-intelligence",
+      "code-modernization",
+      "ai-strategy"
+    ]
+  },
+  {
+    "id": "healthcare",
+    "painPoints": {
+      "zh": [
+        "患者数据跨系统互通困难",
+        "AI 辅助诊断的监管审批路径不明确",
+        "遗留临床系统改造风险高",
+        "数据隐私合规要求严格"
+      ],
+      "en": [
+        "Patient data interoperability across systems",
+        "Unclear regulatory pathway for AI-assisted diagnosis",
+        "High-risk legacy clinical system modernization",
+        "Strict data privacy compliance requirements"
+      ]
+    },
+    "approach": {
+      "zh": "以 FHIR 标准推动互操作性，在合规沙箱中验证 AI 模型，采用绞杀者模式渐进式替换遗留临床系统。",
+      "en": "Drive interoperability with FHIR standards, validate AI models in compliance sandboxes, use strangler-fig pattern for progressive legacy clinical system replacement."
+    },
+    "outcomes": {
+      "zh": [
+        "跨系统数据共享时间从数天缩短至秒级",
+        "AI 诊断第二意见准确率达专家水平",
+        "零停机临床系统迁移"
+      ],
+      "en": [
+        "Cross-system data sharing from days to seconds",
+        "AI diagnostic second-opinion accuracy at expert level",
+        "Zero-downtime clinical system migration"
+      ]
+    },
+    "caseRefs": [],
+    "relatedCaps": [
+      "data-intelligence",
+      "ai-strategy",
+      "code-modernization"
+    ]
+  },
+  {
+    "id": "manufacturing",
+    "painPoints": {
+      "zh": [
+        "OT/IT 融合困难",
+        "产线数据采集与实时分析链路长",
+        "预测性维护模型落地率低",
+        "从职能型到产品型组织的转型阻力大"
+      ],
+      "en": [
+        "OT/IT convergence challenges",
+        "Long data-collection-to-analysis pipeline on production lines",
+        "Low predictive-maintenance model adoption",
+        "Resistance in functional-to-product org transformation"
+      ]
+    },
+    "approach": {
+      "zh": "以边缘计算打通 OT/IT，构建数字孪生与预测性维护平台，同时重塑技术组织为产品型结构。",
+      "en": "Bridge OT/IT with edge computing, build digital twins and predictive maintenance platforms, while reshaping technology org into product-oriented structure."
+    },
+    "outcomes": {
+      "zh": [
+        "非计划停机减少 25–40%",
+        "新产品导入周期缩短 30%",
+        "工程师人均产出提升 50%"
+      ],
+      "en": [
+        "Unplanned downtime reduced 25–40%",
+        "New product introduction cycle shortened 30%",
+        "Engineer per-capita output increased 50%"
+      ]
+    },
+    "caseRefs": [
+      "manufacturing-operating-model"
+    ],
+    "relatedCaps": [
+      "operating-model",
+      "data-intelligence",
+      "code-modernization"
+    ]
+  },
+  {
+    "id": "energy",
+    "painPoints": {
+      "zh": [
+        "碳中和目标缺乏可量化的技术路径",
+        "分布式能源管理复杂度高",
+        "遗留 SCADA 系统安全风险",
+        "能源交易平台延迟要求苛刻"
+      ],
+      "en": [
+        "Net-zero targets lack quantifiable technical pathways",
+        "High complexity in distributed energy management",
+        "Legacy SCADA system security risks",
+        "Stringent latency requirements for energy trading platforms"
+      ]
+    },
+    "approach": {
+      "zh": "以碳排放数据平台为基石，构建能源优化数字孪生，同时升级 SCADA 安全架构并现代化交易系统。",
+      "en": "Build carbon-emission data platform as foundation, construct energy-optimization digital twins, while upgrading SCADA security and modernizing trading systems."
+    },
+    "outcomes": {
+      "zh": [
+        "碳排放预测准确率达 95%",
+        "可再生能源并网效率提升 20%",
+        "交易系统延迟降至亚毫秒级"
+      ],
+      "en": [
+        "Carbon emission forecast accuracy at 95%",
+        "Renewable energy grid integration efficiency +20%",
+        "Trading system latency reduced to sub-millisecond"
+      ]
+    },
+    "caseRefs": [],
+    "relatedCaps": [
+      "data-intelligence",
+      "cyber-resilience",
+      "code-modernization"
+    ]
+  },
+  {
+    "id": "tmt",
+    "painPoints": {
+      "zh": [
+        "用户增长放缓，ARPU 提升困难",
+        "5G/边缘基础设施投资回报不明确",
+        "内容推荐与广告系统架构老化",
+        "数据隐私法规日益严格"
+      ],
+      "en": [
+        "Slowing user growth with ARPU pressure",
+        "Unclear ROI on 5G/edge infrastructure investments",
+        "Aging content recommendation and ad-system architecture",
+        "Increasingly strict data privacy regulations"
+      ]
+    },
+    "approach": {
+      "zh": "以 AI 驱动的内容个性化与广告优化为增长引擎，同时以平台工程降低基础设施单位成本。",
+      "en": "Use AI-driven content personalization and ad optimization as growth engines, while reducing infrastructure unit costs through platform engineering."
+    },
+    "outcomes": {
+      "zh": [
+        "用户留存率提升 10–20%",
+        "广告 CPM 提升 25%",
+        "基础设施单用户成本降低 30%"
+      ],
+      "en": [
+        "User retention lift 10–20%",
+        "Ad CPM increase 25%",
+        "Per-user infrastructure cost reduced 30%"
+      ]
+    },
+    "caseRefs": [],
+    "relatedCaps": [
+      "ai-strategy",
+      "code-modernization",
+      "strategy-advisory"
+    ]
+  },
+  {
+    "id": "public-sector",
+    "painPoints": {
+      "zh": [
+        "政府采购流程慢，敏捷交付受限",
+        "跨部门数据共享的法律与技术障碍",
+        "公民数字服务体验远落后于商业标准",
+        "网络安全威胁面扩大"
+      ],
+      "en": [
+        "Slow procurement processes limit agile delivery",
+        "Legal and technical barriers to cross-agency data sharing",
+        "Citizen digital service experience lags far behind commercial standards",
+        "Expanding cybersecurity threat surface"
+      ]
+    },
+    "approach": {
+      "zh": "采用政府科技敏捷框架，以小规模快速交付建立信任，逐步扩大数字服务平台覆盖范围。",
+      "en": "Adopt gov-tech agile frameworks, build trust through small-scale rapid delivery, progressively expand digital service platform coverage."
+    },
+    "outcomes": {
+      "zh": [
+        "服务上线时间从年缩短至季度",
+        "公民满意度提升 30 个百分点",
+        "安全事件检测时间缩短 80%"
+      ],
+      "en": [
+        "Service launch timeline from years to quarters",
+        "Citizen satisfaction lift of 30 percentage points",
+        "Security incident detection time reduced 80%"
+      ]
+    },
+    "caseRefs": [],
+    "relatedCaps": [
+      "strategy-advisory",
+      "code-modernization",
+      "cyber-resilience"
+    ]
+  },
+  {
+    "id": "automotive",
+    "painPoints": {
+      "zh": [
+        "软件定义汽车带来全新架构挑战",
+        "OTA 更新与功能安全合规矛盾",
+        "车联网数据量爆炸但变现困难",
+        "传统制造思维与软件文化冲突"
+      ],
+      "en": [
+        "Software-defined vehicle creates new architecture challenges",
+        "OTA updates conflict with functional safety compliance",
+        "Exploding vehicle telemetry data but difficult to monetize",
+        "Traditional manufacturing mindset clashes with software culture"
+      ]
+    },
+    "approach": {
+      "zh": "以软件定义汽车参考架构为起点，建立安全合规的 OTA 流水线，同时帮助组织培养软件文化。",
+      "en": "Start with SDV reference architecture, establish safety-compliant OTA pipelines, while helping the organization cultivate software culture."
+    },
+    "outcomes": {
+      "zh": [
+        "新功能上市时间缩短 50%",
+        "OTA 合规审批从月缩短至天",
+        "车联网数据 ARPU 提升 2–3 倍"
+      ],
+      "en": [
+        "Feature time-to-market reduced 50%",
+        "OTA compliance approval from months to days",
+        "Telematics data ARPU increased 2–3x"
+      ]
+    },
+    "caseRefs": [],
+    "relatedCaps": [
+      "operating-model",
+      "code-modernization",
+      "cyber-resilience"
+    ]
+  }
+]

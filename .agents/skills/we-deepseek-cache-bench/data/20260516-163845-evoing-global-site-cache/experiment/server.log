@@ -1,0 +1,5 @@
+
+> evoing-global-site@1.0.0 start
+> node server.mjs
+
+Evoing global site running at http://0.0.0.0:5173

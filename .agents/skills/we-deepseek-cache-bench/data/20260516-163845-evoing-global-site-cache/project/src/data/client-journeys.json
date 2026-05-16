@@ -1,0 +1,476 @@
+[
+  {
+    "role": "ceo",
+    "label": {
+      "zh": "首席执行官",
+      "en": "CEO"
+    },
+    "painPoints": {
+      "zh": [
+        "董事会要求 AI 转型但缺乏清晰路径",
+        "技术投资回报难以量化",
+        "竞争对手已开始部署 AI",
+        "组织文化不适应快速技术变革"
+      ],
+      "en": [
+        "Board demands AI transformation without clear path",
+        "Hard to quantify tech investment returns",
+        "Competitors already deploying AI",
+        "Org culture not adapted to rapid tech change"
+      ]
+    },
+    "journey": [
+      {
+        "step": 1,
+        "label": {
+          "zh": "战略诊断工作坊",
+          "en": "Strategy Diagnostic Workshop"
+        },
+        "desc": {
+          "zh": "半天高管工作坊，对齐 AI 愿景与业务战略",
+          "en": "Half-day executive workshop aligning AI vision with business strategy"
+        }
+      },
+      {
+        "step": 2,
+        "label": {
+          "zh": "AI 机会图谱",
+          "en": "AI Opportunity Map"
+        },
+        "desc": {
+          "zh": "识别并量化前 10 个高价值 AI 用例及其投资回报",
+          "en": "Identify and quantify top 10 high-value AI use cases with ROI"
+        }
+      },
+      {
+        "step": 3,
+        "label": {
+          "zh": "12 周快速验证",
+          "en": "12-Week Rapid Validation"
+        },
+        "desc": {
+          "zh": "选取 2–3 个标志性用例，以原型验证价值",
+          "en": "Select 2–3 flagship use cases, validate value with prototypes"
+        }
+      },
+      {
+        "step": 4,
+        "label": {
+          "zh": "董事会就绪报告",
+          "en": "Board-Ready Report"
+        },
+        "desc": {
+          "zh": "包含商业案例、风险框架和实施路线图的董事会报告",
+          "en": "Board report with business case, risk framework, and implementation roadmap"
+        }
+      }
+    ],
+    "successMetrics": {
+      "zh": [
+        "AI 投资回报率清晰量化",
+        "首批 AI 用例 12 周内上线",
+        "董事会信心显著提升"
+      ],
+      "en": [
+        "AI investment ROI clearly quantified",
+        "First AI use cases live in 12 weeks",
+        "Board confidence measurably increased"
+      ]
+    }
+  },
+  {
+    "role": "cto",
+    "label": {
+      "zh": "首席技术官",
+      "en": "CTO"
+    },
+    "painPoints": {
+      "zh": [
+        "遗留系统拖累交付速度",
+        "团队被运维工作淹没",
+        "技术债务持续累积",
+        "难以招聘和留住顶尖工程人才"
+      ],
+      "en": [
+        "Legacy systems slowing delivery",
+        "Teams drowning in ops work",
+        "Technical debt accumulating",
+        "Hard to attract and retain top engineering talent"
+      ]
+    },
+    "journey": [
+      {
+        "step": 1,
+        "label": {
+          "zh": "技术架构评估",
+          "en": "Architecture Assessment"
+        },
+        "desc": {
+          "zh": "全面评估现有技术栈、债务分布和现代化机会",
+          "en": "Comprehensive assessment of current stack, debt distribution, and modernization opportunities"
+        }
+      },
+      {
+        "step": 2,
+        "label": {
+          "zh": "平台工程设计",
+          "en": "Platform Engineering Design"
+        },
+        "desc": {
+          "zh": "设计自服务开发者平台，建立黄金路径",
+          "en": "Design self-service developer platform with golden paths"
+        }
+      },
+      {
+        "step": 3,
+        "label": {
+          "zh": "渐进式迁移执行",
+          "en": "Incremental Migration"
+        },
+        "desc": {
+          "zh": "以绞杀者模式逐步迁移关键模块，零停机",
+          "en": "Progressively migrate critical modules with strangler-fig pattern, zero downtime"
+        }
+      },
+      {
+        "step": 4,
+        "label": {
+          "zh": "开发者体验优化",
+          "en": "DevEx Optimization"
+        },
+        "desc": {
+          "zh": "建立量化的开发者体验指标和持续改进机制",
+          "en": "Establish quantified DevEx metrics and continuous improvement"
+        }
+      }
+    ],
+    "successMetrics": {
+      "zh": [
+        "部署频率提升 5–10 倍",
+        "变更失败率降至 5% 以下",
+        "开发者净推荐值提升 30 分"
+      ],
+      "en": [
+        "Deploy frequency 5–10x increase",
+        "Change failure rate under 5%",
+        "Developer NPS +30 points"
+      ]
+    }
+  },
+  {
+    "role": "cio",
+    "label": {
+      "zh": "首席信息官",
+      "en": "CIO"
+    },
+    "painPoints": {
+      "zh": [
+        "IT 预算增速赶不上业务需求",
+        "多供应商管理复杂度高",
+        "数字化转型项目延期普遍",
+        "IT 与业务部门缺乏共同语言"
+      ],
+      "en": [
+        "IT budget growth cannot keep pace with business demand",
+        "Multi-vendor management complexity",
+        "Digital transformation projects consistently delayed",
+        "IT and business lack common language"
+      ]
+    },
+    "journey": [
+      {
+        "step": 1,
+        "label": {
+          "zh": "IT 战略对齐",
+          "en": "IT Strategy Alignment"
+        },
+        "desc": {
+          "zh": "将 IT 投资组合与业务战略对齐，识别低价值支出",
+          "en": "Align IT portfolio with business strategy, identify low-value spend"
+        }
+      },
+      {
+        "step": 2,
+        "label": {
+          "zh": "供应商整合",
+          "en": "Vendor Consolidation"
+        },
+        "desc": {
+          "zh": "优化供应商格局，减少碎片化并提升议价能力",
+          "en": "Optimize vendor landscape, reduce fragmentation and improve leverage"
+        }
+      },
+      {
+        "step": 3,
+        "label": {
+          "zh": "敏捷 PMO 转型",
+          "en": "Agile PMO Transformation"
+        },
+        "desc": {
+          "zh": "从传统 PMO 转向价值流导向的敏捷交付办公室",
+          "en": "Transform traditional PMO to value-stream-oriented agile delivery office"
+        }
+      },
+      {
+        "step": 4,
+        "label": {
+          "zh": "IT 财务透明化",
+          "en": "IT Financial Transparency"
+        },
+        "desc": {
+          "zh": "建立以产品为单位的 TCO 模型和 FinOps 实践",
+          "en": "Establish product-level TCO model and FinOps practices"
+        }
+      }
+    ],
+    "successMetrics": {
+      "zh": [
+        "IT 支出效率提升 20–30%",
+        "项目按时交付率从 60% 提升至 90%",
+        "业务满意度评分提升"
+      ],
+      "en": [
+        "IT spend efficiency +20–30%",
+        "On-time project delivery from 60% to 90%",
+        "Business satisfaction scores improved"
+      ]
+    }
+  },
+  {
+    "role": "coo",
+    "label": {
+      "zh": "首席运营官",
+      "en": "COO"
+    },
+    "painPoints": {
+      "zh": [
+        "运营流程碎片化且依赖人工",
+        "供应链可见性不足",
+        "跨部门协作效率低下",
+        "运营数据未能驱动决策"
+      ],
+      "en": [
+        "Fragmented operations relying on manual processes",
+        "Insufficient supply chain visibility",
+        "Inefficient cross-functional collaboration",
+        "Operational data not driving decisions"
+      ]
+    },
+    "journey": [
+      {
+        "step": 1,
+        "label": {
+          "zh": "运营诊断",
+          "en": "Operations Diagnostic"
+        },
+        "desc": {
+          "zh": "绘制端到端价值流图，识别自动化与优化机会",
+          "en": "Map end-to-end value streams, identify automation and optimization opportunities"
+        }
+      },
+      {
+        "step": 2,
+        "label": {
+          "zh": "智能流程自动化",
+          "en": "Intelligent Process Automation"
+        },
+        "desc": {
+          "zh": "在关键流程中部署 RPA、AI 决策辅助和数字孪生",
+          "en": "Deploy RPA, AI decision support, and digital twins in critical processes"
+        }
+      },
+      {
+        "step": 3,
+        "label": {
+          "zh": "运营控制塔",
+          "en": "Operations Control Tower"
+        },
+        "desc": {
+          "zh": "构建实时运营仪表板，提供端到端可视性",
+          "en": "Build real-time operations dashboard with end-to-end visibility"
+        }
+      },
+      {
+        "step": 4,
+        "label": {
+          "zh": "持续优化引擎",
+          "en": "Continuous Optimization Engine"
+        },
+        "desc": {
+          "zh": "建立 AI 驱动的持续改进闭环",
+          "en": "Establish AI-driven continuous improvement loop"
+        }
+      }
+    ],
+    "successMetrics": {
+      "zh": [
+        "运营成本降低 20–35%",
+        "端到端流程周期缩短 40%",
+        "运营异常响应时间缩短 80%"
+      ],
+      "en": [
+        "Operational cost reduced 20–35%",
+        "End-to-end process cycle reduced 40%",
+        "Ops exception response time reduced 80%"
+      ]
+    }
+  },
+  {
+    "role": "cfo",
+    "label": {
+      "zh": "首席财务官",
+      "en": "CFO"
+    },
+    "painPoints": {
+      "zh": [
+        "技术投资回报难以量化和追踪",
+        "AI/云支出增长失控",
+        "并购中技术风险评估不足",
+        "合规与 ESG 报告负担加重"
+      ],
+      "en": [
+        "Hard to quantify and track tech investment returns",
+        "AI/cloud spend growth uncontrolled",
+        "Inadequate tech risk assessment in M&A",
+        "Compliance and ESG reporting burden increasing"
+      ]
+    },
+    "journey": [
+      {
+        "step": 1,
+        "label": {
+          "zh": "技术投资健康检查",
+          "en": "Tech Investment Health Check"
+        },
+        "desc": {
+          "zh": "审计当前技术支出组合，识别浪费与优化机会",
+          "en": "Audit current tech spend portfolio, identify waste and optimization"
+        }
+      },
+      {
+        "step": 2,
+        "label": {
+          "zh": "FinOps 框架部署",
+          "en": "FinOps Framework"
+        },
+        "desc": {
+          "zh": "建立云与 AI 支出的实时可视、预算控制和优化机制",
+          "en": "Establish real-time visibility, budget control, and optimization for cloud & AI spend"
+        }
+      },
+      {
+        "step": 3,
+        "label": {
+          "zh": "技术尽调增强",
+          "en": "Enhanced Tech DD"
+        },
+        "desc": {
+          "zh": "将 AI 资产、技术债务和网络安全纳入并购尽调",
+          "en": "Incorporate AI assets, technical debt, and cybersecurity into M&A due diligence"
+        }
+      },
+      {
+        "step": 4,
+        "label": {
+          "zh": "ESG 数字报告",
+          "en": "ESG Digital Reporting"
+        },
+        "desc": {
+          "zh": "自动化 IT 碳排放追踪和 ESG 合规报告",
+          "en": "Automate IT carbon tracking and ESG compliance reporting"
+        }
+      }
+    ],
+    "successMetrics": {
+      "zh": [
+        "云/AI 支出可见性达到 100%",
+        "技术支出浪费减少 25–40%",
+        "并购后 IT 整合成本降低 30%"
+      ],
+      "en": [
+        "Cloud/AI spend visibility at 100%",
+        "Tech spend waste reduced 25–40%",
+        "Post-M&A IT integration cost reduced 30%"
+      ]
+    }
+  },
+  {
+    "role": "chro",
+    "label": {
+      "zh": "首席人力资源官",
+      "en": "CHRO"
+    },
+    "painPoints": {
+      "zh": [
+        "AI 技能缺口巨大",
+        "技术人才市场竞争激烈",
+        "传统绩效管理不适应敏捷团队",
+        "员工对 AI 的焦虑影响士气"
+      ],
+      "en": [
+        "Massive AI skills gap",
+        "Fierce competition for tech talent",
+        "Traditional performance management doesn't fit agile teams",
+        "Employee AI anxiety affecting morale"
+      ]
+    },
+    "journey": [
+      {
+        "step": 1,
+        "label": {
+          "zh": "技能图谱",
+          "en": "Skills Mapping"
+        },
+        "desc": {
+          "zh": "评估组织当前的 AI 和数字化技能基线",
+          "en": "Assess current AI and digital skills baseline across the organization"
+        }
+      },
+      {
+        "step": 2,
+        "label": {
+          "zh": "人才战略设计",
+          "en": "Talent Strategy Design"
+        },
+        "desc": {
+          "zh": "制定 build/buy/borrow 人才策略和 EVP 刷新",
+          "en": "Define build/buy/borrow talent strategy and EVP refresh"
+        }
+      },
+      {
+        "step": 3,
+        "label": {
+          "zh": "学习生态系统",
+          "en": "Learning Ecosystem"
+        },
+        "desc": {
+          "zh": "构建 AI 技能提升计划和学习平台",
+          "en": "Build AI upskilling program and learning platform"
+        }
+      },
+      {
+        "step": 4,
+        "label": {
+          "zh": "文化变革计划",
+          "en": "Culture Change Program"
+        },
+        "desc": {
+          "zh": "设计并执行 AI 文化变革和员工沟通计划",
+          "en": "Design and execute AI culture change and employee communication program"
+        }
+      }
+    ],
+    "successMetrics": {
+      "zh": [
+        "AI 技能覆盖率从 15% 提升至 60%",
+        "技术岗位招聘周期缩短 40%",
+        "员工 AI 信心指数提升"
+      ],
+      "en": [
+        "AI skills coverage from 15% to 60%",
+        "Tech hiring cycle reduced 40%",
+        "Employee AI confidence index improved"
+      ]
+    }
+  }
+]

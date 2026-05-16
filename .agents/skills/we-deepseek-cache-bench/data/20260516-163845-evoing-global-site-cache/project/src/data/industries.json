@@ -1,0 +1,98 @@
+[
+  {
+    "id": "financial-services",
+    "label": {
+      "zh": "金融服务",
+      "en": "Financial Services"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "retail-consumer",
+    "label": {
+      "zh": "零售与消费品",
+      "en": "Retail & Consumer"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "healthcare",
+    "label": {
+      "zh": "医疗健康",
+      "en": "Healthcare"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "manufacturing",
+    "label": {
+      "zh": "先进制造",
+      "en": "Advanced Manufacturing"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "energy",
+    "label": {
+      "zh": "能源与碳中和",
+      "en": "Energy & Net Zero"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "tmt",
+    "label": {
+      "zh": "科技媒体电信",
+      "en": "TMT"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "public-sector",
+    "label": {
+      "zh": "公共事业",
+      "en": "Public Sector"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  },
+  {
+    "id": "automotive",
+    "label": {
+      "zh": "汽车与出行",
+      "en": "Automotive & Mobility"
+    },
+    "regions": [
+      "apac",
+      "emea",
+      "amer"
+    ]
+  }
+]

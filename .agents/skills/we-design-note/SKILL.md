@@ -16,7 +16,8 @@ description: Use before complex or high-risk changes to create a lightweight,
 
 ## 范围
 
-- 高风险 feature、重构、CI、release、公开镜像、数据迁移或删除操作。
+- 高风险 feature、重构、CI、release、公开仓库安全边界、数据迁移或
+  删除操作。
 - 记录背景、目标、非目标、约束、候选方案和最终决策。
 - 记录测试计划、回滚方案、停止条件和后续 WE skill 顺序。
 - 为 PR、release readiness 或后续维护提供可引用依据。
@@ -35,7 +36,8 @@ description: Use before complex or high-risk changes to create a lightweight,
 - 风险等级为 High 或 Release。
 - 方案不止一个，且取舍会影响后续维护。
 - 改动影响公开 CLI 行为、npm 包内容、CI、release 或公开仓库。
-- 改动涉及删除、迁移、凭据边界、公开镜像或不可轻易回滚的状态。
+- 改动涉及删除、迁移、凭据边界、公开仓库安全边界或不可轻易回滚的
+  状态。
 - 用户要把流程展示给别人，或需要 PR 中引用设计依据。
 
 ## 文档位置

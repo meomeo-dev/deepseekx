@@ -1,0 +1,383 @@
+{
+  "title": {
+    "zh": "价值影响计算器",
+    "en": "Value Impact Calculator"
+  },
+  "subtitle": {
+    "zh": "选择场景，查看 Evoing 项目典型价值回报",
+    "en": "Select a scenario to see typical value returns from Evoing engagements"
+  },
+  "scenarios": [
+    {
+      "id": "ai-transformation",
+      "label": {
+        "zh": "AI 转型",
+        "en": "AI Transformation"
+      },
+      "inputs": [
+        {
+          "id": "employees",
+          "label": {
+            "zh": "企业员工数",
+            "en": "Enterprise headcount"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": "1,000–5,000",
+              "value": 2500
+            },
+            {
+              "label": "5,000–20,000",
+              "value": 10000
+            },
+            {
+              "label": "20,000+",
+              "value": 35000
+            }
+          ]
+        },
+        {
+          "id": "aiMaturity",
+          "label": {
+            "zh": "当前 AI 成熟度",
+            "en": "Current AI maturity"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": {
+                "zh": "起步",
+                "en": "Beginning"
+              },
+              "value": 1
+            },
+            {
+              "label": {
+                "zh": "发展中",
+                "en": "Developing"
+              },
+              "value": 2
+            },
+            {
+              "label": {
+                "zh": "成熟",
+                "en": "Mature"
+              },
+              "value": 3
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "label": {
+            "zh": "预计年生产力提升",
+            "en": "Est. annual productivity gain"
+          },
+          "format": "currency",
+          "baseValue": 12000000,
+          "multiplier": 1.5
+        },
+        {
+          "label": {
+            "zh": "AI 用例年化 ROI",
+            "en": "Annualized AI use-case ROI"
+          },
+          "format": "percent",
+          "baseValue": 180,
+          "multiplier": 1.2
+        },
+        {
+          "label": {
+            "zh": "模型上线时间缩短",
+            "en": "Model time-to-production reduction"
+          },
+          "format": "percent",
+          "baseValue": 65,
+          "multiplier": 0.9
+        }
+      ],
+      "methodology": {
+        "zh": "基于 50+ AI 转型项目的实际数据，按企业规模和 AI 成熟度校准。生产力提升为税前节省。",
+        "en": "Based on actual data from 50+ AI transformation projects, calibrated by enterprise size and AI maturity. Productivity gains are pre-tax savings."
+      }
+    },
+    {
+      "id": "platform-engineering",
+      "label": {
+        "zh": "平台工程",
+        "en": "Platform Engineering"
+      },
+      "inputs": [
+        {
+          "id": "engineers",
+          "label": {
+            "zh": "工程师人数",
+            "en": "Number of engineers"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": "50–200",
+              "value": 125
+            },
+            {
+              "label": "200–1,000",
+              "value": 500
+            },
+            {
+              "label": "1,000+",
+              "value": 2000
+            }
+          ]
+        },
+        {
+          "id": "deployFreq",
+          "label": {
+            "zh": "当前部署频率",
+            "en": "Current deploy frequency"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": {
+                "zh": "每月",
+                "en": "Monthly"
+              },
+              "value": 1
+            },
+            {
+              "label": {
+                "zh": "每周",
+                "en": "Weekly"
+              },
+              "value": 4
+            },
+            {
+              "label": {
+                "zh": "每日",
+                "en": "Daily"
+              },
+              "value": 20
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "label": {
+            "zh": "预计部署频率提升",
+            "en": "Est. deploy frequency increase"
+          },
+          "format": "multiplier",
+          "baseValue": 5,
+          "multiplier": 1.3
+        },
+        {
+          "label": {
+            "zh": "年工程生产力提升",
+            "en": "Annual engineering productivity gain"
+          },
+          "format": "currency",
+          "baseValue": 8000000,
+          "multiplier": 1.8
+        },
+        {
+          "label": {
+            "zh": "变更失败率降低",
+            "en": "Change failure rate reduction"
+          },
+          "format": "percent",
+          "baseValue": 80,
+          "multiplier": 0.85
+        }
+      ],
+      "methodology": {
+        "zh": "基于 DORA 指标和 40+ 平台工程项目数据。部署频率提升按当前频率倍数计算。",
+        "en": "Based on DORA metrics and 40+ platform engineering project data. Deploy frequency increase calculated as multiple of current."
+      }
+    },
+    {
+      "id": "operating-model",
+      "label": {
+        "zh": "运营模式转型",
+        "en": "Operating Model Transformation"
+      },
+      "inputs": [
+        {
+          "id": "teams",
+          "label": {
+            "zh": "转型团队数",
+            "en": "Teams to transform"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": "5–15",
+              "value": 10
+            },
+            {
+              "label": "15–50",
+              "value": 30
+            },
+            {
+              "label": "50+",
+              "value": 80
+            }
+          ]
+        },
+        {
+          "id": "currentModel",
+          "label": {
+            "zh": "当前组织模式",
+            "en": "Current org model"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": {
+                "zh": "职能型",
+                "en": "Functional"
+              },
+              "value": 1
+            },
+            {
+              "label": {
+                "zh": "矩阵型",
+                "en": "Matrix"
+              },
+              "value": 2
+            },
+            {
+              "label": {
+                "zh": "混合型",
+                "en": "Hybrid"
+              },
+              "value": 3
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "label": {
+            "zh": "预计交付周期缩短",
+            "en": "Est. delivery cycle reduction"
+          },
+          "format": "percent",
+          "baseValue": 45,
+          "multiplier": 1.1
+        },
+        {
+          "label": {
+            "zh": "工程师净推荐值提升",
+            "en": "Engineer NPS lift"
+          },
+          "format": "points",
+          "baseValue": 25,
+          "multiplier": 1.0
+        },
+        {
+          "label": {
+            "zh": "年运营效率收益",
+            "en": "Annual ops efficiency gain"
+          },
+          "format": "currency",
+          "baseValue": 5000000,
+          "multiplier": 1.6
+        }
+      ],
+      "methodology": {
+        "zh": "基于 15+ 运营模式转型项目数据。NPS 提升以净推荐值点数计算。",
+        "en": "Based on 15+ operating model transformation projects. NPS lift measured in net promoter score points."
+      }
+    },
+    {
+      "id": "legacy-modernization",
+      "label": {
+        "zh": "系统现代化",
+        "en": "Legacy Modernization"
+      },
+      "inputs": [
+        {
+          "id": "systemAge",
+          "label": {
+            "zh": "系统年限",
+            "en": "System age"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": "5–10 年",
+              "value": 7
+            },
+            {
+              "label": "10–20 年",
+              "value": 15
+            },
+            {
+              "label": "20+ 年",
+              "value": 25
+            }
+          ]
+        },
+        {
+          "id": "linesOfCode",
+          "label": {
+            "zh": "代码量",
+            "en": "Lines of code"
+          },
+          "type": "select",
+          "options": [
+            {
+              "label": "< 100 万",
+              "value": 500000
+            },
+            {
+              "label": "100 万–500 万",
+              "value": 3000000
+            },
+            {
+              "label": "500 万+",
+              "value": 8000000
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "label": {
+            "zh": "基础设施成本节省",
+            "en": "Infrastructure cost savings"
+          },
+          "format": "percent",
+          "baseValue": 30,
+          "multiplier": 1.15
+        },
+        {
+          "label": {
+            "zh": "年运维人力节省",
+            "en": "Annual ops FTE savings"
+          },
+          "format": "fte",
+          "baseValue": 8,
+          "multiplier": 1.4
+        },
+        {
+          "label": {
+            "zh": "部署频率提升",
+            "en": "Deploy frequency increase"
+          },
+          "format": "multiplier",
+          "baseValue": 10,
+          "multiplier": 1.2
+        }
+      ],
+      "methodology": {
+        "zh": "基于 30+ 遗留系统现代化项目数据。基础设施节省按当前年云/主机支出的百分比计算。",
+        "en": "Based on 30+ legacy modernization projects. Infrastructure savings as percentage of current annual cloud/mainframe spend."
+      }
+    }
+  ]
+}

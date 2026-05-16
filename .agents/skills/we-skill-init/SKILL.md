@@ -18,7 +18,7 @@ description: Use when initializing a project-local WE skill set from bundled
 
 - 从 `templates/bundles/<skill>/` 复制通用 WE skill bundle。
 - 根据目标仓库自动渲染项目名、包名、CLI bin、remote、路径和
-  公开镜像。
+  公开仓库策略。
 - 识别项目类型（project type），并标记 release/publish 是否需要适配。
 - 创建 `.agents/skills/.we-skill-init-state` 状态标识文件。
 - 记录 template schema、manifest version、source commit 和 bundle hash。

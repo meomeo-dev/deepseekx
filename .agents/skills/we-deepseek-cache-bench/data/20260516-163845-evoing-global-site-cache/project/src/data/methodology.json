@@ -1,0 +1,230 @@
+{
+  "title": {
+    "zh": "Evoing 方法论",
+    "en": "The Evoing Way"
+  },
+  "subtitle": {
+    "zh": "从诊断到价值实现，六步闭环",
+    "en": "Six steps from diagnosis to value realization"
+  },
+  "steps": [
+    {
+      "id": "diagnose",
+      "phase": 1,
+      "label": {
+        "zh": "诊断",
+        "en": "Diagnose"
+      },
+      "icon": "search",
+      "summary": {
+        "zh": "通过定量评估与利益相关方访谈，精准定位技术债务、组织瓶颈与 AI 就绪度差距。",
+        "en": "Pinpoint technical debt, organizational bottlenecks, and AI readiness gaps through quantitative assessment and stakeholder interviews."
+      },
+      "deliverables": {
+        "zh": [
+          "现状评估报告",
+          "技术债务热力图",
+          "AI 成熟度评分卡",
+          "利益相关方对齐工作坊"
+        ],
+        "en": [
+          "Current-state assessment",
+          "Technical debt heatmap",
+          "AI maturity scorecard",
+          "Stakeholder alignment workshop"
+        ]
+      },
+      "duration": {
+        "zh": "2–4 周",
+        "en": "2–4 weeks"
+      }
+    },
+    {
+      "id": "strategize",
+      "phase": 2,
+      "label": {
+        "zh": "战略",
+        "en": "Strategize"
+      },
+      "icon": "compass",
+      "summary": {
+        "zh": "将诊断洞察转化为可执行的路线图，明确投资优先级、能力建设路径与成功度量。",
+        "en": "Translate diagnostic insights into an executable roadmap with clear investment priorities, capability-building paths, and success metrics."
+      },
+      "deliverables": {
+        "zh": [
+          "数字化转型路线图",
+          "投资优先级矩阵",
+          "能力成熟度目标模型",
+          "商业案例与 ROI 预测"
+        ],
+        "en": [
+          "Digital transformation roadmap",
+          "Investment prioritization matrix",
+          "Capability maturity target model",
+          "Business case with ROI forecast"
+        ]
+      },
+      "duration": {
+        "zh": "3–6 周",
+        "en": "3–6 weeks"
+      }
+    },
+    {
+      "id": "prototype",
+      "phase": 3,
+      "label": {
+        "zh": "原型",
+        "en": "Prototype"
+      },
+      "icon": "build",
+      "summary": {
+        "zh": "以最小可行产品验证关键技术假设与业务价值，在真实环境中快速迭代。",
+        "en": "Validate key technical assumptions and business value with minimum viable products, iterating rapidly in real environments."
+      },
+      "deliverables": {
+        "zh": [
+          "概念验证系统",
+          "技术可行性评估",
+          "用户体验测试报告",
+          "规模化架构蓝图"
+        ],
+        "en": [
+          "Proof-of-concept system",
+          "Technical feasibility assessment",
+          "UX testing report",
+          "Scale-up architecture blueprint"
+        ]
+      },
+      "duration": {
+        "zh": "4–8 周",
+        "en": "4–8 weeks"
+      }
+    },
+    {
+      "id": "engineer",
+      "phase": 4,
+      "label": {
+        "zh": "工程交付",
+        "en": "Engineer"
+      },
+      "icon": "code",
+      "summary": {
+        "zh": "以平台工程和 DevSecOps 实践规模化交付生产级系统，确保质量、安全与可观测性。",
+        "en": "Deliver production-grade systems at scale with platform engineering and DevSecOps practices, ensuring quality, security, and observability."
+      },
+      "deliverables": {
+        "zh": [
+          "生产级平台与应用",
+          "CI/CD 流水线",
+          "安全架构与合规验证",
+          "运行手册与 SRE 框架"
+        ],
+        "en": [
+          "Production-grade platform & applications",
+          "CI/CD pipelines",
+          "Security architecture & compliance validation",
+          "Runbooks & SRE framework"
+        ]
+      },
+      "duration": {
+        "zh": "8–16 周",
+        "en": "8–16 weeks"
+      }
+    },
+    {
+      "id": "migrate",
+      "phase": 5,
+      "label": {
+        "zh": "运营迁移",
+        "en": "Migrate"
+      },
+      "icon": "transfer",
+      "summary": {
+        "zh": "通过结构化交接、知识转移与能力建设，确保客户团队能够自主运营新系统。",
+        "en": "Ensure client teams can independently operate new systems through structured handover, knowledge transfer, and capability building."
+      },
+      "deliverables": {
+        "zh": [
+          "运营交接计划",
+          "团队培训与认证",
+          "知识库与文档体系",
+          "持续改进框架"
+        ],
+        "en": [
+          "Operational handover plan",
+          "Team training & certification",
+          "Knowledge base & documentation",
+          "Continuous improvement framework"
+        ]
+      },
+      "duration": {
+        "zh": "4–8 周",
+        "en": "4–8 weeks"
+      }
+    },
+    {
+      "id": "realize",
+      "phase": 6,
+      "label": {
+        "zh": "价值实现",
+        "en": "Realize"
+      },
+      "icon": "chart",
+      "summary": {
+        "zh": "持续跟踪业务 KPI 与技术指标，通过季度回顾与优化建议确保投资回报。",
+        "en": "Continuously track business KPIs and technical metrics, ensuring return on investment through quarterly reviews and optimization recommendations."
+      },
+      "deliverables": {
+        "zh": [
+          "价值仪表板",
+          "季度业务回顾",
+          "优化建议与路线图更新",
+          "标杆分析与行业对标"
+        ],
+        "en": [
+          "Value dashboard",
+          "Quarterly business review",
+          "Optimization recommendations & roadmap refresh",
+          "Benchmarking & industry comparison"
+        ]
+      },
+      "duration": {
+        "zh": "持续",
+        "en": "Ongoing"
+      }
+    }
+  ],
+  "principles": [
+    {
+      "label": {
+        "zh": "代码即战略",
+        "en": "Code is Strategy"
+      },
+      "desc": {
+        "zh": "我们认为软件架构决策本身就是商业战略决策，而非纯技术选择。",
+        "en": "We believe software architecture decisions are inherently business strategy decisions, not purely technical choices."
+      }
+    },
+    {
+      "label": {
+        "zh": "客户能力内建",
+        "en": "Build Client Capability"
+      },
+      "desc": {
+        "zh": "我们的成功标准是客户团队不再需要我们——每一次交付都包含能力转移。",
+        "en": "Our success metric is when the client team no longer needs us — every engagement includes capability transfer."
+      }
+    },
+    {
+      "label": {
+        "zh": "指标驱动决策",
+        "en": "Metrics-Driven Decisions"
+      },
+      "desc": {
+        "zh": "从诊断到价值实现，每个阶段都由可量化指标驱动，而非主观判断。",
+        "en": "From diagnosis to value realization, every phase is driven by quantifiable metrics, not subjective judgment."
+      }
+    }
+  ]
+}

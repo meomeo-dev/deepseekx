@@ -1,0 +1,266 @@
+[
+  {
+    "id": "insight-01",
+    "category": "ai-strategy",
+    "region": "global",
+    "readingTime": {
+      "zh": "8 分钟",
+      "en": "8 min"
+    },
+    "title": {
+      "zh": "2026 AI 就绪度：从实验到规模化的鸿沟",
+      "en": "AI Readiness 2026: Bridging the Experiment-to-Scale Gap"
+    },
+    "summary": {
+      "zh": "我们的全球调研显示，87% 的企业仍处于 AI 实验阶段。本文分析规模化落地的五大障碍及跨越路径。",
+      "en": "Our global survey reveals 87% of enterprises remain in AI experimentation. This article analyzes the five barriers to scaling and the paths across."
+    },
+    "date": "2026-04-15",
+    "authors": [
+      {
+        "zh": "陈思远",
+        "en": "Siyuan Chen"
+      },
+      {
+        "zh": "Michael Torres",
+        "en": "Michael Torres"
+      }
+    ]
+  },
+  {
+    "id": "insight-02",
+    "category": "code-modernization",
+    "region": "amer",
+    "readingTime": {
+      "zh": "6 分钟",
+      "en": "6 min"
+    },
+    "title": {
+      "zh": "平台工程的 ROI：从减负到加速",
+      "en": "Platform Engineering ROI: From Toil Reduction to Acceleration"
+    },
+    "summary": {
+      "zh": "基于对 40+ 北美企业的平台工程投资分析，我们量化了 IDP 的三年投资回报率与关键成功因素。",
+      "en": "Based on analysis of 40+ North American platform engineering investments, we quantify three-year IDP ROI and key success factors."
+    },
+    "date": "2026-03-28",
+    "authors": [
+      {
+        "zh": "James Park",
+        "en": "James Park"
+      }
+    ]
+  },
+  {
+    "id": "insight-03",
+    "category": "operating-model",
+    "region": "apac",
+    "readingTime": {
+      "zh": "10 分钟",
+      "en": "10 min"
+    },
+    "title": {
+      "zh": "职能型到产品型：亚洲企业技术组织转型实录",
+      "en": "Functional to Product: Inside Asian Enterprise Tech Org Transformations"
+    },
+    "summary": {
+      "zh": "三家亚洲制造业巨头的技术组织重塑案例，详述从职能竖井到产品导向团队的变革路径与经验教训。",
+      "en": "Three Asian manufacturing giants' tech org transformations, detailing the path from functional silos to product-oriented teams with lessons learned."
+    },
+    "date": "2026-03-10",
+    "authors": [
+      {
+        "zh": "王敏",
+        "en": "Min Wang"
+      },
+      {
+        "zh": "佐藤健一",
+        "en": "Kenichi Sato"
+      }
+    ]
+  },
+  {
+    "id": "insight-04",
+    "category": "data-intelligence",
+    "region": "emea",
+    "readingTime": {
+      "zh": "7 分钟",
+      "en": "7 min"
+    },
+    "title": {
+      "zh": "数据网格在金融服务中的实践：不止于架构模式",
+      "en": "Data Mesh in Financial Services: More Than an Architecture Pattern"
+    },
+    "summary": {
+      "zh": "数据网格不仅是技术架构，更是组织设计选择。本文以欧洲银行为例，探讨实施中的组织与治理挑战。",
+      "en": "Data mesh is not just a technical architecture but an organizational design choice. Using a European bank case study, we explore org and governance challenges."
+    },
+    "date": "2026-02-20",
+    "authors": [
+      {
+        "zh": "Anna Lindström",
+        "en": "Anna Lindström"
+      }
+    ]
+  },
+  {
+    "id": "insight-05",
+    "category": "cyber-resilience",
+    "region": "global",
+    "readingTime": {
+      "zh": "9 分钟",
+      "en": "9 min"
+    },
+    "title": {
+      "zh": "零信任不是产品：构建企业安全韧性的系统方法",
+      "en": "Zero Trust Is Not a Product: A Systems Approach to Enterprise Security Resilience"
+    },
+    "summary": {
+      "zh": "零信任常被误解为一套产品组合。本文提出以系统思维构建安全韧性，覆盖身份、网络、应用与数据四层。",
+      "en": "Zero trust is often misunderstood as a product suite. This article proposes a systems-thinking approach to building security resilience across identity, network, application, and data layers."
+    },
+    "date": "2026-02-05",
+    "authors": [
+      {
+        "zh": "David Okonkwo",
+        "en": "David Okonkwo"
+      },
+      {
+        "zh": "李浩然",
+        "en": "Haoran Li"
+      }
+    ]
+  },
+  {
+    "id": "insight-06",
+    "category": "ai-strategy",
+    "region": "apac",
+    "readingTime": {
+      "zh": "5 分钟",
+      "en": "5 min"
+    },
+    "title": {
+      "zh": "生成式 AI 在中国制造业的落地现状与未来",
+      "en": "Generative AI Adoption in Chinese Manufacturing: Present and Future"
+    },
+    "summary": {
+      "zh": "基于 50+ 家中国制造企业的调研，分析 GenAI 在质量检测、工艺优化与知识管理中的实际应用与挑战。",
+      "en": "Based on a survey of 50+ Chinese manufacturers, we analyze GenAI applications in quality inspection, process optimization, and knowledge management."
+    },
+    "date": "2026-01-18",
+    "authors": [
+      {
+        "zh": "张伟",
+        "en": "Wei Zhang"
+      }
+    ]
+  },
+  {
+    "id": "insight-07",
+    "category": "strategy-advisory",
+    "region": "emea",
+    "readingTime": {
+      "zh": "12 分钟",
+      "en": "12 min"
+    },
+    "title": {
+      "zh": "2026 全球数字化投资趋势报告",
+      "en": "2026 Global Digital Investment Trends Report"
+    },
+    "summary": {
+      "zh": "年度旗舰报告：覆盖 30 个国家、12 个行业的数字化投资趋势分析，含 AI、云、安全三大赛道的支出预测。",
+      "en": "Annual flagship report: digital investment trend analysis across 30 countries and 12 industries, including spending forecasts for AI, cloud, and security."
+    },
+    "date": "2026-01-05",
+    "authors": [
+      {
+        "zh": "Sarah Mitchell",
+        "en": "Sarah Mitchell"
+      },
+      {
+        "zh": "Rahul Kapoor",
+        "en": "Rahul Kapoor"
+      },
+      {
+        "zh": "林小燕",
+        "en": "Xiaoyan Lin"
+      }
+    ]
+  },
+  {
+    "id": "insight-08",
+    "category": "code-modernization",
+    "region": "global",
+    "readingTime": {
+      "zh": "8 分钟",
+      "en": "8 min"
+    },
+    "title": {
+      "zh": "遗留系统现代化的五种模式及选型指南",
+      "en": "Five Patterns for Legacy Modernization and How to Choose"
+    },
+    "summary": {
+      "zh": "从重写到绞杀者，我们根据 100+ 项目经验总结五种现代化模式，并提供基于系统特征的选择决策树。",
+      "en": "From rewrite to strangler fig, we summarize five modernization patterns from 100+ projects and provide a selection decision tree based on system characteristics."
+    },
+    "date": "2025-12-10",
+    "authors": [
+      {
+        "zh": "Thomas Wright",
+        "en": "Thomas Wright"
+      }
+    ]
+  },
+  {
+    "id": "insight-09",
+    "category": "operating-model",
+    "region": "amer",
+    "readingTime": {
+      "zh": "7 分钟",
+      "en": "7 min"
+    },
+    "title": {
+      "zh": "工程师体验即产品：技术组织设计的新范式",
+      "en": "Developer Experience as Product: A New Paradigm for Tech Org Design"
+    },
+    "summary": {
+      "zh": "将工程师体验视为产品来管理，正在成为吸引和留住顶尖技术人才的关键差异化因素。本文提出 DevEx 产品管理框架。",
+      "en": "Treating developer experience as a product is becoming a key differentiator for attracting and retaining top technical talent. This article proposes a DevEx product management framework."
+    },
+    "date": "2025-11-22",
+    "authors": [
+      {
+        "zh": "Emily Chen",
+        "en": "Emily Chen"
+      }
+    ]
+  },
+  {
+    "id": "insight-10",
+    "category": "data-intelligence",
+    "region": "apac",
+    "readingTime": {
+      "zh": "6 分钟",
+      "en": "6 min"
+    },
+    "title": {
+      "zh": "从湖到仓：亚太企业数据架构演进路径",
+      "en": "From Lake to Lakehouse: Data Architecture Evolution in Asia-Pacific"
+    },
+    "summary": {
+      "zh": "亚太企业在数据架构上面临独特挑战：多语言数据、跨境合规与混合云。本文提出适配 APAC 的湖仓一体演进策略。",
+      "en": "APAC enterprises face unique data architecture challenges: multilingual data, cross-border compliance, and hybrid cloud. This article proposes an APAC-adapted lakehouse evolution strategy."
+    },
+    "date": "2025-11-05",
+    "authors": [
+      {
+        "zh": "Rajesh Menon",
+        "en": "Rajesh Menon"
+      },
+      {
+        "zh": "黄丽华",
+        "en": "Lihua Huang"
+      }
+    ]
+  }
+]

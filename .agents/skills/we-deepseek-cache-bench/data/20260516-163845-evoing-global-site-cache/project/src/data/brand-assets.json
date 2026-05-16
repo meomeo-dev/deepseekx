@@ -1,0 +1,222 @@
+{
+  "title": {
+    "zh": "品牌与媒体资源",
+    "en": "Brand & Media Kit"
+  },
+  "subtitle": {
+    "zh": "下载 Evoing 品牌资产、视觉指南和演示材料",
+    "en": "Download Evoing brand assets, visual guidelines, and presentation materials"
+  },
+  "brandPrinciples": [
+    {
+      "label": {
+        "zh": "精准胜过华丽",
+        "en": "Precision Over Polish"
+      },
+      "desc": {
+        "zh": "我们的设计和文案以清晰和准确为首要目标。每一个视觉元素和每一个字都应该传达实质信息。",
+        "en": "Our design and copy prioritize clarity and accuracy. Every visual element and every word should convey substance."
+      }
+    },
+    {
+      "label": {
+        "zh": "工程可信度",
+        "en": "Engineering Credibility"
+      },
+      "desc": {
+        "zh": "我们是一家同时做战略和工程的公司。品牌传达应该在咨询的优雅与工程的可信之间找到平衡。",
+        "en": "We are a company that does both strategy and engineering. Brand communication should balance consulting elegance with engineering credibility."
+      }
+    },
+    {
+      "label": {
+        "zh": "全球与中国双引擎",
+        "en": "Global-China Dual Engine"
+      },
+      "desc": {
+        "zh": "我们的品牌必须同时在全球市场和中国市场具有吸引力。双语不是翻译，而是两种独立表达。",
+        "en": "Our brand must appeal in both global and China markets. Bilingual is not translation — it's two independent expressions."
+      }
+    },
+    {
+      "label": {
+        "zh": "以人为本的技术",
+        "en": "Human-Centered Technology"
+      },
+      "desc": {
+        "zh": "我们讨论技术，但始终以人的影响为落脚点——无论是客户团队、最终用户还是社会。",
+        "en": "We discuss technology but always land on human impact — whether client teams, end users, or society."
+      }
+    }
+  ],
+  "visualIdentity": {
+    "colors": [
+      {
+        "name": "Navy 900",
+        "hex": "#0A1220",
+        "usage": {
+          "zh": "主背景、深色区块",
+          "en": "Primary background, dark sections"
+        }
+      },
+      {
+        "name": "Gold 500",
+        "hex": "#C9A96E",
+        "usage": {
+          "zh": "强调色、CTA、装饰",
+          "en": "Accent, CTAs, decoration"
+        }
+      },
+      {
+        "name": "Cream",
+        "hex": "#FBF9F5",
+        "usage": {
+          "zh": "页面背景、卡片",
+          "en": "Page background, cards"
+        }
+      },
+      {
+        "name": "Slate 500",
+        "hex": "#556274",
+        "usage": {
+          "zh": "正文辅助文本",
+          "en": "Body secondary text"
+        }
+      }
+    ],
+    "typography": [
+      {
+        "family": "Georgia / Serif",
+        "role": {
+          "zh": "标题展示字体",
+          "en": "Display/Heading"
+        },
+        "specimen": "Evoing 智能及代码"
+      },
+      {
+        "family": "Segoe UI / Sans-Serif",
+        "role": {
+          "zh": "正文字体",
+          "en": "Body"
+        },
+        "specimen": "Intelligence and Code"
+      },
+      {
+        "family": "Cascadia Code / Monospace",
+        "role": {
+          "zh": "代码、数据、标签",
+          "en": "Code, data, labels"
+        },
+        "specimen": "99.99% availability"
+      }
+    ]
+  },
+  "presentationModules": [
+    {
+      "id": "mod-01",
+      "label": {
+        "zh": "公司概览",
+        "en": "Company Overview"
+      },
+      "slides": 12,
+      "desc": {
+        "zh": "Evoing 品牌故事、全球足迹、核心能力与关键数据",
+        "en": "Evoing brand story, global footprint, core capabilities, and key figures"
+      }
+    },
+    {
+      "id": "mod-02",
+      "label": {
+        "zh": "AI 战略方法论",
+        "en": "AI Strategy Methodology"
+      },
+      "slides": 18,
+      "desc": {
+        "zh": "Evoing AI 就绪度评估框架与六步方法论详解",
+        "en": "Evoing AI readiness assessment framework and six-step methodology in detail"
+      }
+    },
+    {
+      "id": "mod-03",
+      "label": {
+        "zh": "平台工程价值主张",
+        "en": "Platform Engineering Value Proposition"
+      },
+      "slides": 15,
+      "desc": {
+        "zh": "IDP 商业案例、投资回报模型与实施路径",
+        "en": "IDP business case, ROI model, and implementation path"
+      }
+    },
+    {
+      "id": "mod-04",
+      "label": {
+        "zh": "案例研究精选",
+        "en": "Selected Case Studies"
+      },
+      "slides": 22,
+      "desc": {
+        "zh": "精选 6 个案例的完整故事：挑战、方案、成果",
+        "en": "Full stories of 6 selected cases: challenge, approach, results"
+      }
+    },
+    {
+      "id": "mod-05",
+      "label": {
+        "zh": "零信任架构",
+        "en": "Zero Trust Architecture"
+      },
+      "slides": 20,
+      "desc": {
+        "zh": "零信任实施框架、技术架构与迁移路径",
+        "en": "Zero trust implementation framework, technical architecture, and migration path"
+      }
+    },
+    {
+      "id": "mod-06",
+      "label": {
+        "zh": "行业深度报告模板",
+        "en": "Industry Deep-Dive Template"
+      },
+      "slides": 25,
+      "desc": {
+        "zh": "标准化行业报告模板：痛点、方法、成果、案例",
+        "en": "Standardized industry report template: pain points, approach, outcomes, cases"
+      }
+    }
+  ],
+  "downloads": [
+    {
+      "label": {
+        "zh": "品牌指南 (PDF)",
+        "en": "Brand Guidelines (PDF)"
+      },
+      "format": "PDF",
+      "size": "8.2 MB"
+    },
+    {
+      "label": {
+        "zh": "Logo 包 (SVG/PNG)",
+        "en": "Logo Pack (SVG/PNG)"
+      },
+      "format": "ZIP",
+      "size": "3.5 MB"
+    },
+    {
+      "label": {
+        "zh": "演示模板 (PPTX)",
+        "en": "Presentation Template (PPTX)"
+      },
+      "format": "PPTX",
+      "size": "12.1 MB"
+    },
+    {
+      "label": {
+        "zh": "字体包",
+        "en": "Font Pack"
+      },
+      "format": "ZIP",
+      "size": "5.4 MB"
+    }
+  ]
+}

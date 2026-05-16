@@ -1,0 +1,1 @@
+[2m2026-05-16T09:19:38.361657Z[0m [31mERROR[0m [2mcodex_core::tools::router[0m[2m:[0m [3merror[0m[2m=[0mapply_patch verification failed: invalid patch: The first line of the patch must be '*** Begin Patch'

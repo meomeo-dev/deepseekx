@@ -21,7 +21,7 @@ description: Use when preparing, validating, or executing npm publication for
 - npm latest 必须通过 `npm view @meomeo-dev/deepseekx version` 实时查询。
 - npm registry 当前登录用户必须用 `npm whoami` 检查。
 - 根 `package.json` 是 private maintenance package，不得作为发布包。
-- 私有/公开双仓库清洗属于 `$we-release` 和 `$we-public-sync` 范围。
+- 公开仓库安全扫描属于 `$we-release` 和 `$we-public-sync` 范围。
 
 ## 适用范围
 
@@ -34,13 +34,13 @@ description: Use when preparing, validating, or executing npm publication for
 
 ## 非目标
 
-- 不替代 `$we-release` 的私有/公开双仓库流程。
+- 不替代 `$we-release` 的版本、tag 和公开仓库安全检查流程。
 - 不自动推送 git remote。
 - 不自动创建 GitHub release，除非用户明确要求。
 - 不发布根 private maintenance package。
 - 不把 `_tasks/`、`_workflows/`、`.env`、`docs/notes/` 或本地 cache
   纳入 npm 包。
-- `.agents/`、`.codex/`、`.deepseekx/` 可以同步公开仓库，但不是
+- `.agents/`、`.codex/`、`.deepseekx/` 可以存在于公开仓库，但不是
   `@meomeo-dev/deepseekx` npm 包默认内容。
 
 ## 安全边界

@@ -1,0 +1,410 @@
+[
+  {
+    "id": "res-01",
+    "category": "whitepaper",
+    "industry": "cross-industry",
+    "language": "bilingual",
+    "format": "PDF",
+    "audience": {
+      "zh": "CTO、CIO、AI 负责人",
+      "en": "CTO, CIO, AI Leaders"
+    },
+    "title": {
+      "zh": "2026 企业 AI 就绪度白皮书",
+      "en": "2026 Enterprise AI Readiness Whitepaper"
+    },
+    "abstract": {
+      "zh": "覆盖 500+ 企业的 AI 就绪度调研，含行业基准、成熟度模型和实施路线图。",
+      "en": "AI readiness survey of 500+ enterprises with benchmarks, maturity model, and roadmap."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "AI 成熟度的五个等级及其特征",
+        "各行业 AI 就绪度对标数据",
+        "从实验到规模化的四阶段路径",
+        "AI 投资回报的量化模型"
+      ],
+      "en": [
+        "Five levels of AI maturity and their characteristics",
+        "Industry AI readiness benchmark data",
+        "Four-stage path from experiment to scale",
+        "Quantified AI investment return model"
+      ]
+    },
+    "pages": 48
+  },
+  {
+    "id": "res-02",
+    "category": "playbook",
+    "industry": "financial-services",
+    "language": "en",
+    "format": "PDF",
+    "audience": {
+      "zh": "合规官、CTO、风险管理者",
+      "en": "Compliance Officers, CTO, Risk Managers"
+    },
+    "title": {
+      "zh": "金融服务 GenAI 合规实施手册",
+      "en": "GenAI Compliance Playbook for Financial Services"
+    },
+    "abstract": {
+      "zh": "面向金融服务的 GenAI 实施操作手册，涵盖模型治理、合规审计和监管沟通。",
+      "en": "Operational playbook for GenAI in financial services: model governance, compliance audit, regulatory communication."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "GenAI 模型治理的最佳实践框架",
+        "监管机构对 AI 模型的期望要求",
+        "合规审计的证据链建立方法",
+        "与监管机构的有效沟通策略"
+      ],
+      "en": [
+        "Best-practice framework for GenAI model governance",
+        "Regulatory expectations for AI models",
+        "Building evidence chains for compliance audits",
+        "Effective communication strategies with regulators"
+      ]
+    },
+    "pages": 36
+  },
+  {
+    "id": "res-03",
+    "category": "briefing",
+    "industry": "manufacturing",
+    "language": "zh",
+    "format": "PDF",
+    "audience": {
+      "zh": "制造企业 CIO、工厂总经理",
+      "en": "Manufacturing CIOs, Plant GMs"
+    },
+    "title": {
+      "zh": "中国制造业 AI 落地简报",
+      "en": "AI Implementation Briefing for Chinese Manufacturing"
+    },
+    "abstract": {
+      "zh": "基于 50+ 中国制造企业调研的 AI 落地简报，含关键用例和投资回报分析。",
+      "en": "AI briefing from 50+ Chinese manufacturer surveys with key use cases and ROI analysis."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "中国制造业 AI 投资的 TOP 5 应用场景",
+        "从试点到工厂级推广的路径",
+        "AI + 工业互联网的整合架构",
+        "典型项目的投入产出分析"
+      ],
+      "en": [
+        "Top 5 AI application scenarios for Chinese manufacturing",
+        "Path from pilot to plant-wide deployment",
+        "Integrated AI + Industrial Internet architecture",
+        "Input-output analysis of typical projects"
+      ]
+    },
+    "pages": 12
+  },
+  {
+    "id": "res-04",
+    "category": "webinar",
+    "industry": "cross-industry",
+    "language": "en",
+    "format": "Video",
+    "audience": {
+      "zh": "CISO、安全架构师、IT 主管",
+      "en": "CISO, Security Architects, IT Leaders"
+    },
+    "title": {
+      "zh": "零信任架构实战网络研讨会",
+      "en": "Zero Trust Architecture in Practice Webinar"
+    },
+    "abstract": {
+      "zh": "由 Evoing CISO David Okonkwo 主讲的零信任实施经验分享，含 Q&A。",
+      "en": "Zero-trust implementation experience sharing by Evoing CISO David Okonkwo, with Q&A."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "零信任的七个核心原则及其实施优先级",
+        "从边界安全到零信任的迁移路径",
+        "零信任架构中的身份与访问管理",
+        "常见实施陷阱与规避策略"
+      ],
+      "en": [
+        "Seven core zero-trust principles and implementation priorities",
+        "Migration path from perimeter to zero-trust security",
+        "Identity and access management in zero-trust",
+        "Common pitfalls and avoidance strategies"
+      ]
+    },
+    "pages": null
+  },
+  {
+    "id": "res-05",
+    "category": "assessment",
+    "industry": "cross-industry",
+    "language": "bilingual",
+    "format": "Online Tool",
+    "audience": {
+      "zh": "CTO、AI 负责人",
+      "en": "CTO, AI Leaders"
+    },
+    "title": {
+      "zh": "AI 成熟度自评工具",
+      "en": "AI Maturity Self-Assessment Tool"
+    },
+    "abstract": {
+      "zh": "30 分钟在线自评，生成个性化 AI 成熟度雷达图和改进建议。",
+      "en": "30-minute online self-assessment generating personalized AI maturity radar and recommendations."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "您组织的 AI 成熟度当前水平",
+        "与行业同行的对比定位",
+        "最优先的 AI 能力建设领域",
+        "定制化的 90 天行动计划"
+      ],
+      "en": [
+        "Your organization's current AI maturity level",
+        "Positioning vs industry peers",
+        "Highest-priority AI capability areas",
+        "Customized 90-day action plan"
+      ]
+    },
+    "pages": null
+  },
+  {
+    "id": "res-06",
+    "category": "whitepaper",
+    "industry": "energy",
+    "language": "en",
+    "format": "PDF",
+    "audience": {
+      "zh": "能源公司 CTO、运营总监",
+      "en": "Energy CTOs, Operations Directors"
+    },
+    "title": {
+      "zh": "能源行业数字孪生白皮书",
+      "en": "Digital Twin Whitepaper for Energy Sector"
+    },
+    "abstract": {
+      "zh": "能源行业数字孪生技术应用全景：从上游勘探到下游炼化的端到端方案。",
+      "en": "Full landscape of digital twin application in energy: end-to-end from upstream to downstream."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "能源数字孪生的五层参考架构",
+        "实时 SCADA 数据集成的技术方案",
+        "AI 驱动的预测性维护与能耗优化",
+        "碳排放监测与 ESG 报告自动化"
+      ],
+      "en": [
+        "Five-layer reference architecture for energy digital twins",
+        "Technical approach to real-time SCADA data integration",
+        "AI-driven predictive maintenance and energy optimization",
+        "Carbon monitoring and ESG report automation"
+      ]
+    },
+    "pages": 52
+  },
+  {
+    "id": "res-07",
+    "category": "playbook",
+    "industry": "retail-consumer",
+    "language": "bilingual",
+    "format": "PDF",
+    "audience": {
+      "zh": "零售 CTO、电商技术负责人",
+      "en": "Retail CTOs, E-commerce Tech Leads"
+    },
+    "title": {
+      "zh": "零售业平台工程实施指南",
+      "en": "Platform Engineering Playbook for Retail"
+    },
+    "abstract": {
+      "zh": "面向零售业的平台工程实施指南，覆盖促销高峰弹性、全渠道数据统一和实时推荐。",
+      "en": "Platform engineering guide for retail covering peak elasticity, omnichannel data, and real-time recommendations."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "促销高峰期系统弹性设计模式",
+        "全渠道数据统一的平台架构",
+        "实时推荐引擎的技术选型",
+        "零售平台工程的 ROI 模型"
+      ],
+      "en": [
+        "System elasticity design patterns for peak promotions",
+        "Platform architecture for omnichannel data unification",
+        "Technology selection for real-time recommendation engines",
+        "ROI model for retail platform engineering"
+      ]
+    },
+    "pages": 42
+  },
+  {
+    "id": "res-08",
+    "category": "briefing",
+    "industry": "healthcare",
+    "language": "bilingual",
+    "format": "PDF",
+    "audience": {
+      "zh": "医疗 CIO、临床信息学主管",
+      "en": "Healthcare CIOs, Clinical Informatics Leads"
+    },
+    "title": {
+      "zh": "医疗 AI 合规与实施简报",
+      "en": "Healthcare AI Compliance & Implementation Briefing"
+    },
+    "abstract": {
+      "zh": "全球医疗 AI 监管趋势与合规实施框架，覆盖 FDA、EU MDR、NMPA 等。",
+      "en": "Global healthcare AI regulatory trends and compliance framework covering FDA, EU MDR, NMPA."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "FDA/EU MDR/NMPA 的 AI 监管要求对比",
+        "医疗 AI 的临床验证路径",
+        "FHIR 数据互操作标准实施指南",
+        "患者数据隐私保护的技术方案"
+      ],
+      "en": [
+        "Comparison of FDA/EU MDR/NMPA AI regulatory requirements",
+        "Clinical validation pathways for healthcare AI",
+        "FHIR interoperability implementation guide",
+        "Technical solutions for patient data privacy"
+      ]
+    },
+    "pages": 16
+  },
+  {
+    "id": "res-09",
+    "category": "webinar",
+    "industry": "automotive",
+    "language": "en",
+    "format": "Video",
+    "audience": {
+      "zh": "汽车软件架构师、产品负责人",
+      "en": "Automotive Software Architects, Product Leaders"
+    },
+    "title": {
+      "zh": "软件定义汽车网络研讨会",
+      "en": "Software-Defined Vehicle Webinar"
+    },
+    "abstract": {
+      "zh": "从硬件定义到软件定义的汽车行业转型。Evoing 汽车团队分享最新客户案例和技术洞察。",
+      "en": "The shift from hardware-defined to software-defined automotive. Evoing automotive team shares latest cases."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "SDV 参考架构的核心组件",
+        "AUTOSAR Adaptive 与容器化运行时的选择",
+        "符合 ISO 26262 的 CI/CD 流水线设计",
+        "OTA 更新安全框架（TUF/Uptane）"
+      ],
+      "en": [
+        "Core components of SDV reference architecture",
+        "AUTOSAR Adaptive vs containerized runtime selection",
+        "ISO 26262-compliant CI/CD pipeline design",
+        "OTA update security framework (TUF/Uptane)"
+      ]
+    },
+    "pages": null
+  },
+  {
+    "id": "res-10",
+    "category": "assessment",
+    "industry": "cross-industry",
+    "language": "bilingual",
+    "format": "Online Tool",
+    "audience": {
+      "zh": "CTO、架构师",
+      "en": "CTO, Architects"
+    },
+    "title": {
+      "zh": "技术债务量化评估",
+      "en": "Technical Debt Quantification Assessment"
+    },
+    "abstract": {
+      "zh": "量化您的技术债务并生成现代化优先级路线图。基于 200+ 企业项目的评估模型。",
+      "en": "Quantify your technical debt and generate a modernization priority roadmap."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "技术债务的货币化估算",
+        "按风险和价值排序的现代化优先级",
+        "各项债务对交付速度的量化影响",
+        "推荐的现代化模式和工具链"
+      ],
+      "en": [
+        "Monetized estimation of technical debt",
+        "Modernization priorities by risk and value",
+        "Quantified impact of each debt on delivery speed",
+        "Recommended modernization patterns and toolchain"
+      ]
+    },
+    "pages": null
+  },
+  {
+    "id": "res-11",
+    "category": "whitepaper",
+    "industry": "public-sector",
+    "language": "bilingual",
+    "format": "PDF",
+    "audience": {
+      "zh": "政府 CIO、数字化转型负责人",
+      "en": "Government CIOs, Digital Transformation Leads"
+    },
+    "title": {
+      "zh": "政府数字服务平台建设白皮书",
+      "en": "Government Digital Service Platform Whitepaper"
+    },
+    "abstract": {
+      "zh": "基于东南亚政府数字化转型成功案例的平台建设方法论与实践指南。",
+      "en": "Platform methodology and practice guide based on successful government digital transformation cases."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "政府数字平台的架构设计原则",
+        "跨部门数据共享的治理模型",
+        "敏捷开发在政府环境中的适配方法",
+        "公民身份认证与隐私保护方案"
+      ],
+      "en": [
+        "Architecture principles for government digital platforms",
+        "Governance model for cross-agency data sharing",
+        "Agile development adaptation in government",
+        "Citizen identity and privacy protection"
+      ]
+    },
+    "pages": 40
+  },
+  {
+    "id": "res-12",
+    "category": "webinar",
+    "industry": "cross-industry",
+    "language": "bilingual",
+    "format": "Video",
+    "audience": {
+      "zh": "CXO、战略规划负责人",
+      "en": "CXO, Strategy Planning Leaders"
+    },
+    "title": {
+      "zh": "2026 全球技术投资展望发布",
+      "en": "2026 Global Tech Investment Outlook Launch"
+    },
+    "abstract": {
+      "zh": "Evoing 首席研究官林小燕发布年度旗舰报告，深度解读全球技术支出趋势。",
+      "en": "Evoing CRO presents the annual flagship report with in-depth global tech spending analysis."
+    },
+    "whatYouWillLearn": {
+      "zh": [
+        "2026-2028 全球 AI 支出预测",
+        "各行业技术投资优先级排序",
+        "区域市场机会与风险评估",
+        "技术投资的决策框架"
+      ],
+      "en": [
+        "2026-2028 global AI spending forecast",
+        "Industry technology investment priorities",
+        "Regional market opportunity and risk assessment",
+        "Decision framework for technology investment"
+      ]
+    },
+    "pages": null
+  }
+]

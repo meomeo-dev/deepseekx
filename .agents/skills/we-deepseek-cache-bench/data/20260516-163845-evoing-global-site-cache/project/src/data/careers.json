@@ -1,0 +1,327 @@
+{
+  "values": {
+    "title": {
+      "zh": "我们的价值观",
+      "en": "Our Values"
+    },
+    "items": [
+      {
+        "label": {
+          "zh": "代码即承诺",
+          "en": "Code is Commitment"
+        },
+        "desc": {
+          "zh": "我们不只是提供建议，我们交付可运行的代码。每一个战略都以可验证的工程成果为终点。",
+          "en": "We don't just advise — we deliver working code. Every strategy ends with verifiable engineering outcomes."
+        }
+      },
+      {
+        "label": {
+          "zh": "智能无国界",
+          "en": "Intelligence Without Borders"
+        },
+        "desc": {
+          "zh": "我们相信最好的想法可以来自任何地方。我们的团队横跨 14 个城市，说 15 种以上的语言。",
+          "en": "We believe the best ideas can come from anywhere. Our team spans 14 cities and speaks 15+ languages."
+        }
+      },
+      {
+        "label": {
+          "zh": "客户能力即成功",
+          "en": "Client Capability is Success"
+        },
+        "desc": {
+          "zh": "衡量我们成功的最终标准是客户团队能否独立前行。我们构建能力，而非依赖。",
+          "en": "The ultimate measure of our success is whether the client team can move forward independently. We build capability, not dependency."
+        }
+      },
+      {
+        "label": {
+          "zh": "学习即工作",
+          "en": "Learning is Working"
+        },
+        "desc": {
+          "zh": "在 AI 时代，持续学习不是福利而是工作要求。我们投入 15% 的工作时间用于学习和知识分享。",
+          "en": "In the AI era, continuous learning is not a perk but a job requirement. We invest 15% of working time in learning and knowledge sharing."
+        }
+      }
+    ]
+  },
+  "interviewProcess": {
+    "title": {
+      "zh": "面试流程",
+      "en": "Interview Process"
+    },
+    "steps": [
+      {
+        "label": {
+          "zh": "初步沟通（30 分钟）",
+          "en": "Initial Conversation (30 min)"
+        },
+        "desc": {
+          "zh": "与招聘团队进行非正式沟通，了解你的背景和兴趣。",
+          "en": "Informal conversation with our recruiting team to understand your background and interests."
+        }
+      },
+      {
+        "label": {
+          "zh": "技术/案例分析（60 分钟）",
+          "en": "Technical/Case Interview (60 min)"
+        },
+        "desc": {
+          "zh": "根据岗位，你可能需要完成一个技术设计或商业案例分析。",
+          "en": "Depending on the role, you'll work through a technical design or business case analysis."
+        }
+      },
+      {
+        "label": {
+          "zh": "团队深度对话（2–3 轮）",
+          "en": "Deep-Dive Conversations (2–3 rounds)"
+        },
+        "desc": {
+          "zh": "与未来的同事和跨职能领导进行深入对话，探讨你的工作方式和价值观匹配。",
+          "en": "Deep conversations with future colleagues and cross-functional leaders about your working style and values alignment."
+        }
+      },
+      {
+        "label": {
+          "zh": "最终决策",
+          "en": "Final Decision"
+        },
+        "desc": {
+          "zh": "我们通常在 48 小时内给出反馈。欢迎你在任何阶段提出疑问。",
+          "en": "We typically provide feedback within 48 hours. You're welcome to raise questions at any stage."
+        }
+      }
+    ]
+  },
+  "careerPaths": [
+    {
+      "id": "path-consulting",
+      "label": {
+        "zh": "战略咨询",
+        "en": "Strategy Consulting"
+      },
+      "levels": {
+        "zh": [
+          "分析师",
+          "顾问",
+          "高级顾问",
+          "经理",
+          "总监",
+          "合伙人"
+        ],
+        "en": [
+          "Analyst",
+          "Consultant",
+          "Senior Consultant",
+          "Manager",
+          "Director",
+          "Partner"
+        ]
+      },
+      "desc": {
+        "zh": "帮助全球客户制定和执行技术驱动的业务战略。",
+        "en": "Help global clients define and execute technology-driven business strategies."
+      }
+    },
+    {
+      "id": "path-engineering",
+      "label": {
+        "zh": "软件工程",
+        "en": "Software Engineering"
+      },
+      "levels": {
+        "zh": [
+          "工程师",
+          "高级工程师",
+          "首席工程师",
+          "工程总监",
+          "技术副总裁"
+        ],
+        "en": [
+          "Engineer",
+          "Senior Engineer",
+          "Principal Engineer",
+          "Engineering Director",
+          "VP Engineering"
+        ]
+      },
+      "desc": {
+        "zh": "设计并交付生产级平台与应用，直接为客户创造价值。",
+        "en": "Design and deliver production-grade platforms and applications that directly create value for clients."
+      }
+    },
+    {
+      "id": "path-data-ai",
+      "label": {
+        "zh": "数据与 AI",
+        "en": "Data & AI"
+      },
+      "levels": {
+        "zh": [
+          "数据科学家",
+          "AI 工程师",
+          "高级 AI 工程师",
+          "首席 AI 科学家"
+        ],
+        "en": [
+          "Data Scientist",
+          "AI Engineer",
+          "Senior AI Engineer",
+          "Principal AI Scientist"
+        ]
+      },
+      "desc": {
+        "zh": "构建企业级数据平台和 AI 系统，推动智能决策。",
+        "en": "Build enterprise-grade data platforms and AI systems that drive intelligent decision-making."
+      }
+    }
+  ],
+  "openings": [
+    {
+      "id": "job-01",
+      "title": {
+        "zh": "高级战略顾问 — AI 与数字化转型",
+        "en": "Senior Strategy Consultant — AI & Digital Transformation"
+      },
+      "path": "path-consulting",
+      "location": "shanghai",
+      "region": "apac",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "加入我们的上海团队，领导亚太区大型企业的 AI 战略与数字化转型项目。",
+        "en": "Join our Shanghai team to lead AI strategy and digital transformation projects for major enterprises in Asia-Pacific."
+      }
+    },
+    {
+      "id": "job-02",
+      "title": {
+        "zh": "平台工程师 — 内部开发者平台",
+        "en": "Platform Engineer — Internal Developer Platform"
+      },
+      "path": "path-engineering",
+      "location": "san-francisco",
+      "region": "amer",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "为全球客户设计和构建云原生内部开发者平台。需要深厚的 Kubernetes 和 Go 经验。",
+        "en": "Design and build cloud-native internal developer platforms for global clients. Deep Kubernetes and Go experience required."
+      }
+    },
+    {
+      "id": "job-03",
+      "title": {
+        "zh": "AI 工程师 — 大语言模型应用",
+        "en": "AI Engineer — LLM Applications"
+      },
+      "path": "path-data-ai",
+      "location": "london",
+      "region": "emea",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "为欧洲金融服务客户构建基于大语言模型的企业级应用，包括 RAG 管道和 AI 代理。",
+        "en": "Build LLM-based enterprise applications for European financial services clients, including RAG pipelines and AI agents."
+      }
+    },
+    {
+      "id": "job-04",
+      "title": {
+        "zh": "高级顾问 — 运营模式设计",
+        "en": "Senior Consultant — Operating Model Design"
+      },
+      "path": "path-consulting",
+      "location": "singapore",
+      "region": "apac",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "帮助东南亚企业从职能型组织转型为产品型组织。需要组织设计和变革管理经验。",
+        "en": "Help Southeast Asian enterprises transform from functional to product-oriented organizations. Experience in org design and change management required."
+      }
+    },
+    {
+      "id": "job-05",
+      "title": {
+        "zh": "网络安全顾问 — 零信任架构",
+        "en": "Cybersecurity Consultant — Zero Trust Architecture"
+      },
+      "path": "path-consulting",
+      "location": "dubai",
+      "region": "emea",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "为中东客户设计和实施零信任安全架构。需要 OT/ICS 安全经验。",
+        "en": "Design and implement zero-trust security architectures for Middle Eastern clients. OT/ICS security experience required."
+      }
+    },
+    {
+      "id": "job-06",
+      "title": {
+        "zh": "数据工程师 — 数据平台架构",
+        "en": "Data Engineer — Data Platform Architecture"
+      },
+      "path": "path-data-ai",
+      "location": "new-york",
+      "region": "amer",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "为北美金融和零售客户构建湖仓一体数据平台。需要 Spark、dbt 和云数据服务经验。",
+        "en": "Build lakehouse data platforms for North American financial and retail clients. Experience with Spark, dbt, and cloud data services required."
+      }
+    },
+    {
+      "id": "job-07",
+      "title": {
+        "zh": "初级工程师 — 云原生开发",
+        "en": "Associate Engineer — Cloud-Native Development"
+      },
+      "path": "path-engineering",
+      "location": "mumbai",
+      "region": "apac",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "加入我们的孟买全球交付中心，参与全球客户的云原生应用开发项目。",
+        "en": "Join our Mumbai global delivery center to work on cloud-native application development for global clients."
+      }
+    },
+    {
+      "id": "job-08",
+      "title": {
+        "zh": "战略咨询经理 — 可持续技术",
+        "en": "Strategy Consulting Manager — Sustainable Technology"
+      },
+      "path": "path-consulting",
+      "location": "berlin",
+      "region": "emea",
+      "type": {
+        "zh": "全职",
+        "en": "Full-time"
+      },
+      "summary": {
+        "zh": "领导欧洲客户的可持续技术战略项目，包括 IT 碳足迹评估与绿色架构设计。",
+        "en": "Lead sustainable technology strategy projects for European clients, including IT carbon footprint assessment and green architecture design."
+      }
+    }
+  ]
+}

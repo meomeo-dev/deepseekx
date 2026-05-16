@@ -1,36 +1,39 @@
 ---
 name: we-public-sync
-description: Use when preparing, checking, or validating the sanitized public
-  repository mirror for release, including private-path leak checks and public
+description: Use when checking the public DeepSeekX repository before release,
+  including stale mirror assumptions, credential leak checks, and public
   package metadata verification.
 ---
 
 # we-public-sync
 
-用于公开仓库清洗同步（public sanitized mirror sync）。目标是把私有
-开发仓库中的可公开内容同步到公开仓库，同时确认私有路径、内部任务、
-凭据、本地配置和未授权目录没有进入公开镜像。
+用于公开仓库发布安全检查（public repository release safety check）。
+当前 `https://github.com/meomeo-dev/deepseekx` 本身就是公开仓库，不再
+使用独立的 `deepseekx-public` 清洗镜像。本技能确认公开仓库内没有
+旧的双仓库镜像假设、凭据、本地配置或未授权目录，并确认 npm package
+metadata 指向公开 GitHub。
 
-默认只读检查和同步建议。真正复制、删除、提交、推送公开仓库前，
-必须由用户明确要求。
+默认只读检查。真正删除、提交、推送或修改公开仓库文件前，必须由用户
+明确要求。
 
 ## 范围
 
-- 检查私有仓库和公开仓库路径、remote、visibility、branch 和 dirty 状态。
-- 检查公开仓库是否包含私有目录、私有远端、本地路径或凭据关键词。
+- 检查当前公开仓库路径、remote、visibility、branch 和 dirty 状态。
+- 检查仓库是否包含旧 `deepseekx-public` 镜像假设、禁止公开目录、
+  本地路径或凭据关键词。
 - 检查 `codex-cli/package.json` metadata 是否指向公开 GitHub。
-- 为 `$we-release` 提供公开镜像同步前后的确定性检查。
-- 后续可以扩展为确定性同步脚本。
+- 为 `$we-release` 提供公开发布前的确定性安全检查。
 
 ## 非目标
 
 - 不维护版本号；版本、CHANGELOG、tag 使用 `$we-release`。
 - 不执行 npm publish；registry 发布使用 `$we-publish`。
 - 不调试 CI；CI 使用 `$we-ci-maintenance`。
-- 不默认删除公开仓库文件、不推送公开仓库。
-- 不把 `_tasks/`、`_workflows/` 或 `.deep-research/` 发布到公开仓库。
-- `.agents/`、`.codex/`、`.deepseekx/` 是本项目允许同步的公开内容，
-  但必须通过同一凭据、私有路径和内部任务扫描。
+- 不默认删除文件、不推送公开仓库。
+- 不把 `_tasks/`、`_workflows/`、`.deep-research/`、`.env` 或 `.npmrc`
+  纳入公开发布内容。
+- `.agents/`、`.codex/`、`.deepseekx/` 是本项目允许公开的内容，但其中
+  不得包含凭据、本地 cache、runtime state 或未公开任务内容。
 
 ## 检查脚本
 
@@ -42,13 +45,13 @@ description: Use when preparing, checking, or validating the sanitized public
 
 脚本会检查：
 
-- 私有和公开仓库是否存在，且不是同一路径或同一 git dir。
-- 两边 remote URL、owner 和 visibility 是否符合预期。
+- 当前仓库是否存在，remote URL 和 GitHub visibility 是否符合预期。
 - 当前分支、dirty 状态和 `@meomeo-dev/deepseekx` package version。
 - 根 `package.json` 是否仍为 private maintenance package。
-- 公开仓库中是否存在禁止公开目录。
-- 公开仓库中是否出现私有远端、本地路径、token、secret、credential、
-  `.env` 等风险字符串。
+- 仓库中是否存在禁止公开目录。
+- 仓库中是否出现 token、secret、credential、`.env` 等风险字符串。
+- WE skills 中是否仍出现 `deepseekx-public`、`双仓库` 或 `公开镜像`
+  等过期流程假设。
 - `codex-cli/package.json` 的 repository 是否指向公开仓库。
 
 ## Public Allowlist
@@ -64,30 +67,28 @@ description: Use when preparing, checking, or validating the sanitized public
 
 - `_tasks/`、`_workflows/`、`.deep-research/`。
 - `.env`、`.npmrc`、cache、runtime output、tmp、coverage。
-- 私有仓库 URL、私有本地路径、token、key、secret、credential。
+- token、key、secret、credential。
 - `.agents/`、`.codex/`、`.deepseekx/` 可以公开同步，但其中不得包含
   私有路径、凭据、本地 cache、runtime state 或未公开任务内容。
 
 ## 工作流程
 
-1. 在私有仓库运行 `$we-release-readiness` 或 `$we-release` 前置检查。
+1. 在当前公开仓库运行 `$we-release-readiness` 或 `$we-release` 前置检查。
 2. 运行只读检查脚本，确认公开仓库当前状态。
-3. 如用户明确要求同步，先给出同步范围和排除规则。
-4. 同步后再次运行脚本。
-5. 在公开仓库运行 DeepSeekX package staging 或等价公开发布检查。
-6. 公开仓库通过后，才允许提交和推送公开镜像。
+3. 如发现旧镜像假设、凭据或禁止公开目录，先停止并修复。
+4. 修复后再次运行脚本。
+5. 需要发布时，继续运行 DeepSeekX package staging 或等价发布检查。
 
 ## Stop Conditions
 
 遇到以下情况必须停止：
 
-- 私有和公开仓库解析为同一路径或同一 git dir。
-- 公开仓库 remote 不指向 `meomeo-dev/deepseekx`。
+- 当前仓库 remote 不指向 `meomeo-dev/deepseekx`。
 - 无法确认公开仓库 visibility，且用户要求推送或发布。
-- 公开仓库出现禁止公开目录或凭据风险字符串。
-- `codex-cli/package.json` metadata 指向私有仓库。
-- 私有或公开仓库存在未解释 tracked dirty files。
-- 用户未明确授权复制、删除、提交或推送。
+- 仓库出现禁止公开目录或凭据风险字符串。
+- `codex-cli/package.json` metadata 不指向公开仓库。
+- 仓库存在未解释 tracked dirty files。
+- 用户未明确授权删除、提交或推送。
 
 ## Validation
 
@@ -111,9 +112,9 @@ PY
 
 报告：
 
-- 私有和公开仓库路径、分支、dirty 状态。
+- 当前公开仓库路径、分支、dirty 状态。
 - remote URL 是否符合预期。
 - 禁止公开目录和泄漏扫描结论。
 - package metadata 是否公开正确。
-- 是否允许进入 `$we-release` 的公开同步步骤。
-- 是否需要用户确认同步、提交或推送。
+- 是否允许进入 `$we-release` 的公开发布步骤。
+- 是否需要用户确认删除、提交或推送。

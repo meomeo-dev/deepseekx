@@ -1,0 +1,230 @@
+[
+  {
+    "id": "ai-strategy",
+    "label": {
+      "zh": "AI 战略与转型",
+      "en": "AI Strategy & Transformation"
+    },
+    "summary": {
+      "zh": "从战略规划到落地执行，帮助企业构建 AI 原生竞争力。",
+      "en": "From strategic planning to execution, we help enterprises build AI-native competitiveness."
+    },
+    "icon": "brain",
+    "subs": [
+      {
+        "label": {
+          "zh": "AI 成熟度评估",
+          "en": "AI Maturity Assessment"
+        }
+      },
+      {
+        "label": {
+          "zh": "生成式 AI 落地",
+          "en": "Generative AI Implementation"
+        }
+      },
+      {
+        "label": {
+          "zh": "AI 治理与合规",
+          "en": "AI Governance & Compliance"
+        }
+      },
+      {
+        "label": {
+          "zh": "机器学习平台",
+          "en": "ML Platform Engineering"
+        }
+      }
+    ]
+  },
+  {
+    "id": "code-modernization",
+    "label": {
+      "zh": "代码现代化",
+      "en": "Code Modernization"
+    },
+    "summary": {
+      "zh": "通过平台工程、架构演进和遗留系统改造，释放软件资产的长期价值。",
+      "en": "Unlock the long-term value of software assets through platform engineering, architecture evolution, and legacy modernization."
+    },
+    "icon": "code",
+    "subs": [
+      {
+        "label": {
+          "zh": "平台工程",
+          "en": "Platform Engineering"
+        }
+      },
+      {
+        "label": {
+          "zh": "遗留系统迁移",
+          "en": "Legacy System Migration"
+        }
+      },
+      {
+        "label": {
+          "zh": "云原生架构",
+          "en": "Cloud-Native Architecture"
+        }
+      },
+      {
+        "label": {
+          "zh": "DevSecOps 转型",
+          "en": "DevSecOps Transformation"
+        }
+      }
+    ]
+  },
+  {
+    "id": "operating-model",
+    "label": {
+      "zh": "运营模式设计",
+      "en": "Operating Model Design"
+    },
+    "summary": {
+      "zh": "重塑组织架构、流程与人才体系，使技术真正驱动业务增长。",
+      "en": "Reshape organizational structure, processes, and talent systems so technology genuinely drives business growth."
+    },
+    "icon": "gears",
+    "subs": [
+      {
+        "label": {
+          "zh": "技术组织设计",
+          "en": "Technology Org Design"
+        }
+      },
+      {
+        "label": {
+          "zh": "敏捷与产品运营",
+          "en": "Agile & Product Operations"
+        }
+      },
+      {
+        "label": {
+          "zh": "数字化人才战略",
+          "en": "Digital Talent Strategy"
+        }
+      },
+      {
+        "label": {
+          "zh": "变革管理",
+          "en": "Change Management"
+        }
+      }
+    ]
+  },
+  {
+    "id": "data-intelligence",
+    "label": {
+      "zh": "数据智能",
+      "en": "Data Intelligence"
+    },
+    "summary": {
+      "zh": "打通数据孤岛，构建可扩展的数据平台与智能决策体系。",
+      "en": "Break down data silos, build scalable data platforms and intelligent decision-making systems."
+    },
+    "icon": "chart",
+    "subs": [
+      {
+        "label": {
+          "zh": "数据战略",
+          "en": "Data Strategy"
+        }
+      },
+      {
+        "label": {
+          "zh": "数据平台架构",
+          "en": "Data Platform Architecture"
+        }
+      },
+      {
+        "label": {
+          "zh": "高级分析",
+          "en": "Advanced Analytics"
+        }
+      },
+      {
+        "label": {
+          "zh": "数据治理",
+          "en": "Data Governance"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cyber-resilience",
+    "label": {
+      "zh": "网络韧性",
+      "en": "Cyber Resilience"
+    },
+    "summary": {
+      "zh": "在日益复杂的威胁环境中，构建从预防到恢复的全周期安全能力。",
+      "en": "Build full-cycle security capabilities from prevention to recovery in an increasingly complex threat landscape."
+    },
+    "icon": "shield",
+    "subs": [
+      {
+        "label": {
+          "zh": "安全架构评估",
+          "en": "Security Architecture Assessment"
+        }
+      },
+      {
+        "label": {
+          "zh": "零信任实施",
+          "en": "Zero Trust Implementation"
+        }
+      },
+      {
+        "label": {
+          "zh": "事件响应",
+          "en": "Incident Response"
+        }
+      },
+      {
+        "label": {
+          "zh": "合规与审计",
+          "en": "Compliance & Audit"
+        }
+      }
+    ]
+  },
+  {
+    "id": "strategy-advisory",
+    "label": {
+      "zh": "战略咨询",
+      "en": "Strategy Advisory"
+    },
+    "summary": {
+      "zh": "结合行业洞察与技术视野，为企业制定可执行的数字化增长战略。",
+      "en": "Combine industry insight with technology vision to craft executable digital growth strategies."
+    },
+    "icon": "compass",
+    "subs": [
+      {
+        "label": {
+          "zh": "数字化战略",
+          "en": "Digital Strategy"
+        }
+      },
+      {
+        "label": {
+          "zh": "技术尽职调查",
+          "en": "Technology Due Diligence"
+        }
+      },
+      {
+        "label": {
+          "zh": "创新蓝图",
+          "en": "Innovation Blueprint"
+        }
+      },
+      {
+        "label": {
+          "zh": "并购整合",
+          "en": "M&A Integration"
+        }
+      }
+    ]
+  }
+]

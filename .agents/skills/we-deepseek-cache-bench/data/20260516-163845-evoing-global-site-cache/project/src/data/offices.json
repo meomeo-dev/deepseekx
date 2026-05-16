@@ -1,0 +1,440 @@
+[
+  {
+    "id": "office-singapore",
+    "city": {
+      "zh": "新加坡",
+      "en": "Singapore"
+    },
+    "region": "apac",
+    "hub": true,
+    "address": {
+      "zh": "莱佛士坊 1 号 #42-01，新加坡 048616",
+      "en": "1 Raffles Place #42-01, Singapore 048616"
+    },
+    "focusAreas": {
+      "zh": [
+        "AI 战略",
+        "数据智能",
+        "东南亚市场进入"
+      ],
+      "en": [
+        "AI Strategy",
+        "Data Intelligence",
+        "SEA Market Entry"
+      ]
+    },
+    "languages": [
+      "en",
+      "zh",
+      "ms"
+    ],
+    "timezone": "SGT (UTC+8)",
+    "contact": "apac@evoing.com"
+  },
+  {
+    "id": "office-shanghai",
+    "city": {
+      "zh": "上海",
+      "en": "Shanghai"
+    },
+    "region": "apac",
+    "hub": true,
+    "address": {
+      "zh": "上海市浦东新区陆家嘴环路 1000 号 38 层",
+      "en": "38F, 1000 Lujiazui Ring Road, Pudong, Shanghai"
+    },
+    "focusAreas": {
+      "zh": [
+        "制造转型",
+        "AI 落地",
+        "汽车 SDV"
+      ],
+      "en": [
+        "Manufacturing Transformation",
+        "AI Implementation",
+        "Automotive SDV"
+      ]
+    },
+    "languages": [
+      "zh",
+      "en"
+    ],
+    "timezone": "CST (UTC+8)",
+    "contact": "shanghai@evoing.com"
+  },
+  {
+    "id": "office-tokyo",
+    "city": {
+      "zh": "东京",
+      "en": "Tokyo"
+    },
+    "region": "apac",
+    "hub": false,
+    "address": {
+      "zh": "东京都千代田区丸之内 2-4-1 丸之内大厦 25 层",
+      "en": "25F, Marunouchi Building, 2-4-1 Marunouchi, Chiyoda-ku, Tokyo"
+    },
+    "focusAreas": {
+      "zh": [
+        "精益运营",
+        "制造 IoT",
+        "机器人流程自动化"
+      ],
+      "en": [
+        "Lean Operations",
+        "Manufacturing IoT",
+        "RPA"
+      ]
+    },
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "timezone": "JST (UTC+9)",
+    "contact": "tokyo@evoing.com"
+  },
+  {
+    "id": "office-sydney",
+    "city": {
+      "zh": "悉尼",
+      "en": "Sydney"
+    },
+    "region": "apac",
+    "hub": false,
+    "address": {
+      "zh": "悉尼乔治街 200 号 #30-01，NSW 2000",
+      "en": "200 George Street #30-01, Sydney NSW 2000"
+    },
+    "focusAreas": {
+      "zh": [
+        "金融服务",
+        "云迁移",
+        "网络安全"
+      ],
+      "en": [
+        "Financial Services",
+        "Cloud Migration",
+        "Cybersecurity"
+      ]
+    },
+    "languages": [
+      "en"
+    ],
+    "timezone": "AEDT (UTC+11)",
+    "contact": "sydney@evoing.com"
+  },
+  {
+    "id": "office-mumbai",
+    "city": {
+      "zh": "孟买",
+      "en": "Mumbai"
+    },
+    "region": "apac",
+    "hub": false,
+    "address": {
+      "zh": "孟买班德拉库尔拉综合体 C-20，G 栋 12 层",
+      "en": "12F, Block G, C-20 Bandra Kurla Complex, Mumbai"
+    },
+    "focusAreas": {
+      "zh": [
+        "IT 服务转型",
+        "全球交付",
+        "AI 工程化"
+      ],
+      "en": [
+        "IT Service Transformation",
+        "Global Delivery",
+        "AI Engineering"
+      ]
+    },
+    "languages": [
+      "en",
+      "hi",
+      "mr"
+    ],
+    "timezone": "IST (UTC+5:30)",
+    "contact": "mumbai@evoing.com"
+  },
+  {
+    "id": "office-london",
+    "city": {
+      "zh": "伦敦",
+      "en": "London"
+    },
+    "region": "emea",
+    "hub": true,
+    "address": {
+      "zh": "伦敦金丝雀码头加拿大广场 1 号 32 层，E14 5AB",
+      "en": "32F, One Canada Square, Canary Wharf, London E14 5AB"
+    },
+    "focusAreas": {
+      "zh": [
+        "金融服务",
+        "战略咨询",
+        "监管科技"
+      ],
+      "en": [
+        "Financial Services",
+        "Strategy Advisory",
+        "RegTech"
+      ]
+    },
+    "languages": [
+      "en",
+      "fr",
+      "de"
+    ],
+    "timezone": "GMT/BST (UTC+0/+1)",
+    "contact": "london@evoing.com"
+  },
+  {
+    "id": "office-dubai",
+    "city": {
+      "zh": "迪拜",
+      "en": "Dubai"
+    },
+    "region": "emea",
+    "hub": true,
+    "address": {
+      "zh": "迪拜国际金融中心 The Gate 大厦 12 层",
+      "en": "12F, The Gate Building, DIFC, Dubai"
+    },
+    "focusAreas": {
+      "zh": [
+        "能源转型",
+        "智慧城市",
+        "网络安全"
+      ],
+      "en": [
+        "Energy Transition",
+        "Smart Cities",
+        "Cybersecurity"
+      ]
+    },
+    "languages": [
+      "en",
+      "ar",
+      "fr"
+    ],
+    "timezone": "GST (UTC+4)",
+    "contact": "dubai@evoing.com"
+  },
+  {
+    "id": "office-berlin",
+    "city": {
+      "zh": "柏林",
+      "en": "Berlin"
+    },
+    "region": "emea",
+    "hub": false,
+    "address": {
+      "zh": "柏林波茨坦广场 11 号 20 层，10785",
+      "en": "20F, Potsdamer Platz 11, 10785 Berlin"
+    },
+    "focusAreas": {
+      "zh": [
+        "数据战略",
+        "工业 4.0",
+        "GDPR 合规"
+      ],
+      "en": [
+        "Data Strategy",
+        "Industry 4.0",
+        "GDPR Compliance"
+      ]
+    },
+    "languages": [
+      "de",
+      "en"
+    ],
+    "timezone": "CET/CEST (UTC+1/+2)",
+    "contact": "berlin@evoing.com"
+  },
+  {
+    "id": "office-paris",
+    "city": {
+      "zh": "巴黎",
+      "en": "Paris"
+    },
+    "region": "emea",
+    "hub": false,
+    "address": {
+      "zh": "巴黎拉德芳斯区 CBX 大厦 15 层，92932",
+      "en": "15F, Tour CBX, La Defense, 92932 Paris"
+    },
+    "focusAreas": {
+      "zh": [
+        "奢侈品零售",
+        "AI 伦理",
+        "数字政府"
+      ],
+      "en": [
+        "Luxury Retail",
+        "AI Ethics",
+        "Digital Government"
+      ]
+    },
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "timezone": "CET/CEST (UTC+1/+2)",
+    "contact": "paris@evoing.com"
+  },
+  {
+    "id": "office-johannesburg",
+    "city": {
+      "zh": "约翰内斯堡",
+      "en": "Johannesburg"
+    },
+    "region": "emea",
+    "hub": false,
+    "address": {
+      "zh": "约翰内斯堡桑顿区 Maude 街 1 号 8 层",
+      "en": "8F, 1 Maude Street, Sandton, Johannesburg"
+    },
+    "focusAreas": {
+      "zh": [
+        "金融包容",
+        "移动支付",
+        "数字基础设施"
+      ],
+      "en": [
+        "Financial Inclusion",
+        "Mobile Payments",
+        "Digital Infrastructure"
+      ]
+    },
+    "languages": [
+      "en",
+      "af",
+      "zu"
+    ],
+    "timezone": "SAST (UTC+2)",
+    "contact": "johannesburg@evoing.com"
+  },
+  {
+    "id": "office-new-york",
+    "city": {
+      "zh": "纽约",
+      "en": "New York"
+    },
+    "region": "amer",
+    "hub": true,
+    "address": {
+      "zh": "纽约曼哈顿公园大道 399 号 28 层，NY 10022",
+      "en": "28F, 399 Park Avenue, Manhattan, New York NY 10022"
+    },
+    "focusAreas": {
+      "zh": [
+        "金融服务",
+        "战略咨询",
+        "并购尽调"
+      ],
+      "en": [
+        "Financial Services",
+        "Strategy Advisory",
+        "M&A Due Diligence"
+      ]
+    },
+    "languages": [
+      "en",
+      "es"
+    ],
+    "timezone": "EST/EDT (UTC-5/-4)",
+    "contact": "newyork@evoing.com"
+  },
+  {
+    "id": "office-san-francisco",
+    "city": {
+      "zh": "旧金山",
+      "en": "San Francisco"
+    },
+    "region": "amer",
+    "hub": true,
+    "address": {
+      "zh": "旧金山市场街 1 号 Spear Tower 32 层，CA 94105",
+      "en": "32F, Spear Tower, 1 Market Street, San Francisco CA 94105"
+    },
+    "focusAreas": {
+      "zh": [
+        "平台工程",
+        "AI 工程化",
+        "开发者体验"
+      ],
+      "en": [
+        "Platform Engineering",
+        "AI Engineering",
+        "Developer Experience"
+      ]
+    },
+    "languages": [
+      "en"
+    ],
+    "timezone": "PST/PDT (UTC-8/-7)",
+    "contact": "sf@evoing.com"
+  },
+  {
+    "id": "office-toronto",
+    "city": {
+      "zh": "多伦多",
+      "en": "Toronto"
+    },
+    "region": "amer",
+    "hub": false,
+    "address": {
+      "zh": "多伦多国王街西 200 号 18 层，ON M5H 3T4",
+      "en": "18F, 200 King Street West, Toronto ON M5H 3T4"
+    },
+    "focusAreas": {
+      "zh": [
+        "金融科技",
+        "医疗 AI",
+        "公共事业"
+      ],
+      "en": [
+        "Fintech",
+        "Healthcare AI",
+        "Public Sector"
+      ]
+    },
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "timezone": "EST/EDT (UTC-5/-4)",
+    "contact": "toronto@evoing.com"
+  },
+  {
+    "id": "office-sao-paulo",
+    "city": {
+      "zh": "圣保罗",
+      "en": "São Paulo"
+    },
+    "region": "amer",
+    "hub": false,
+    "address": {
+      "zh": "圣保罗 Faria Lima 大道 3477 号 16 层，04538-133",
+      "en": "16F, Av. Brigadeiro Faria Lima 3477, São Paulo 04538-133"
+    },
+    "focusAreas": {
+      "zh": [
+        "金融包容",
+        "零售数字化",
+        "农业科技"
+      ],
+      "en": [
+        "Financial Inclusion",
+        "Retail Digitalization",
+        "AgriTech"
+      ]
+    },
+    "languages": [
+      "pt",
+      "en",
+      "es"
+    ],
+    "timezone": "BRT (UTC-3)",
+    "contact": "saopaulo@evoing.com"
+  }
+]

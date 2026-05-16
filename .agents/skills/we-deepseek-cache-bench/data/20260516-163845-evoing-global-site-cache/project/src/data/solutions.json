@@ -1,0 +1,472 @@
+[
+  {
+    "id": "ai-native-enterprise",
+    "name": {
+      "zh": "AI 原生企业转型",
+      "en": "AI-Native Enterprise Transformation"
+    },
+    "problem": {
+      "zh": "大多数企业在 AI 应用中仍停留在单点实验阶段，缺乏从基础设施到组织文化的系统性 AI 就绪度。",
+      "en": "Most enterprises remain stuck in point-solution AI experiments, lacking systematic AI readiness from infrastructure to organizational culture."
+    },
+    "approach": {
+      "zh": "以 AI 成熟度评估为起点，并行推进 GenAI 用例落地、ML 平台建设与 AI 治理框架搭建，三轨同步加速。",
+      "en": "Start with AI maturity assessment, then run three parallel tracks: GenAI use-case delivery, ML platform build-out, and AI governance framework."
+    },
+    "modules": {
+      "zh": [
+        "AI 成熟度诊断",
+        "GenAI 解决方案工厂",
+        "企业 ML 平台",
+        "AI 治理与合规",
+        "AI 文化变革"
+      ],
+      "en": [
+        "AI Maturity Diagnostic",
+        "GenAI Solution Factory",
+        "Enterprise ML Platform",
+        "AI Governance & Compliance",
+        "AI Culture Change"
+      ]
+    },
+    "outcomes": {
+      "zh": "6 个月内建成企业级 AI 平台，12 个月内实现 3–5 个 GenAI 用例规模化上线",
+      "en": "Enterprise AI platform live within 6 months, 3–5 GenAI use cases at scale within 12 months"
+    },
+    "metrics": {
+      "zh": [
+        "AI 用例上线时间缩短 70%",
+        "模型治理合规覆盖率 100%",
+        "AI 人才留存率提升 25%"
+      ],
+      "en": [
+        "AI use-case time-to-market reduced 70%",
+        "100% model governance compliance",
+        "AI talent retention +25%"
+      ]
+    },
+    "relatedCapabilities": [
+      "ai-strategy",
+      "code-modernization",
+      "data-intelligence"
+    ],
+    "industries": [
+      "financial-services",
+      "healthcare",
+      "tmt",
+      "retail-consumer"
+    ]
+  },
+  {
+    "id": "platform-engineering-foundation",
+    "name": {
+      "zh": "平台工程基础重塑",
+      "en": "Platform Engineering Foundation"
+    },
+    "problem": {
+      "zh": "企业开发团队被碎片化工具链、漫长的环境准备和重复的运维工作所困，工程生产力严重受损。",
+      "en": "Development teams are trapped by fragmented toolchains, long environment provisioning, and repetitive ops work, severely damaging engineering productivity."
+    },
+    "approach": {
+      "zh": "设计并交付内部开发者平台（IDP），建立黄金路径、自服务门户与标准化 CI/CD 流水线，将平台作为产品持续迭代。",
+      "en": "Design and deliver an Internal Developer Platform (IDP) with golden paths, self-service portal, and standardized CI/CD pipelines — treating the platform as a product."
+    },
+    "modules": {
+      "zh": [
+        "IDP 架构设计",
+        "自服务门户开发",
+        "黄金路径模板库",
+        "CI/CD 流水线标准化",
+        "开发者体验度量"
+      ],
+      "en": [
+        "IDP Architecture Design",
+        "Self-Service Portal",
+        "Golden Path Templates",
+        "CI/CD Standardization",
+        "DevEx Metrics"
+      ]
+    },
+    "outcomes": {
+      "zh": "开发环境准备时间从数天缩短至分钟级，部署频率提升 3–10 倍",
+      "en": "Environment provisioning from days to minutes, deployment frequency increase of 3–10x"
+    },
+    "metrics": {
+      "zh": [
+        "首次提交到上线时间缩短 80%",
+        "开发者净推荐值提升 30 分",
+        "基础设施单开发者成本降低 40%"
+      ],
+      "en": [
+        "Time from first commit to production reduced 80%",
+        "Developer NPS +30 points",
+        "Per-developer infra cost reduced 40%"
+      ]
+    },
+    "relatedCapabilities": [
+      "code-modernization",
+      "operating-model",
+      "cyber-resilience"
+    ],
+    "industries": [
+      "financial-services",
+      "retail-consumer",
+      "tmt",
+      "manufacturing",
+      "automotive"
+    ]
+  },
+  {
+    "id": "data-mesh-modernization",
+    "name": {
+      "zh": "数据网格现代化",
+      "en": "Data Mesh Modernization"
+    },
+    "problem": {
+      "zh": "中央数据湖/仓架构已成为数据价值交付的瓶颈：数据团队过载、领域团队等待时间长、数据质量持续下降。",
+      "en": "Centralized data lake/warehouse architectures have become bottlenecks: overloaded data teams, long domain-team wait times, declining data quality."
+    },
+    "approach": {
+      "zh": "以数据网格原则为指导，将数据所有权下放至业务领域，构建联邦治理与自服务数据基础设施，逐步迁移关键数据产品。",
+      "en": "Following data mesh principles, decentralize data ownership to business domains, build federated governance and self-service data infrastructure, progressively migrate key data products."
+    },
+    "modules": {
+      "zh": [
+        "数据产品识别与优先级",
+        "领域数据平台",
+        "联邦治理框架",
+        "数据目录与发现",
+        "数据质量自动化"
+      ],
+      "en": [
+        "Data Product Identification",
+        "Domain Data Platform",
+        "Federated Governance",
+        "Data Catalog & Discovery",
+        "Data Quality Automation"
+      ]
+    },
+    "outcomes": {
+      "zh": "数据产品交付周期从季度缩短至两周，数据复用率提升 3 倍",
+      "en": "Data product delivery cycle from quarters to two weeks, data reuse rate increased 3x"
+    },
+    "metrics": {
+      "zh": [
+        "数据请求积压减少 60%",
+        "数据产品可用率 99.5%",
+        "跨域数据集成成本降低 50%"
+      ],
+      "en": [
+        "Data request backlog reduced 60%",
+        "Data product availability 99.5%",
+        "Cross-domain integration cost reduced 50%"
+      ]
+    },
+    "relatedCapabilities": [
+      "data-intelligence",
+      "code-modernization",
+      "operating-model"
+    ],
+    "industries": [
+      "financial-services",
+      "retail-consumer",
+      "healthcare",
+      "energy",
+      "public-sector"
+    ]
+  },
+  {
+    "id": "zero-trust-enterprise",
+    "name": {
+      "zh": "零信任企业安全",
+      "en": "Zero Trust Enterprise Security"
+    },
+    "problem": {
+      "zh": "边界安全模型在混合办公与多云环境中已失效。企业面临身份泄露、横向移动攻击和合规审计压力。",
+      "en": "Perimeter security models have failed in hybrid-work and multi-cloud environments. Enterprises face identity compromise, lateral movement attacks, and compliance audit pressure."
+    },
+    "approach": {
+      "zh": "以身份为中心重新设计安全架构，实施微分段、持续验证与自动化事件响应，从身份、网络、应用、数据四层同步推进。",
+      "en": "Redesign security architecture around identity, implement micro-segmentation, continuous verification, and automated incident response across identity, network, application, and data layers."
+    },
+    "modules": {
+      "zh": [
+        "零信任架构蓝图",
+        "身份联邦与 MFA",
+        "微分段实施",
+        "持续安全验证",
+        "自动化 SOAR"
+      ],
+      "en": [
+        "Zero Trust Blueprint",
+        "Identity Federation & MFA",
+        "Micro-Segmentation",
+        "Continuous Verification",
+        "Automated SOAR"
+      ]
+    },
+    "outcomes": {
+      "zh": "攻击面缩小 70%，安全事件平均检测时间从数周缩短至小时级",
+      "en": "Attack surface reduced 70%, mean detection time from weeks to hours"
+    },
+    "metrics": {
+      "zh": [
+        "横向移动风险消除 90%",
+        "合规审计准备时间缩短 80%",
+        "安全事件响应时间缩短 95%"
+      ],
+      "en": [
+        "Lateral movement risk eliminated 90%",
+        "Compliance audit prep time reduced 80%",
+        "Incident response time reduced 95%"
+      ]
+    },
+    "relatedCapabilities": [
+      "cyber-resilience",
+      "code-modernization",
+      "strategy-advisory"
+    ],
+    "industries": [
+      "financial-services",
+      "healthcare",
+      "energy",
+      "public-sector",
+      "tmt"
+    ]
+  },
+  {
+    "id": "product-operating-model",
+    "name": {
+      "zh": "产品型运营模式",
+      "en": "Product Operating Model"
+    },
+    "problem": {
+      "zh": "传统职能型技术组织导致交付缓慢、责任不清、创新乏力。业务与技术的鸿沟持续扩大。",
+      "en": "Traditional functional technology organizations cause slow delivery, unclear accountability, and weak innovation. The business-technology gap continues to widen."
+    },
+    "approach": {
+      "zh": "将技术团队重组为以业务成果为导向的产品团队，建立 OKR 对齐、产品运营节奏和持续改进机制，并在 90 天内完成首批团队转型。",
+      "en": "Reorganize tech teams into business-outcome-oriented product teams, establish OKR alignment, product operations cadence, and continuous improvement — with first cohorts transformed in 90 days."
+    },
+    "modules": {
+      "zh": [
+        "组织诊断与设计",
+        "产品团队组建",
+        "OKR 对齐框架",
+        "产品运营手册",
+        "变革管理"
+      ],
+      "en": [
+        "Org Diagnostic & Design",
+        "Product Team Formation",
+        "OKR Alignment Framework",
+        "Product Ops Playbook",
+        "Change Management"
+      ]
+    },
+    "outcomes": {
+      "zh": "首批产品团队在 90 天内完成转型，交付周期缩短 40–60%",
+      "en": "First product teams transformed in 90 days, delivery cycle reduced 40–60%"
+    },
+    "metrics": {
+      "zh": [
+        "功能上市时间缩短 50%",
+        "团队自治度从低到高",
+        "员工敬业度提升 20 分"
+      ],
+      "en": [
+        "Feature time-to-market reduced 50%",
+        "Team autonomy from low to high",
+        "Employee engagement +20 points"
+      ]
+    },
+    "relatedCapabilities": [
+      "operating-model",
+      "strategy-advisory",
+      "code-modernization"
+    ],
+    "industries": [
+      "manufacturing",
+      "financial-services",
+      "automotive",
+      "retail-consumer",
+      "energy"
+    ]
+  },
+  {
+    "id": "legacy-to-cloud-native",
+    "name": {
+      "zh": "遗留系统云原生化",
+      "en": "Legacy-to-Cloud-Native Migration"
+    },
+    "problem": {
+      "zh": "运行超过 10 年的单体系统成为企业敏捷性的最大阻碍：变更风险高、扩展性差、运维成本持续攀升。",
+      "en": "Monolithic systems running for over 10 years have become the biggest barrier to enterprise agility: high change risk, poor scalability, and rising operational costs."
+    },
+    "approach": {
+      "zh": "采用绞杀者模式渐进式迁移，以领域驱动设计分解单体，构建云原生微服务并建立并行运行验证机制，逐步下线遗留模块。",
+      "en": "Use strangler-fig pattern for progressive migration, decompose monoliths with domain-driven design, build cloud-native microservices with parallel-run validation, gradually retire legacy modules."
+    },
+    "modules": {
+      "zh": [
+        "系统依赖拓扑分析",
+        "领域分解与边界识别",
+        "绞杀者迁移流水线",
+        "并行运行验证",
+        "遗留系统退役"
+      ],
+      "en": [
+        "System Dependency Topology",
+        "Domain Decomposition",
+        "Strangler Migration Pipeline",
+        "Parallel-Run Validation",
+        "Legacy System Retirement"
+      ]
+    },
+    "outcomes": {
+      "zh": "核心业务模块在 12–18 个月内完成迁移，零业务中断",
+      "en": "Core business modules migrated in 12–18 months with zero business disruption"
+    },
+    "metrics": {
+      "zh": [
+        "部署频率从月级提升至日级",
+        "变更失败率降低 90%",
+        "基础设施成本降低 35%"
+      ],
+      "en": [
+        "Deploy frequency from monthly to daily",
+        "Change failure rate reduced 90%",
+        "Infrastructure cost reduced 35%"
+      ]
+    },
+    "relatedCapabilities": [
+      "code-modernization",
+      "data-intelligence",
+      "cyber-resilience"
+    ],
+    "industries": [
+      "financial-services",
+      "retail-consumer",
+      "healthcare",
+      "public-sector",
+      "automotive"
+    ]
+  },
+  {
+    "id": "digital-supply-chain",
+    "name": {
+      "zh": "数字化供应链韧性",
+      "en": "Digital Supply Chain Resilience"
+    },
+    "problem": {
+      "zh": "全球供应链频繁受到地缘政治、气候与需求波动的冲击，传统计划系统无法应对实时变化。",
+      "en": "Global supply chains are frequently disrupted by geopolitics, climate, and demand volatility. Traditional planning systems cannot handle real-time changes."
+    },
+    "approach": {
+      "zh": "构建数字孪生驱动的供应链控制塔，集成实时数据、AI 预测与自主决策能力，从可视到可控再到自主优化。",
+      "en": "Build a digital-twin-driven supply chain control tower integrating real-time data, AI forecasting, and autonomous decision-making — from visibility to control to autonomous optimization."
+    },
+    "modules": {
+      "zh": [
+        "供应链数字孪生",
+        "实时可视控制塔",
+        "AI 需求预测引擎",
+        "自主补货与调度",
+        "供应商风险雷达"
+      ],
+      "en": [
+        "Supply Chain Digital Twin",
+        "Real-Time Control Tower",
+        "AI Demand Forecasting",
+        "Autonomous Replenishment",
+        "Supplier Risk Radar"
+      ]
+    },
+    "outcomes": {
+      "zh": "端到端供应链可视性从 40% 提升至 95%，库存周转率提升 25%",
+      "en": "End-to-end supply chain visibility from 40% to 95%, inventory turnover increased 25%"
+    },
+    "metrics": {
+      "zh": [
+        "缺货率降低 40%",
+        "物流成本降低 20%",
+        "供应商风险预警提前 14 天"
+      ],
+      "en": [
+        "Stockout rate reduced 40%",
+        "Logistics cost reduced 20%",
+        "Supplier risk early warning 14 days ahead"
+      ]
+    },
+    "relatedCapabilities": [
+      "data-intelligence",
+      "ai-strategy",
+      "code-modernization"
+    ],
+    "industries": [
+      "manufacturing",
+      "retail-consumer",
+      "automotive",
+      "energy"
+    ]
+  },
+  {
+    "id": "sustainable-tech-strategy",
+    "name": {
+      "zh": "可持续技术战略",
+      "en": "Sustainable Technology Strategy"
+    },
+    "problem": {
+      "zh": "企业碳中和承诺缺乏可量化的技术路线图。IT 碳排放占比持续上升，但多数企业缺乏测量和优化能力。",
+      "en": "Corporate net-zero commitments lack quantifiable technology roadmaps. IT carbon emissions continue to rise as a share, but most enterprises lack measurement and optimization capabilities."
+    },
+    "approach": {
+      "zh": "建立 IT 碳足迹基线，通过绿色架构、云优化与可持续软件工程实践，制定 3 年减排路线图并与业务目标对齐。",
+      "en": "Establish IT carbon footprint baseline, develop a 3-year emissions reduction roadmap through green architecture, cloud optimization, and sustainable software engineering — aligned with business goals."
+    },
+    "modules": {
+      "zh": [
+        "IT 碳足迹基线评估",
+        "绿色云架构设计",
+        "可持续软件工程实践",
+        "供应商碳管理",
+        "ESG 报告自动化"
+      ],
+      "en": [
+        "IT Carbon Baseline Assessment",
+        "Green Cloud Architecture",
+        "Sustainable Software Engineering",
+        "Supplier Carbon Management",
+        "ESG Report Automation"
+      ]
+    },
+    "outcomes": {
+      "zh": "IT 碳排放在 3 年内降低 30–50%，同时降低基础设施成本 20%",
+      "en": "IT carbon emissions reduced 30–50% in 3 years while reducing infrastructure costs by 20%"
+    },
+    "metrics": {
+      "zh": [
+        "PUE 优化 15–25%",
+        "云资源利用率提升 40%",
+        "ESG 报告准备时间缩短 90%"
+      ],
+      "en": [
+        "PUE improved 15–25%",
+        "Cloud resource utilization +40%",
+        "ESG report prep time reduced 90%"
+      ]
+    },
+    "relatedCapabilities": [
+      "strategy-advisory",
+      "code-modernization",
+      "data-intelligence"
+    ],
+    "industries": [
+      "energy",
+      "manufacturing",
+      "financial-services",
+      "public-sector",
+      "tmt"
+    ]
+  }
+]

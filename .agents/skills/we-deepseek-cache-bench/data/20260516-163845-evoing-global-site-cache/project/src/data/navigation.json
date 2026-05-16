@@ -1,0 +1,67 @@
+{
+  "primary": [
+    {
+      "id": "capabilities",
+      "label": {
+        "zh": "核心能力",
+        "en": "Capabilities"
+      }
+    },
+    {
+      "id": "industries",
+      "label": {
+        "zh": "行业专长",
+        "en": "Industries"
+      }
+    },
+    {
+      "id": "insights",
+      "label": {
+        "zh": "洞见",
+        "en": "Insights"
+      }
+    },
+    {
+      "id": "careers",
+      "label": {
+        "zh": "招贤纳士",
+        "en": "Careers"
+      }
+    },
+    {
+      "id": "contact",
+      "label": {
+        "zh": "联系我们",
+        "en": "Contact"
+      }
+    }
+  ],
+  "footer": {
+    "legal": [
+      {
+        "label": {
+          "zh": "隐私政策",
+          "en": "Privacy Policy"
+        },
+        "href": "#privacy"
+      },
+      {
+        "label": {
+          "zh": "使用条款",
+          "en": "Terms of Use"
+        },
+        "href": "#terms"
+      }
+    ],
+    "social": [
+      {
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/company/evoing"
+      },
+      {
+        "label": "X",
+        "href": "https://x.com/evoing"
+      }
+    ]
+  }
+}

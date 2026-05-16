@@ -1,0 +1,178 @@
+/* ============================================================
+   Evoing Methodology — 6-step engagement timeline
+   ============================================================ */
+
+.methodology-timeline {
+  position: relative;
+  padding: var(--space-xl) 0;
+}
+
+.methodology-timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border-light);
+  transform: translateX(-50%);
+}
+
+.methodology-step {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: start;
+  padding: var(--space-2xl) 0;
+  position: relative;
+}
+
+.methodology-step__marker {
+  position: absolute;
+  left: 50%;
+  top: var(--space-2xl);
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  border: 2px solid var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+  z-index: 2;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.methodology-step--active .methodology-step__marker {
+  background: var(--color-accent);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 8px rgba(201, 169, 110, 0.15);
+}
+
+.methodology-step:nth-child(odd) .methodology-step__content {
+  grid-column: 1;
+  text-align: right;
+  padding-right: var(--space-3xl);
+}
+
+.methodology-step:nth-child(even) .methodology-step__content {
+  grid-column: 2;
+  text-align: left;
+  padding-left: var(--space-3xl);
+}
+
+.methodology-step__phase {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-xs);
+}
+
+.methodology-step__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  margin-bottom: var(--space-sm);
+  line-height: var(--lh-tight);
+}
+
+.methodology-step__summary {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+.methodology-step__deliverables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.methodology-step:nth-child(odd) .methodology-step__deliverables {
+  justify-content: flex-end;
+}
+
+.methodology-step__deliverable {
+  font-size: var(--fs-xs);
+  background: var(--color-slate-50);
+  color: var(--color-slate-500);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-full);
+}
+
+.methodology-step__duration {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-slate-400);
+  margin-top: var(--space-sm);
+}
+
+.methodology-principles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+  margin-top: var(--space-5xl);
+  padding-top: var(--space-3xl);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.methodology-principle {
+  text-align: center;
+}
+
+.methodology-principle__label {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  margin-bottom: var(--space-sm);
+}
+
+.methodology-principle__desc {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-relaxed);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .methodology-timeline::before {
+    left: 24px;
+  }
+
+  .methodology-step {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .methodology-step__marker {
+    left: 24px;
+    width: 36px;
+    height: 36px;
+    font-size: var(--fs-body);
+  }
+
+  .methodology-step:nth-child(odd) .methodology-step__content,
+  .methodology-step:nth-child(even) .methodology-step__content {
+    grid-column: 1;
+    text-align: left;
+    padding-left: var(--space-3xl);
+    padding-right: 0;
+  }
+
+  .methodology-step:nth-child(odd) .methodology-step__deliverables {
+    justify-content: flex-start;
+  }
+
+  .methodology-principles {
+    grid-template-columns: 1fr;
+  }
+}

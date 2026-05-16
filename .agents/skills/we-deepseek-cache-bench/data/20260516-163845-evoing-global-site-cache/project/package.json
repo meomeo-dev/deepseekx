@@ -1,0 +1,11 @@
+{
+  "name": "evoing-global-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Evoing Global Official Website — Intelligence and Code, Code and Intelligence",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node scripts/validate.mjs"
+  },
+  "license": "UNLICENSED"
+}

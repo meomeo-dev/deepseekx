@@ -1,0 +1,127 @@
+[
+  {
+    "id": "apac",
+    "label": {
+      "zh": "亚太",
+      "en": "Asia-Pacific"
+    },
+    "offices": [
+      {
+        "city": {
+          "zh": "新加坡",
+          "en": "Singapore"
+        },
+        "hub": true
+      },
+      {
+        "city": {
+          "zh": "上海",
+          "en": "Shanghai"
+        },
+        "hub": true
+      },
+      {
+        "city": {
+          "zh": "东京",
+          "en": "Tokyo"
+        },
+        "hub": false
+      },
+      {
+        "city": {
+          "zh": "悉尼",
+          "en": "Sydney"
+        },
+        "hub": false
+      },
+      {
+        "city": {
+          "zh": "孟买",
+          "en": "Mumbai"
+        },
+        "hub": false
+      }
+    ]
+  },
+  {
+    "id": "emea",
+    "label": {
+      "zh": "欧洲、中东与非洲",
+      "en": "Europe, Middle East & Africa"
+    },
+    "offices": [
+      {
+        "city": {
+          "zh": "伦敦",
+          "en": "London"
+        },
+        "hub": true
+      },
+      {
+        "city": {
+          "zh": "柏林",
+          "en": "Berlin"
+        },
+        "hub": false
+      },
+      {
+        "city": {
+          "zh": "迪拜",
+          "en": "Dubai"
+        },
+        "hub": true
+      },
+      {
+        "city": {
+          "zh": "巴黎",
+          "en": "Paris"
+        },
+        "hub": false
+      },
+      {
+        "city": {
+          "zh": "约翰内斯堡",
+          "en": "Johannesburg"
+        },
+        "hub": false
+      }
+    ]
+  },
+  {
+    "id": "amer",
+    "label": {
+      "zh": "美洲",
+      "en": "Americas"
+    },
+    "offices": [
+      {
+        "city": {
+          "zh": "纽约",
+          "en": "New York"
+        },
+        "hub": true
+      },
+      {
+        "city": {
+          "zh": "旧金山",
+          "en": "San Francisco"
+        },
+        "hub": true
+      },
+      {
+        "city": {
+          "zh": "多伦多",
+          "en": "Toronto"
+        },
+        "hub": false
+      },
+      {
+        "city": {
+          "zh": "圣保罗",
+          "en": "São Paulo"
+        },
+        "hub": false
+      }
+    ]
+  }
+]

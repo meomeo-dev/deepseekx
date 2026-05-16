@@ -1,0 +1,110 @@
+/* ============================================================
+   Evoing Insights — article cards, filtering, grid
+   ============================================================ */
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xl);
+}
+
+.insight-card {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xl);
+  transition: all var(--duration-normal) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.insight-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.insight-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.insight-card__category {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: rgba(201, 169, 110, 0.1);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.insight-card__region {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-slate-400);
+  text-transform: uppercase;
+}
+
+.insight-card__reading-time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-slate-400);
+  margin-left: auto;
+}
+
+.insight-card__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  margin-bottom: var(--space-sm);
+  flex-grow: 0;
+}
+
+.insight-card__summary {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-relaxed);
+  flex-grow: 1;
+  margin-bottom: var(--space-md);
+}
+
+.insight-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+  color: var(--color-slate-400);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.insight-card__authors {
+  color: var(--color-text);
+  font-weight: var(--fw-medium);
+}
+
+.insight-card__date {
+  font-family: var(--font-mono);
+}
+
+/* Multi-axis filter bar */
+.filter-bar--insights {
+  gap: var(--space-sm);
+}
+
+.filter-bar--insights .filter-chip {
+  font-size: var(--fs-xs);
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+}

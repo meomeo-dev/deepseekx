@@ -48,7 +48,8 @@ description: Use when a new requirement, bug, refactor, workflow change, or
 
 - Low：文档、注释、窄范围测试、无 runtime 行为变化。
 - Medium：普通代码改动、测试改动、局部 CLI 行为变化。
-- High：发布包内容、跨平台脚本、认证、网络、删除、迁移、公开镜像。
+- High：发布包内容、跨平台脚本、认证、网络、删除、迁移、公开仓库
+  安全边界。
 - Release：版本、CHANGELOG、tag、npm publish、GitHub Release。
 
 风险为 High 或 Release 时，必须给出测试计划和回滚或停止条件。
@@ -60,7 +61,7 @@ description: Use when a new requirement, bug, refactor, workflow change, or
 - 风险等级为 High 或 Release。
 - 存在多个可行方案，且取舍影响后续维护。
 - 改动影响公开 CLI 行为、npm 包内容、CI、release 或公开仓库。
-- 涉及删除、迁移、凭据边界、公开镜像或不可轻易回滚的状态。
+- 涉及删除、迁移、凭据边界、公开仓库安全边界或不可轻易回滚的状态。
 - 用户需要 PR、发布说明或演示材料中引用决策依据。
 
 满足任一条件时，建议创建 GitHub issue 或等价需求记录：

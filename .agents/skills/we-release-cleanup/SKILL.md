@@ -8,15 +8,15 @@ description: Use after release preparation, tag push, GitHub Release, or npm
 # we-release-cleanup
 
 用于发布流程结束后的收工检查（post-release cleanup）。目标不是继续发布，
-而是确认私有仓库、公开仓库、tag、npm registry、CI、临时产物和本地分支
-都回到可继续开发的干净状态。
+而是确认当前公开仓库、tag、npm registry、CI、临时产物和本地分支都回到
+可继续开发的干净状态。
 
 默认只读检查。删除文件、删除分支、切换分支、创建新分支、重新触发 CI、
 创建 GitHub Release 或执行 npm publish 都必须由用户明确要求。
 
 ## 适用范围
 
-- `$we-release` 完成后，确认双仓库同步、tag、tarball 和工作区状态。
+- `$we-release` 完成后，确认公开仓库、tag、tarball 和工作区状态。
 - `$we-publish` 完成后，确认 npm latest、dist-tag、registry 安装和本地
   发布目录状态。
 - GitHub Release 页面创建后，确认 tag、release 页面和附件命名一致。
@@ -34,13 +34,11 @@ description: Use after release preparation, tag push, GitHub Release, or npm
 
 ## 收工不变量
 
-- 私有工作区路径是 `/Users/jin/projects/deepseekx`。
-- 公开工作区路径是 `/Users/jin/projects/deepseekx-public`。
-- 两个工作区都应在 `deepseekx/main` 或公开镜像约定分支，除非用户明确
-  要求停在 release 分支。
-- 两个工作区都应没有 tracked dirty files。
-- 私有远端必须是 `deepseekx`。
-- 公开远端必须是 `deepseekx`。
+- 当前公开工作区路径是 `/Users/jin/projects/deepseekx`。
+- GitHub 公开仓库是 `https://github.com/meomeo-dev/deepseekx`。
+- 工作区应在 `deepseekx/main`，除非用户明确要求停在 release 分支。
+- 工作区应没有 tracked dirty files。
+- `origin` 必须指向 `meomeo-dev/deepseekx`。
 - 本地 `deepseekx/main` 不应落后对应 `origin/deepseekx/main`。
 - release tag 应存在于需要记录 release 的仓库远端。
 - npm registry latest 应符合本轮发布目标；未执行 publish 时要明确说明。
@@ -56,7 +54,7 @@ description: Use after release preparation, tag push, GitHub Release, or npm
    .agents/skills/we-release-cleanup/scripts/check_release_cleanup.sh
    ```
 
-3. 查看私有和公开仓库：
+3. 查看当前公开仓库：
    - 当前分支；
    - dirty / untracked / ignored 摘要；
    - `origin/deepseekx/main...deepseekx/main` ahead/behind；
@@ -93,7 +91,7 @@ description: Use after release preparation, tag push, GitHub Release, or npm
 
 ## 常见结论
 
-- “发布准备完成，未 npm publish”：tag 和双仓库干净，但 npm latest 仍是
+- “发布准备完成，未 npm publish”：tag 和仓库干净，但 npm latest 仍是
   旧版本；下一步是 `$we-publish`。
 - “npm publish 完成”：npm latest、dist-tag、临时 registry 安装都匹配；
   下一步可以归档或开始新 feature。
@@ -142,7 +140,7 @@ PY
 
 报告：
 
-- 私有/公开仓库当前分支和 dirty 状态。
+- 当前公开仓库分支和 dirty 状态。
 - 本地/远端 tag 状态。
 - npm latest 与本地版本是否一致。
 - 最近 CI 结论和是否有平台被跳过。

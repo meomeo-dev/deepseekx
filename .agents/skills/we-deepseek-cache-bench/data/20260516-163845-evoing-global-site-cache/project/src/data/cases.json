@@ -1,0 +1,92 @@
+[
+  {
+    "id": "bank-ai-platform",
+    "title": {
+      "zh": "某全球银行 AI 平台构建",
+      "en": "Global Bank AI Platform Build"
+    },
+    "industry": "financial-services",
+    "region": "emea",
+    "capability": "ai-strategy",
+    "summary": {
+      "zh": "为一家欧洲顶级银行设计并交付企业级 AI 平台，覆盖 12 个业务线，模型推理延迟降低 60%。",
+      "en": "Designed and delivered an enterprise AI platform for a top European bank, covering 12 business lines with 60% lower model inference latency."
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "推理延迟降低",
+          "en": "Inference latency reduction"
+        },
+        "value": "60%"
+      },
+      {
+        "label": {
+          "zh": "覆盖业务线",
+          "en": "Business lines covered"
+        },
+        "value": "12"
+      }
+    ]
+  },
+  {
+    "id": "retail-platform-migration",
+    "title": {
+      "zh": "零售巨头云原生迁移",
+      "en": "Retail Giant Cloud-Native Migration"
+    },
+    "industry": "retail-consumer",
+    "region": "amer",
+    "capability": "code-modernization",
+    "summary": {
+      "zh": "协助一家北美零售巨头将单体遗留系统迁移至云原生微服务架构，部署频率提升 8 倍。",
+      "en": "Helped a North American retail giant migrate from monolith to cloud-native microservices, increasing deployment frequency 8x."
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "部署频率提升",
+          "en": "Deployment frequency increase"
+        },
+        "value": "8x"
+      },
+      {
+        "label": {
+          "zh": "系统可用性",
+          "en": "System availability"
+        },
+        "value": "99.99%"
+      }
+    ]
+  },
+  {
+    "id": "manufacturing-operating-model",
+    "title": {
+      "zh": "先进制造运营模式重塑",
+      "en": "Advanced Manufacturing Op Model Redesign"
+    },
+    "industry": "manufacturing",
+    "region": "apac",
+    "capability": "operating-model",
+    "summary": {
+      "zh": "为一家中国先进制造企业重塑技术组织，从职能型结构转型为产品型组织，交付周期缩短 40%。",
+      "en": "Reshaped the technology organization for a Chinese advanced manufacturer, transforming from functional to product-oriented structure, reducing delivery cycle by 40%."
+    },
+    "metrics": [
+      {
+        "label": {
+          "zh": "交付周期缩短",
+          "en": "Delivery cycle reduction"
+        },
+        "value": "40%"
+      },
+      {
+        "label": {
+          "zh": "工程师满意度提升",
+          "en": "Engineer satisfaction lift"
+        },
+        "value": "+35%"
+      }
+    ]
+  }
+]

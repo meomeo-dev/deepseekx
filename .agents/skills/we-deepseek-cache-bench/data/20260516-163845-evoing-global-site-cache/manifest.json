@@ -1,0 +1,141 @@
+{
+  "caseId": "20260516-163845-evoing-global-site-cache",
+  "model": "deepseek-v4-pro",
+  "modelProvider": "deepseek",
+  "threadId": "019e2ff1-213e-7f10-918e-56ff4313a1e6",
+  "previewPort": 5173,
+  "reasoningEfforts": [
+    "high"
+  ],
+  "modelContextWindow": 364800,
+  "lineCount": {
+    "lineCount": 12321,
+    "fileCount": 69,
+    "topFiles": [
+      [
+        1316,
+        "src/data/case-studies.json"
+      ],
+      [
+        706,
+        "src/data/articles.json"
+      ],
+      [
+        618,
+        "src/css/components.css"
+      ],
+      [
+        557,
+        "src/data/service-catalog.json"
+      ],
+      [
+        476,
+        "src/data/client-journeys.json"
+      ],
+      [
+        472,
+        "src/data/solutions.json"
+      ],
+      [
+        440,
+        "src/data/offices.json"
+      ],
+      [
+        410,
+        "src/data/resources.json"
+      ],
+      [
+        394,
+        "src/data/delivery-model.json"
+      ],
+      [
+        383,
+        "src/data/value-models.json"
+      ],
+      [
+        327,
+        "src/data/partners.json"
+      ],
+      [
+        327,
+        "src/data/careers.json"
+      ],
+      [
+        320,
+        "src/data/industry-deep.json"
+      ],
+      [
+        302,
+        "src/data/leadership.json"
+      ],
+      [
+        266,
+        "src/data/insights.json"
+      ],
+      [
+        230,
+        "src/data/methodology.json"
+      ],
+      [
+        230,
+        "src/data/capabilities.json"
+      ],
+      [
+        222,
+        "src/data/brand-assets.json"
+      ],
+      [
+        217,
+        "src/css/careers.css"
+      ],
+      [
+        216,
+        "src/data/trust.json"
+      ],
+      [
+        216,
+        "src/data/briefings.json"
+      ],
+      [
+        212,
+        "src/css/articles.css"
+      ],
+      [
+        195,
+        "src/css/solutions.css"
+      ],
+      [
+        193,
+        "src/css/case-studies.css"
+      ],
+      [
+        178,
+        "src/css/methodology.css"
+      ],
+      [
+        162,
+        "src/css/brand.css"
+      ],
+      [
+        153,
+        "src/css/industry-detail.css"
+      ],
+      [
+        135,
+        "src/js/industry-detail.js"
+      ],
+      [
+        130,
+        "src/css/offices.css"
+      ],
+      [
+        127,
+        "src/data/regions.json"
+      ]
+    ]
+  },
+  "workspaceSource": "/private/tmp/deepseek-cache-bench-export-20260516-163845-evoing-global-site-cache/workspace",
+  "reportSource": "/private/tmp/deepseek-cache-bench-export-20260516-163845-evoing-global-site-cache/experiment",
+  "startCommand": "npm start",
+  "notes": "Full DeepSeekX cache benchmark using minimal /skill mount and npm-installed @meomeo-dev/deepseekx@latest; Evoing global consulting website for 智能及代码，代码及智能."
+}

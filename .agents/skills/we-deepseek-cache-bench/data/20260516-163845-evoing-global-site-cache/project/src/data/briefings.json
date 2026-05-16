@@ -1,0 +1,216 @@
+{
+  "title": {
+    "zh": "高管简报生成器",
+    "en": "Executive Briefing Builder"
+  },
+  "subtitle": {
+    "zh": "按角色、行业和目标生成定制化高管简报议程",
+    "en": "Generate a customized executive briefing agenda by role, industry, and objective"
+  },
+  "roles": [
+    {
+      "id": "ceo",
+      "label": {
+        "zh": "CEO / 总裁",
+        "en": "CEO / President"
+      },
+      "focusAreas": {
+        "zh": [
+          "AI 战略愿景",
+          "竞争优势",
+          "投资回报",
+          "组织变革"
+        ],
+        "en": [
+          "AI Strategic Vision",
+          "Competitive Advantage",
+          "Investment Returns",
+          "Organizational Change"
+        ]
+      }
+    },
+    {
+      "id": "cto",
+      "label": {
+        "zh": "CTO / 技术副总裁",
+        "en": "CTO / VP Engineering"
+      },
+      "focusAreas": {
+        "zh": [
+          "技术架构",
+          "平台工程",
+          "开发者体验",
+          "技术债务"
+        ],
+        "en": [
+          "Technical Architecture",
+          "Platform Engineering",
+          "Developer Experience",
+          "Technical Debt"
+        ]
+      }
+    },
+    {
+      "id": "cfo",
+      "label": {
+        "zh": "CFO / 财务副总裁",
+        "en": "CFO / VP Finance"
+      },
+      "focusAreas": {
+        "zh": [
+          "投资回报分析",
+          "成本优化",
+          "风险管理",
+          "并购尽调"
+        ],
+        "en": [
+          "ROI Analysis",
+          "Cost Optimization",
+          "Risk Management",
+          "M&A Due Diligence"
+        ]
+      }
+    },
+    {
+      "id": "chro",
+      "label": {
+        "zh": "CHRO / 人力副总裁",
+        "en": "CHRO / VP People"
+      },
+      "focusAreas": {
+        "zh": [
+          "人才战略",
+          "技能提升",
+          "文化变革",
+          "组织设计"
+        ],
+        "en": [
+          "Talent Strategy",
+          "Upskilling",
+          "Culture Change",
+          "Org Design"
+        ]
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "id": "explore",
+      "label": {
+        "zh": "探索了解",
+        "en": "Explore & Learn"
+      },
+      "duration": "60 min",
+      "agenda": {
+        "zh": [
+          "公司能力概览 (10 min)",
+          "行业趋势与对标 (15 min)",
+          "相关案例分享 (20 min)",
+          "Q&A 与下一步 (15 min)"
+        ],
+        "en": [
+          "Company Overview (10 min)",
+          "Industry Trends & Benchmarks (15 min)",
+          "Relevant Case Sharing (20 min)",
+          "Q&A & Next Steps (15 min)"
+        ]
+      }
+    },
+    {
+      "id": "evaluate",
+      "label": {
+        "zh": "评估验证",
+        "en": "Evaluate & Validate"
+      },
+      "duration": "120 min",
+      "agenda": {
+        "zh": [
+          "业务挑战诊断 (20 min)",
+          "方案框架展示 (25 min)",
+          "技术/组织深度研讨 (30 min)",
+          "价值模型与 ROI 预测 (20 min)",
+          "实施路径与时间线 (15 min)",
+          "Q&A 与决策点 (10 min)"
+        ],
+        "en": [
+          "Business Challenge Diagnosis (20 min)",
+          "Solution Framework (25 min)",
+          "Technical/Org Deep-Dive (30 min)",
+          "Value Model & ROI Forecast (20 min)",
+          "Implementation Path & Timeline (15 min)",
+          "Q&A & Decision Points (10 min)"
+        ]
+      }
+    },
+    {
+      "id": "commit",
+      "label": {
+        "zh": "决策合作",
+        "en": "Commit & Partner"
+      },
+      "duration": "180 min",
+      "agenda": {
+        "zh": [
+          "联合愿景工作坊 (30 min)",
+          "详细方案与团队模型 (25 min)",
+          "合同与商业条款 (20 min)",
+          "首批里程碑与成功指标 (20 min)",
+          "治理与沟通节奏 (15 min)",
+          "正式启动计划 (10 min)"
+        ],
+        "en": [
+          "Joint Vision Workshop (30 min)",
+          "Detailed Proposal & Team Model (25 min)",
+          "Contract & Commercial Terms (20 min)",
+          "First Milestones & Success Metrics (20 min)",
+          "Governance & Communication Cadence (15 min)",
+          "Formal Kickoff Plan (10 min)"
+        ]
+      }
+    }
+  ],
+  "industries": [
+    {
+      "id": "financial-services",
+      "label": {
+        "zh": "金融服务",
+        "en": "Financial Services"
+      }
+    },
+    {
+      "id": "manufacturing",
+      "label": {
+        "zh": "先进制造",
+        "en": "Advanced Manufacturing"
+      }
+    },
+    {
+      "id": "healthcare",
+      "label": {
+        "zh": "医疗健康",
+        "en": "Healthcare"
+      }
+    },
+    {
+      "id": "energy",
+      "label": {
+        "zh": "能源与碳中和",
+        "en": "Energy & Net Zero"
+      }
+    },
+    {
+      "id": "tmt",
+      "label": {
+        "zh": "科技媒体电信",
+        "en": "TMT"
+      }
+    },
+    {
+      "id": "retail-consumer",
+      "label": {
+        "zh": "零售与消费品",
+        "en": "Retail & Consumer"
+      }
+    }
+  ]
+}

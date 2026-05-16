@@ -1,0 +1,269 @@
+validationUtc=2026-05-16T11:00:36Z
+
+> evoing-global-site@1.0.0 test
+> node scripts/validate.mjs
+
+
+=== Evoing Site Validation ===
+
+1. Files
+  PASS  package.json
+  PASS  server.mjs
+  PASS  scripts/validate.mjs
+  PASS  src/index.html
+  PASS  src/css/brand.css
+  PASS  src/css/layout.css
+  PASS  src/css/components.css
+  PASS  src/css/main.css
+  PASS  src/css/methodology.css
+  PASS  src/css/industry-detail.css
+  PASS  src/css/leadership.css
+  PASS  src/css/solutions.css
+  PASS  src/css/case-studies.css
+  PASS  src/css/articles.css
+  PASS  src/css/offices.css
+  PASS  src/css/careers.css
+  PASS  src/css/trust.css
+  PASS  src/css/journeys.css
+  PASS  src/css/resources.css
+  PASS  src/css/partners.css
+  PASS  src/css/brand-assets.css
+  PASS  src/css/value-calc.css
+  PASS  src/css/briefings.css
+  PASS  src/css/delivery-model.css
+  PASS  src/js/i18n.js
+  PASS  src/js/navigation.js
+  PASS  src/js/filter.js
+  PASS  src/js/main.js
+  PASS  src/js/articles.js
+  PASS  src/js/contact.js
+  PASS  src/js/methodology.js
+  PASS  src/js/industry-detail.js
+  PASS  src/js/solutions.js
+  PASS  src/js/case-studies.js
+  PASS  src/js/offices.js
+  PASS  src/js/careers.js
+  PASS  src/js/trust.js
+  PASS  src/js/journeys.js
+  PASS  src/js/resources.js
+  PASS  src/js/partners.js
+  PASS  src/js/brand-assets.js
+  PASS  src/js/value-calc.js
+  PASS  src/js/briefings.js
+  PASS  src/js/delivery-model.js
+  PASS  src/data/navigation.json
+  PASS  src/data/capabilities.json
+  PASS  src/data/industries.json
+  PASS  src/data/regions.json
+  PASS  src/data/cases.json
+  PASS  src/data/methodology.json
+  PASS  src/data/service-catalog.json
+  PASS  src/data/industry-deep.json
+  PASS  src/data/insights.json
+  PASS  src/data/leadership.json
+  PASS  src/data/solutions.json
+  PASS  src/data/case-studies.json
+  PASS  src/data/articles.json
+  PASS  src/data/offices.json
+  PASS  src/data/careers.json
+  PASS  src/data/trust.json
+  PASS  src/data/client-journeys.json
+  PASS  src/data/resources.json
+  PASS  src/data/partners.json
+  PASS  src/data/brand-assets.json
+  PASS  src/data/value-models.json
+  PASS  src/data/briefings.json
+  PASS  src/data/delivery-model.json
+
+2. JSON
+  PASS  case-studies >= 10
+  PASS  case[0] has deep fields
+  PASS  case[1] has deep fields
+  PASS  case[2] has deep fields
+  PASS  case[3] has deep fields
+  PASS  case[4] has deep fields
+  PASS  case[5] has deep fields
+  PASS  case[6] has deep fields
+  PASS  case[7] has deep fields
+  PASS  case[8] has deep fields
+  PASS  case[9] has deep fields
+  PASS  articles >= 12
+  PASS  article[0] has keyTakeaways+relatedCaps
+  PASS  article[1] has keyTakeaways+relatedCaps
+  PASS  article[2] has keyTakeaways+relatedCaps
+  PASS  article[3] has keyTakeaways+relatedCaps
+  PASS  article[4] has keyTakeaways+relatedCaps
+  PASS  article[5] has keyTakeaways+relatedCaps
+  PASS  article[6] has keyTakeaways+relatedCaps
+  PASS  article[7] has keyTakeaways+relatedCaps
+  PASS  article[8] has keyTakeaways+relatedCaps
+  PASS  article[9] has keyTakeaways+relatedCaps
+  PASS  article[10] has keyTakeaways+relatedCaps
+  PASS  article[11] has keyTakeaways+relatedCaps
+  PASS  resources >= 12
+  PASS  resource[0] has audience+whatYouWillLearn
+  PASS  resource[1] has audience+whatYouWillLearn
+  PASS  resource[2] has audience+whatYouWillLearn
+  PASS  resource[3] has audience+whatYouWillLearn
+  PASS  resource[4] has audience+whatYouWillLearn
+  PASS  resource[5] has audience+whatYouWillLearn
+  PASS  resource[6] has audience+whatYouWillLearn
+  PASS  resource[7] has audience+whatYouWillLearn
+  PASS  resource[8] has audience+whatYouWillLearn
+  PASS  resource[9] has audience+whatYouWillLearn
+  PASS  resource[10] has audience+whatYouWillLearn
+  PASS  resource[11] has audience+whatYouWillLearn
+  PASS  solutions >= 8
+  PASS  value-models 4 scenarios
+  PASS  briefings has roles+objectives+industries
+  PASS  delivery-model has all sections
+  PASS  trust ok
+  PASS  partners ok
+  PASS  caps ok
+  PASS  inds ok
+
+3. HTML sections
+  PASS  #hero
+  PASS  #capabilities
+  PASS  #trust
+  PASS  #solutions
+  PASS  #services
+  PASS  #methodology
+  PASS  #value-calc
+  PASS  #case-studies
+  PASS  #journeys
+  PASS  #briefings
+  PASS  #industries
+  PASS  #partners
+  PASS  #delivery
+  PASS  #offices
+  PASS  #insights
+  PASS  #resources
+  PASS  #leadership
+  PASS  #brand
+  PASS  #careers-sec
+  PASS  #contact
+
+4. JS depth
+  PASS  trust.js > 100 chars
+  PASS  partners.js > 100 chars
+  PASS  brand-assets.js > 100 chars
+  PASS  value-calc.js has recalc logic
+  PASS  briefings.js interactive
+  PASS  delivery-model.js > 100 chars
+
+5. Business rules
+  PASS  case bank-ai-platform ind
+  PASS  case retail-platform-migration ind
+  PASS  case manufacturing-operating-model ind
+  PASS  case healthcare-fhir-platform ind
+  PASS  case energy-digital-twin ind
+  PASS  case gov-digital-platform ind
+  PASS  case automotive-sdv-platform ind
+  PASS  case tmt-ad-platform ind
+  PASS  case insurtech-ai-underwriting ind
+  PASS  case logistics-digital-control-tower ind
+  PASS  sol ai-native-enterprise cap ai-strategy
+  PASS  sol ai-native-enterprise cap code-modernization
+  PASS  sol ai-native-enterprise cap data-intelligence
+  PASS  sol platform-engineering-foundation cap code-modernization
+  PASS  sol platform-engineering-foundation cap operating-model
+  PASS  sol platform-engineering-foundation cap cyber-resilience
+  PASS  sol data-mesh-modernization cap data-intelligence
+  PASS  sol data-mesh-modernization cap code-modernization
+  PASS  sol data-mesh-modernization cap operating-model
+  PASS  sol zero-trust-enterprise cap cyber-resilience
+  PASS  sol zero-trust-enterprise cap code-modernization
+  PASS  sol zero-trust-enterprise cap strategy-advisory
+  PASS  sol product-operating-model cap operating-model
+  PASS  sol product-operating-model cap strategy-advisory
+  PASS  sol product-operating-model cap code-modernization
+  PASS  sol legacy-to-cloud-native cap code-modernization
+  PASS  sol legacy-to-cloud-native cap data-intelligence
+  PASS  sol legacy-to-cloud-native cap cyber-resilience
+  PASS  sol digital-supply-chain cap data-intelligence
+  PASS  sol digital-supply-chain cap ai-strategy
+  PASS  sol digital-supply-chain cap code-modernization
+  PASS  sol sustainable-tech-strategy cap strategy-advisory
+  PASS  sol sustainable-tech-strategy cap code-modernization
+  PASS  sol sustainable-tech-strategy cap data-intelligence
+
+6. Server
+  PASS  server ok
+
+7. Line count
+     12  package.json
+     59  server.mjs
+     87  scripts/validate.mjs
+    116  src/index.html
+    163  src/css/brand.css
+     95  src/css/layout.css
+    619  src/css/components.css
+     28  src/css/main.css
+    179  src/css/methodology.css
+    154  src/css/industry-detail.css
+     85  src/css/leadership.css
+    196  src/css/solutions.css
+    194  src/css/case-studies.css
+    213  src/css/articles.css
+    131  src/css/offices.css
+    218  src/css/careers.css
+     23  src/css/trust.css
+     33  src/css/journeys.css
+     30  src/css/resources.css
+     25  src/css/partners.css
+     49  src/css/brand-assets.css
+     19  src/css/value-calc.css
+     18  src/css/briefings.css
+     38  src/css/delivery-model.css
+     71  src/js/i18n.js
+     73  src/js/navigation.js
+     42  src/js/filter.js
+     45  src/js/main.js
+    120  src/js/articles.js
+    102  src/js/contact.js
+     34  src/js/methodology.js
+    136  src/js/industry-detail.js
+    114  src/js/solutions.js
+    124  src/js/case-studies.js
+     31  src/js/offices.js
+     33  src/js/careers.js
+     28  src/js/trust.js
+     22  src/js/journeys.js
+     69  src/js/resources.js
+     22  src/js/partners.js
+     22  src/js/brand-assets.js
+     64  src/js/value-calc.js
+     49  src/js/briefings.js
+     19  src/js/delivery-model.js
+     67  src/data/navigation.json
+    230  src/data/capabilities.json
+     98  src/data/industries.json
+    127  src/data/regions.json
+     92  src/data/cases.json
+    230  src/data/methodology.json
+    557  src/data/service-catalog.json
+    320  src/data/industry-deep.json
+    266  src/data/insights.json
+    302  src/data/leadership.json
+    472  src/data/solutions.json
+   1316  src/data/case-studies.json
+    706  src/data/articles.json
+    440  src/data/offices.json
+    327  src/data/careers.json
+    216  src/data/trust.json
+    476  src/data/client-journeys.json
+    410  src/data/resources.json
+    327  src/data/partners.json
+    222  src/data/brand-assets.json
+    383  src/data/value-models.json
+    216  src/data/briefings.json
+    394  src/data/delivery-model.json
+  -----
+  12198  TOTAL
+
+=== Summary ===
+  Checks: 173  Passed: 173  Failed: 0
+  PASS: first-party lines (12198) >= 10,000.
+
+  PASSED.

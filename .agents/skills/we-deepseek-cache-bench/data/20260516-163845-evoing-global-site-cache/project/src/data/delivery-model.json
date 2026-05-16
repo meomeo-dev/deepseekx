@@ -1,0 +1,394 @@
+{
+  "title": {
+    "zh": "全球交付模式",
+    "en": "Global Delivery Model"
+  },
+  "subtitle": {
+    "zh": "从战略咨询到工程交付，我们的全球团队如何协同工作",
+    "en": "How our global teams collaborate from strategy advisory to engineering delivery"
+  },
+  "engagementModels": [
+    {
+      "id": "strategic-advisory",
+      "label": {
+        "zh": "战略咨询模式",
+        "en": "Strategic Advisory"
+      },
+      "desc": {
+        "zh": "由合伙人带领的小型专家团队，专注于战略、诊断和路线图设计。典型团队 3-6 人，周期 6-12 周。",
+        "en": "Small expert team led by a Partner, focused on strategy, diagnosis, and roadmap design. Typical team 3-6, duration 6-12 weeks."
+      },
+      "teamComposition": {
+        "zh": [
+          "合伙人 (1)",
+          "高级顾问 (1-2)",
+          "行业专家 (1-2)",
+          "项目经理 (1)"
+        ],
+        "en": [
+          "Partner (1)",
+          "Senior Consultant (1-2)",
+          "Industry Expert (1-2)",
+          "Project Manager (1)"
+        ]
+      },
+      "cadence": {
+        "zh": "周度客户同步、双周度指导委员会、月度交付成果评审",
+        "en": "Weekly client sync, bi-weekly steering committee, monthly deliverable review"
+      }
+    },
+    {
+      "id": "embedded-squad",
+      "label": {
+        "zh": "嵌入式 Squad",
+        "en": "Embedded Squad"
+      },
+      "desc": {
+        "zh": "Evoing 工程师嵌入客户团队，与客户工程师并肩工作。典型 squad 4-8 人，周期 12-24 周。",
+        "en": "Evoing engineers embedded in client teams, working alongside client engineers. Typical squad 4-8, duration 12-24 weeks."
+      },
+      "teamComposition": {
+        "zh": [
+          "技术负责人 (1)",
+          "高级工程师 (2-4)",
+          "平台/DevOps 工程师 (1-2)",
+          "QA 工程师 (1)"
+        ],
+        "en": [
+          "Tech Lead (1)",
+          "Senior Engineers (2-4)",
+          "Platform/DevOps Engineer (1-2)",
+          "QA Engineer (1)"
+        ]
+      },
+      "cadence": {
+        "zh": "每日站会、双周 Sprint 评审、月度技术深度评审",
+        "en": "Daily standup, bi-weekly Sprint review, monthly technical deep-dive"
+      }
+    },
+    {
+      "id": "dedicated-pod",
+      "label": {
+        "zh": "专属 Pod",
+        "en": "Dedicated Pod"
+      },
+      "desc": {
+        "zh": "Evoing 独立交付团队，通过明确的接口与客户团队协作。典型 pod 8-15 人，周期 6-18 个月。",
+        "en": "Independent Evoing delivery team collaborating with client through defined interfaces. Typical pod 8-15, duration 6-18 months."
+      },
+      "teamComposition": {
+        "zh": [
+          "交付总监 (1)",
+          "技术架构师 (1-2)",
+          "工程师 (4-8)",
+          "QA 工程师 (2-3)",
+          "项目经理 (1)"
+        ],
+        "en": [
+          "Delivery Director (1)",
+          "Technical Architect (1-2)",
+          "Engineers (4-8)",
+          "QA Engineers (2-3)",
+          "Project Manager (1)"
+        ]
+      },
+      "cadence": {
+        "zh": "每日内部站会、周度客户同步、双周度交付评审、月度指导委员会",
+        "en": "Daily internal standup, weekly client sync, bi-weekly delivery review, monthly steering committee"
+      }
+    },
+    {
+      "id": "global-program",
+      "label": {
+        "zh": "全球项目群",
+        "en": "Global Program"
+      },
+      "desc": {
+        "zh": "跨多个地区和业务线的大型转型项目。典型团队 30-80 人，周期 12-36 个月。",
+        "en": "Large-scale transformation across multiple regions and business lines. Typical team 30-80, duration 12-36 months."
+      },
+      "teamComposition": {
+        "zh": [
+          "项目群总监 (1)",
+          "区域交付负责人 (每区域 1)",
+          "技术架构委员会 (3-5)",
+          "工程师 (15-40)",
+          "变革管理 (2-4)",
+          "PMO (2-3)"
+        ],
+        "en": [
+          "Program Director (1)",
+          "Regional Delivery Leads (1 per region)",
+          "Architecture Board (3-5)",
+          "Engineers (15-40)",
+          "Change Management (2-4)",
+          "PMO (2-3)"
+        ]
+      },
+      "cadence": {
+        "zh": "日度区域站会、周度项目群同步、双周度指导委员会、季度执行评审",
+        "en": "Daily regional standups, weekly program sync, bi-weekly steering committee, quarterly executive review"
+      }
+    }
+  ],
+  "globalDeliveryCenters": [
+    {
+      "city": {
+        "zh": "上海",
+        "en": "Shanghai"
+      },
+      "region": "apac",
+      "capabilities": {
+        "zh": [
+          "AI/ML 工程",
+          "云原生开发",
+          "移动与前端"
+        ],
+        "en": [
+          "AI/ML Engineering",
+          "Cloud-Native Development",
+          "Mobile & Frontend"
+        ]
+      },
+      "headcount": 120
+    },
+    {
+      "city": {
+        "zh": "新加坡",
+        "en": "Singapore"
+      },
+      "region": "apac",
+      "capabilities": {
+        "zh": [
+          "战略咨询",
+          "AI 战略",
+          "金融科技"
+        ],
+        "en": [
+          "Strategy Consulting",
+          "AI Strategy",
+          "Fintech"
+        ]
+      },
+      "headcount": 80
+    },
+    {
+      "city": {
+        "zh": "孟买",
+        "en": "Mumbai"
+      },
+      "region": "apac",
+      "capabilities": {
+        "zh": [
+          "应用开发",
+          "测试自动化",
+          "数据工程"
+        ],
+        "en": [
+          "App Development",
+          "Test Automation",
+          "Data Engineering"
+        ]
+      },
+      "headcount": 150
+    },
+    {
+      "city": {
+        "zh": "伦敦",
+        "en": "London"
+      },
+      "region": "emea",
+      "capabilities": {
+        "zh": [
+          "金融服务",
+          "战略咨询",
+          "监管科技"
+        ],
+        "en": [
+          "Financial Services",
+          "Strategy Consulting",
+          "RegTech"
+        ]
+      },
+      "headcount": 90
+    },
+    {
+      "city": {
+        "zh": "纽约",
+        "en": "New York"
+      },
+      "region": "amer",
+      "capabilities": {
+        "zh": [
+          "战略咨询",
+          "并购尽调",
+          "金融服务"
+        ],
+        "en": [
+          "Strategy Consulting",
+          "M&A Due Diligence",
+          "Financial Services"
+        ]
+      },
+      "headcount": 70
+    },
+    {
+      "city": {
+        "zh": "旧金山",
+        "en": "San Francisco"
+      },
+      "region": "amer",
+      "capabilities": {
+        "zh": [
+          "平台工程",
+          "AI 工程化",
+          "DevEx"
+        ],
+        "en": [
+          "Platform Engineering",
+          "AI Engineering",
+          "DevEx"
+        ]
+      },
+      "headcount": 60
+    }
+  ],
+  "governanceFramework": {
+    "levels": [
+      {
+        "level": "Executive",
+        "label": {
+          "zh": "执行层",
+          "en": "Executive"
+        },
+        "participants": {
+          "zh": "Evoing 合伙人 + 客户 C-suite",
+          "en": "Evoing Partner + Client C-suite"
+        },
+        "frequency": {
+          "zh": "季度",
+          "en": "Quarterly"
+        },
+        "focus": {
+          "zh": "战略对齐、价值实现、关系健康度",
+          "en": "Strategic alignment, value realization, relationship health"
+        }
+      },
+      {
+        "level": "Steering",
+        "label": {
+          "zh": "指导委员会",
+          "en": "Steering Committee"
+        },
+        "participants": {
+          "zh": "Evoing 交付总监 + 客户 VP",
+          "en": "Evoing Delivery Director + Client VP"
+        },
+        "frequency": {
+          "zh": "月度",
+          "en": "Monthly"
+        },
+        "focus": {
+          "zh": "里程碑追踪、风险升级、资源调配",
+          "en": "Milestone tracking, risk escalation, resource allocation"
+        }
+      },
+      {
+        "level": "Delivery",
+        "label": {
+          "zh": "交付层",
+          "en": "Delivery"
+        },
+        "participants": {
+          "zh": "Evoing 技术负责人 + 客户技术负责人",
+          "en": "Evoing Tech Lead + Client Tech Lead"
+        },
+        "frequency": {
+          "zh": "周度",
+          "en": "Weekly"
+        },
+        "focus": {
+          "zh": "Sprint 进度、技术决策、阻塞项清除",
+          "en": "Sprint progress, technical decisions, blocker removal"
+        }
+      },
+      {
+        "level": "Operational",
+        "label": {
+          "zh": "运营层",
+          "en": "Operational"
+        },
+        "participants": {
+          "zh": "联合工程团队",
+          "en": "Joint Engineering Team"
+        },
+        "frequency": {
+          "zh": "每日",
+          "en": "Daily"
+        },
+        "focus": {
+          "zh": "站会、代码审查、持续集成",
+          "en": "Standup, code review, CI/CD"
+        }
+      }
+    ]
+  },
+  "qualityFramework": {
+    "pillars": [
+      {
+        "label": {
+          "zh": "代码质量",
+          "en": "Code Quality"
+        },
+        "practices": {
+          "zh": [
+            "SAST/DAST 扫描",
+            "同行代码审查",
+            "自动化测试覆盖率 > 80%"
+          ],
+          "en": [
+            "SAST/DAST scanning",
+            "Peer code review",
+            "Automated test coverage > 80%"
+          ]
+        }
+      },
+      {
+        "label": {
+          "zh": "交付节奏",
+          "en": "Delivery Cadence"
+        },
+        "practices": {
+          "zh": [
+            "双周 Sprint",
+            "持续集成/持续部署",
+            "DORA 指标追踪"
+          ],
+          "en": [
+            "Bi-weekly Sprints",
+            "CI/CD",
+            "DORA metrics tracking"
+          ]
+        }
+      },
+      {
+        "label": {
+          "zh": "知识转移",
+          "en": "Knowledge Transfer"
+        },
+        "practices": {
+          "zh": [
+            "结对编程",
+            "文档即代码",
+            "毕业标准：客户团队独立运营 4 周"
+          ],
+          "en": [
+            "Pair programming",
+            "Docs-as-code",
+            "Graduation criteria: 4 weeks of independent client ops"
+          ]
+        }
+      }
+    ]
+  }
+}

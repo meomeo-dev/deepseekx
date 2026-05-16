@@ -32,8 +32,8 @@ WE skill，或判断不建议使用 WE skill 时应采用什么普通流程。
 - 不管理 git worktree；并行 worktree 使用 `$we-worktree-dev`。
 - 不维护 CI；CI 创建、调试和运行使用 `$we-ci-maintenance`。
 - 不判断发布候选状态；发布前判断使用 `$we-release-readiness`。
-- 不准备双仓库 release；发布准备使用 `$we-release`。
-- 不检查或同步公开镜像；公开镜像使用 `$we-public-sync`。
+- 不准备 release；发布准备使用 `$we-release`。
+- 不检查公开仓库安全边界；公开检查使用 `$we-public-sync`。
 - 不执行 npm publish；npm 发布使用 `$we-publish`。
 - 不做发布后收工检查；发布收尾使用 `$we-release-cleanup`。
 - 不做 WE 技能集合基准审计；技能审计使用 `$we-skill-audit`。
@@ -56,14 +56,14 @@ WE skill，或判断不建议使用 WE skill 时应采用什么普通流程。
   查看、成本控制和 release preflight CI。
 - `$we-release-readiness`：发布前候选检查，判断目标版本、CHANGELOG、
   Windows CI、GitHub Release 页面和发布阻塞项。
-- `$we-release`：版本号、CHANGELOG、双仓库清洗同步、发布准备、
+- `$we-release`：版本号、CHANGELOG、公开仓库检查、发布准备、
   GitHub Release 页面和 release artifact 策略。
-- `$we-public-sync`：公开仓库清洗同步、泄漏扫描、公开 metadata
-  和公开镜像发布前验证。
+- `$we-public-sync`：当前公开仓库安全检查、泄漏扫描、公开 metadata
+  和过期镜像假设验证。
 - `$we-publish`：npm registry 发布、`npm publish`、registry post-check
   和发布后临时安装验证。
 - `$we-release-cleanup`：发布、tag、GitHub Release 或 npm publish
-  之后检查双仓库、分支、tag、CI、npm latest 和本地产物是否收干净。
+  之后检查公开仓库、分支、tag、CI、npm latest 和本地产物是否收干净。
 - `$we-skill-audit`：复制专业流程基准 DOT，重新审计当前 WE
   技能集合，输出覆盖、取舍、缺口和补强建议。
 - `$we-skill-init`：从 bundled templates 初始化项目本地 WE 技能集合，
@@ -94,7 +94,7 @@ WE skill，或判断不建议使用 WE skill 时应采用什么普通流程。
    使用 `$we-release-readiness`。
 9. 请求是准备 release、版本、tag、release notes 或 release 文件：
    使用 `$we-release`。
-10. 请求是公开仓库同步、公开镜像、泄漏扫描或 public metadata：
+10. 请求是公开仓库安全检查、泄漏扫描、public metadata 或过期镜像假设：
    使用 `$we-public-sync`。
 11. 请求是执行 npm publish、查询 npm latest、验证 registry 安装：
    使用 `$we-publish`。
@@ -195,8 +195,7 @@ release-cleanup
 
 ```text
 target:
-- private repo: deepseekx/main clean, origin/deepseekx/main up to date
-- public repo: untouched or synced, depending on path
+- public repo: `deepseekx/main` clean, origin/deepseekx/main up to date
 - npm: unchanged unless publish path is selected
 - CI: not triggered unless ci-maintenance path is selected
 ```

@@ -1,0 +1,22 @@
+/* ============================================================
+   Evoing Trust & Governance
+   ============================================================ */
+.trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-xl); }
+.trust-card { background: var(--color-bg-alt); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); padding: var(--space-2xl); transition: all var(--duration-normal) var(--ease-out); }
+.trust-card:hover { border-color: var(--color-accent); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.trust-card__header { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); }
+.trust-card__icon { font-size: 1.8rem; }
+.trust-card__label { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-semibold); }
+.trust-card__summary { font-size: var(--fs-small); color: var(--color-text-secondary); line-height: var(--lh-relaxed); margin-bottom: var(--space-md); }
+.trust-card__frameworks { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: var(--space-md); }
+.trust-card__fw-tag { font-size: var(--fs-xs); background: rgba(201,169,110,0.1); color: var(--color-accent); padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-full); font-weight: var(--fw-medium); }
+.trust-card__commitments { border-top: 1px solid var(--color-border-light); padding-top: var(--space-md); margin-top: var(--space-sm); }
+.trust-card__commit { font-size: var(--fs-xs); color: var(--color-navy-600); padding: var(--space-2xs) 0; display: flex; align-items: flex-start; gap: var(--space-xs); }
+.trust-card__commit::before { content: '\2713'; color: var(--color-accent); font-weight: var(--fw-bold); }
+
+.certifications-bar { display: flex; flex-wrap: wrap; gap: var(--space-md); justify-content: center; margin-top: var(--space-4xl); padding-top: var(--space-3xl); border-top: 1px solid var(--color-border-light); }
+.cert-badge { text-align: center; padding: var(--space-md) var(--space-xl); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-alt); min-width: 140px; }
+.cert-badge__label { font-family: var(--font-mono); font-size: var(--fs-small); font-weight: var(--fw-bold); color: var(--color-accent); }
+.cert-badge__scope { font-size: var(--fs-xs); color: var(--color-text-secondary); margin-top: var(--space-2xs); }
+
+@media (max-width: 768px) { .trust-grid { grid-template-columns: 1fr; } }

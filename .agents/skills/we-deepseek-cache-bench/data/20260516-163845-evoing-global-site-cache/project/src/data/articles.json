@@ -1,0 +1,706 @@
+[
+  {
+    "id": "art-01",
+    "category": "ai-strategy",
+    "region": "global",
+    "date": "2026-05-01",
+    "readingTime": {
+      "zh": "10 分钟",
+      "en": "10 min"
+    },
+    "headline": {
+      "zh": "AI 代理的元年：2026 企业就绪度白皮书",
+      "en": "Year of the AI Agent: 2026 Enterprise Readiness Whitepaper"
+    },
+    "deck": {
+      "zh": "AI 代理从概念验证走向生产环境。我们的全球调研揭示了规模化部署的三大关键成功因素。",
+      "en": "AI agents move from POC to production. Our global survey reveals three critical success factors for deployment at scale."
+    },
+    "sections": {
+      "zh": [
+        "代理架构模式：从单任务到多代理协作",
+        "安全与治理：代理权限、审计与人为干预",
+        "组织就绪度：技能、流程与文化变革",
+        "投资回报分析：代理 ROI 模型与基准"
+      ],
+      "en": [
+        "Agent Architecture: From single-task to multi-agent collaboration",
+        "Security & Governance: Agent permissions, audit, and human-in-the-loop",
+        "Organizational Readiness: Skills, processes, and culture change",
+        "ROI Analysis: Agent ROI models and benchmarks"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "到 2027 年，40% 的企业将部署 AI 代理",
+        "成功率最高的代理类型是内部知识检索",
+        "安全治理是规模化部署的首要障碍"
+      ],
+      "en": [
+        "40% of enterprises will deploy AI agents by 2027",
+        "Highest success rate: internal knowledge retrieval agents",
+        "Security governance is the #1 barrier to scaling"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "陈思远",
+        "en": "Siyuan Chen"
+      },
+      {
+        "zh": "James Park",
+        "en": "James Park"
+      }
+    ],
+    "relatedCapabilities": [
+      "ai-strategy",
+      "cyber-resilience"
+    ]
+  },
+  {
+    "id": "art-02",
+    "category": "code-modernization",
+    "region": "amer",
+    "date": "2026-04-22",
+    "readingTime": {
+      "zh": "8 分钟",
+      "en": "8 min"
+    },
+    "headline": {
+      "zh": "IDP 的新定义：从构建平台到构建平台产品",
+      "en": "Redefining IDP: From Building a Platform to Building a Platform Product"
+    },
+    "deck": {
+      "zh": "内部开发者平台的概念正在被重新定义。我们分析了 50+ 企业的最新平台工程实践。",
+      "en": "The IDP concept is being redefined. We analyze the latest platform engineering practices from 50+ enterprises."
+    },
+    "sections": {
+      "zh": [
+        "平台即产品：用产品思维管理内部平台",
+        "开发者体验度量：DORA 之外的新维度",
+        "平台团队拓扑：哪种结构适合你的组织",
+        "投资回报模型：IDP 的三年总拥有成本分析"
+      ],
+      "en": [
+        "Platform-as-Product: Managing internal platforms with product thinking",
+        "DevEx Metrics: New dimensions beyond DORA",
+        "Platform Team Topologies: Which structure fits your org",
+        "ROI Models: Three-year TCO analysis for IDPs"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "平台即产品思维使采用率从 30% 提升至 80%",
+        "DevEx 指标应与业务 KPI 挂钩",
+        "平台团队不应超过工程团队的 10%"
+      ],
+      "en": [
+        "Platform-as-product mindset lifts adoption from 30% to 80%",
+        "DevEx metrics should tie to business KPIs",
+        "Platform teams should not exceed 10% of engineering"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "James Park",
+        "en": "James Park"
+      },
+      {
+        "zh": "Emily Chen",
+        "en": "Emily Chen"
+      }
+    ],
+    "relatedCapabilities": [
+      "code-modernization",
+      "operating-model"
+    ]
+  },
+  {
+    "id": "art-03",
+    "category": "operating-model",
+    "region": "apac",
+    "date": "2026-04-15",
+    "readingTime": {
+      "zh": "12 分钟",
+      "en": "12 min"
+    },
+    "headline": {
+      "zh": "从职能竖井到产品团队：亚洲制造业组织转型实录",
+      "en": "From Functional Silos to Product Teams: Inside Asian Manufacturing Transformations"
+    },
+    "deck": {
+      "zh": "基于三家中国和日本制造业巨头的真实转型数据，我们提出了产品型组织转型的五阶段框架。",
+      "en": "Based on real transformation data from three manufacturing giants, we propose a five-stage framework for product-oriented org transformation."
+    },
+    "sections": {
+      "zh": [
+        "诊断与设计：如何识别正确的产品领域边界",
+        "试点团队选取：为什么前 3 个团队决定成败",
+        "规模化推广：从 3 个团队到 150 个团队的路径",
+        "文化转型：激励机制、绩效考核与领导力",
+        "持续改进：OKR 复盘与组织健康度量"
+      ],
+      "en": [
+        "Diagnosis & Design: Identifying the right product domain boundaries",
+        "Pilot Selection: Why the first 3 teams determine success or failure",
+        "Scaling Out: From 3 to 150 teams",
+        "Culture: Incentives, performance review, and leadership",
+        "Continuous Improvement: OKR retrospectives and org health metrics"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "产品领域应以客户价值流而非技术栈划分",
+        "前 90 天的变革管理至关重要",
+        "领导者必须先转变自己的行为"
+      ],
+      "en": [
+        "Define product domains by customer value streams, not tech stacks",
+        "The first 90 days of change management are critical",
+        "Leaders must transform their own behavior first"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "王敏",
+        "en": "Min Wang"
+      },
+      {
+        "zh": "佐藤健一",
+        "en": "Kenichi Sato"
+      }
+    ],
+    "relatedCapabilities": [
+      "operating-model",
+      "strategy-advisory"
+    ]
+  },
+  {
+    "id": "art-04",
+    "category": "data-intelligence",
+    "region": "emea",
+    "date": "2026-04-08",
+    "readingTime": {
+      "zh": "9 分钟",
+      "en": "9 min"
+    },
+    "headline": {
+      "zh": "数据网格两年回顾：承诺、陷阱与实践者指南",
+      "en": "Data Mesh Two Years In: Promises, Pitfalls, and a Practitioner's Guide"
+    },
+    "deck": {
+      "zh": "数据网格从热门概念走向实际落地。基于 30+ 实施项目的经验，我们复盘了什么有效、什么需要重新思考。",
+      "en": "Data mesh moves from hype to implementation. Based on 30+ project experiences, we review what works and what needs rethinking."
+    },
+    "sections": {
+      "zh": [
+        "数据产品定义：什么是好的数据产品边界",
+        "联邦治理的实践：谁做什么、谁决策",
+        "技术选型困境：不想被锁定但也不想碎片化",
+        "组织变革：数据所有权下放的真正挑战"
+      ],
+      "en": [
+        "Data Product Definition: What makes a good data product boundary",
+        "Federated Governance in Practice: Who does what, who decides",
+        "Technology Dilemma: Avoiding lock-in without fragmentation",
+        "Org Change: The real challenge of decentralizing data ownership"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "数据产品应以消费端需求为起点而非数据源",
+        "联邦治理中最难的是建立信任而非技术",
+        "70% 的数据网格项目低估了组织变革难度"
+      ],
+      "en": [
+        "Start data products from consumer needs, not data sources",
+        "The hardest part of federated governance is trust, not technology",
+        "70% of data mesh projects underestimate org change difficulty"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "Anna Lindström",
+        "en": "Anna Lindström"
+      }
+    ],
+    "relatedCapabilities": [
+      "data-intelligence",
+      "operating-model"
+    ]
+  },
+  {
+    "id": "art-05",
+    "category": "cyber-resilience",
+    "region": "global",
+    "date": "2026-03-25",
+    "readingTime": {
+      "zh": "11 分钟",
+      "en": "11 min"
+    },
+    "headline": {
+      "zh": "2026 网络威胁格局：AI 攻防新战场",
+      "en": "2026 Cyber Threat Landscape: The New AI Attack-Defense Battlefield"
+    },
+    "deck": {
+      "zh": "AI 既是武器也是盾牌。我们分析了 2026 年最重要的五类 AI 驱动的网络威胁及对应防御策略。",
+      "en": "AI is both weapon and shield. We analyze the five most significant AI-driven cyber threats of 2026 and defense strategies."
+    },
+    "sections": {
+      "zh": [
+        "AI 驱动的社会工程：超个性化钓鱼已达工业规模",
+        "深度伪造攻击：针对高管的语音和视频欺诈",
+        "供应链 AI 风险：第三方 AI 模型中的后门",
+        "防御性 AI 框架：从检测到自主响应",
+        "2026 全球网络安全监管趋势"
+      ],
+      "en": [
+        "AI-Driven Social Engineering: Hyper-personalized phishing at industrial scale",
+        "Deepfake Attacks: Voice and video fraud targeting executives",
+        "Supply Chain AI Risk: Backdoors in third-party AI models",
+        "Defensive AI: From detection to autonomous response",
+        "2026 Global Cybersecurity Regulatory Trends"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "AI 钓鱼邮件的打开率是传统钓鱼的 3 倍",
+        "防御性 AI 的投资回报率 12 个月内可达 300%",
+        "零信任 + AI 检测是最有效的组合防御"
+      ],
+      "en": [
+        "AI phishing emails have 3x the open rate of traditional phishing",
+        "Defensive AI ROI can reach 300% within 12 months",
+        "Zero Trust + AI detection is the most effective combined defense"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "David Okonkwo",
+        "en": "David Okonkwo"
+      },
+      {
+        "zh": "李浩然",
+        "en": "Haoran Li"
+      }
+    ],
+    "relatedCapabilities": [
+      "cyber-resilience",
+      "ai-strategy"
+    ]
+  },
+  {
+    "id": "art-06",
+    "category": "strategy-advisory",
+    "region": "global",
+    "date": "2026-03-12",
+    "readingTime": {
+      "zh": "15 分钟",
+      "en": "15 min"
+    },
+    "headline": {
+      "zh": "2026 全球技术投资展望",
+      "en": "2026 Global Tech Investment Outlook"
+    },
+    "deck": {
+      "zh": "年度旗舰报告：覆盖 30 个国家、12 个行业的 5,000 亿美元技术支出分析，含 AI、云、安全三年预测。",
+      "en": "Annual flagship: USD 500B tech spending analysis across 30 countries and 12 industries with 3-year forecasts."
+    },
+    "sections": {
+      "zh": [
+        "全球技术支出总览：5,000 亿美元的市场图景",
+        "AI 投资趋势：从实验到规模化的转折点",
+        "云基础设施：多云策略成为主流",
+        "安全支出：增速首次超过整体 IT 支出",
+        "区域差异：亚太增速领先全球",
+        "行业基准：金融和制造业领跑 AI 投资"
+      ],
+      "en": [
+        "Global Tech Spending: The USD 500B landscape",
+        "AI Investment: Inflection point from experiment to scale",
+        "Cloud Infrastructure: Multi-cloud goes mainstream",
+        "Security Spending: Growing faster than overall IT for the first time",
+        "Regional Variations: APAC leads global growth",
+        "Industry Benchmarks: Financial services and manufacturing lead AI"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "2026 年全球 AI 支出将超过 3,000 亿美元",
+        "亚太区技术支出增速是全球平均的 1.5 倍",
+        "安全支出首次超过传统 IT 基础设施支出"
+      ],
+      "en": [
+        "Global AI spending will exceed USD 300B in 2026",
+        "APAC tech spending growth is 1.5x the global average",
+        "Security spending surpasses traditional IT infra for the first time"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "林小燕",
+        "en": "Xiaoyan Lin"
+      },
+      {
+        "zh": "Sarah Mitchell",
+        "en": "Sarah Mitchell"
+      },
+      {
+        "zh": "Rahul Kapoor",
+        "en": "Rahul Kapoor"
+      }
+    ],
+    "relatedCapabilities": [
+      "strategy-advisory",
+      "ai-strategy"
+    ]
+  },
+  {
+    "id": "art-07",
+    "category": "ai-strategy",
+    "region": "apac",
+    "date": "2026-02-28",
+    "readingTime": {
+      "zh": "7 分钟",
+      "en": "7 min"
+    },
+    "headline": {
+      "zh": "GenAI 在中国金融业的合规落地路径",
+      "en": "GenAI Compliance Pathways in Chinese Financial Services"
+    },
+    "deck": {
+      "zh": "中国金融监管机构对生成式 AI 的态度日趋明确。本文提出符合最新监管指引的 GenAI 实施框架。",
+      "en": "Chinese financial regulators provide clearer guidance on generative AI. This article proposes a GenAI implementation framework."
+    },
+    "sections": {
+      "zh": [
+        "监管环境分析：网信办、金监局、央行最新指引",
+        "合规实施框架：模型备案、数据本地化、算法审计",
+        "风控模型治理：生成式 AI 在风控中的可解释性要求",
+        "典型案例：银行智能客服与投研助手的合规实践"
+      ],
+      "en": [
+        "Regulatory Analysis: CAC, NFRA, PBOC latest guidance",
+        "Compliance Framework: Model registration, data localization, algorithm audit",
+        "Risk Model Governance: Explainability requirements for GenAI in risk control",
+        "Case Examples: Bank intelligent customer service and research assistant compliance"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "中国 GenAI 监管框架为全球最全面的之一",
+        "模型备案是进入金融 GenAI 市场的必要条件",
+        "人类在关键决策中必须保留最终决定权"
+      ],
+      "en": [
+        "China's GenAI regulatory framework is among the world's most comprehensive",
+        "Model registration is mandatory for financial GenAI market entry",
+        "Humans must retain final decision authority in critical decisions"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "张伟",
+        "en": "Wei Zhang"
+      },
+      {
+        "zh": "陈思远",
+        "en": "Siyuan Chen"
+      }
+    ],
+    "relatedCapabilities": [
+      "ai-strategy",
+      "cyber-resilience"
+    ]
+  },
+  {
+    "id": "art-08",
+    "category": "code-modernization",
+    "region": "emea",
+    "date": "2026-02-15",
+    "readingTime": {
+      "zh": "6 分钟",
+      "en": "6 min"
+    },
+    "headline": {
+      "zh": "Green Code：软件碳效率的工程实践",
+      "en": "Green Code: Engineering Practices for Software Carbon Efficiency"
+    },
+    "deck": {
+      "zh": "可持续软件工程从理论走向工程实践。我们提出了可量化的绿色编码模式及对云成本的直接影响。",
+      "en": "Sustainable software engineering moves from theory to practice. We propose quantifiable green coding patterns and their impact on cloud costs."
+    },
+    "sections": {
+      "zh": [
+        "碳感知架构：将碳强度信号纳入调度决策",
+        "能效编码模式：10 个降低 CPU/内存能耗的实践",
+        "云资源优化：合理调整、Spot 实例和自动缩放",
+        "测量与报告：SCI 评分与云碳足迹仪表板"
+      ],
+      "en": [
+        "Carbon-Aware Architecture: Integrating carbon intensity signals into scheduling",
+        "Energy-Efficient Patterns: 10 practices to reduce CPU/memory energy",
+        "Cloud Optimization: Rightsizing, Spot instances, and auto-scaling",
+        "Measurement & Reporting: SCI scores and cloud carbon dashboards"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "碳感知调度可在不增加成本的情况下减排 15-30%",
+        "绿色编码实践通常同时降低成本和碳排放",
+        "2027 年起欧盟将要求大型企业报告 IT 碳足迹"
+      ],
+      "en": [
+        "Carbon-aware scheduling can reduce emissions 15-30% at no extra cost",
+        "Green coding practices typically reduce both cost and carbon",
+        "EU will require large enterprises to report IT carbon footprint from 2027"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "Anna Lindström",
+        "en": "Anna Lindström"
+      },
+      {
+        "zh": "Thomas Wright",
+        "en": "Thomas Wright"
+      }
+    ],
+    "relatedCapabilities": [
+      "code-modernization",
+      "strategy-advisory"
+    ]
+  },
+  {
+    "id": "art-09",
+    "category": "operating-model",
+    "region": "amer",
+    "date": "2026-01-30",
+    "readingTime": {
+      "zh": "8 分钟",
+      "en": "8 min"
+    },
+    "headline": {
+      "zh": "工程师体验的四个维度：超越工具与流程",
+      "en": "The Four Dimensions of Developer Experience: Beyond Tools and Processes"
+    },
+    "deck": {
+      "zh": "DevEx 已成为技术人才竞争的关键差异化因素。我们提出覆盖工具、流程、文化与职业的四维框架。",
+      "en": "DevEx has become a critical differentiator in tech talent competition. We propose a 4D framework: tools, process, culture, career."
+    },
+    "sections": {
+      "zh": [
+        "工具维度：本地开发环境、CI/CD 反馈循环",
+        "流程维度：代码审查、部署流程和事件响应",
+        "文化维度：心理安全、学习文化和自主权",
+        "职业维度：成长路径、导师制和影响力"
+      ],
+      "en": [
+        "Tools: Local dev environment, CI/CD feedback loops",
+        "Process: Code review, deployment flow, incident response",
+        "Culture: Psychological safety, learning culture, autonomy",
+        "Career: Growth paths, mentorship, and impact"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "文化维度对工程师留任的影响最大",
+        "改善反馈循环的 ROI 高于购买新工具",
+        "DevEx 指标应成为工程主管的 KPI"
+      ],
+      "en": [
+        "Culture dimension has the largest impact on retention",
+        "Improving feedback loops has higher ROI than buying new tools",
+        "DevEx metrics should be engineering leaders' KPIs"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "Emily Chen",
+        "en": "Emily Chen"
+      }
+    ],
+    "relatedCapabilities": [
+      "operating-model",
+      "code-modernization"
+    ]
+  },
+  {
+    "id": "art-10",
+    "category": "data-intelligence",
+    "region": "apac",
+    "date": "2026-01-18",
+    "readingTime": {
+      "zh": "10 分钟",
+      "en": "10 min"
+    },
+    "headline": {
+      "zh": "实时数据管道的七大反模式",
+      "en": "Seven Anti-Patterns in Real-Time Data Pipelines"
+    },
+    "deck": {
+      "zh": "基于 100+ 企业实时数据处理系统诊断，我们总结最常见的设计错误及工程化解决方案。",
+      "en": "Based on diagnostics of 100+ real-time data systems, we summarize the most common design mistakes and engineering solutions."
+    },
+    "sections": {
+      "zh": [
+        "架构反模式：Lambda 架构的隐性成本",
+        "数据质量陷阱：假设数据是干净的错误",
+        "运维反模式：缺乏可观测性的流处理系统",
+        "成本失控：Kafka 和 Flink 的十大省钱技巧",
+        "最佳实践：经过验证的实时管道参考架构"
+      ],
+      "en": [
+        "Architecture Anti-Patterns: Hidden costs of Lambda architecture",
+        "Data Quality Traps: The error of assuming clean data",
+        "Ops Anti-Patterns: Streaming systems without observability",
+        "Cost Runaway: Top 10 cost-saving tips for Kafka and Flink",
+        "Best Practices: Proven reference architecture for real-time pipelines"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "Lambda 架构在 80% 的场景中应被 Kappa 架构取代",
+        "数据质量检查应占据管道代码的 30%",
+        "可观测性投资通常 6 个月内收回成本"
+      ],
+      "en": [
+        "Lambda architecture should be replaced by Kappa in 80% of cases",
+        "Data quality checks should comprise 30% of pipeline code",
+        "Observability investment typically pays back within 6 months"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "Rajesh Menon",
+        "en": "Rajesh Menon"
+      },
+      {
+        "zh": "黄丽华",
+        "en": "Lihua Huang"
+      }
+    ],
+    "relatedCapabilities": [
+      "data-intelligence",
+      "code-modernization"
+    ]
+  },
+  {
+    "id": "art-11",
+    "category": "strategy-advisory",
+    "region": "emea",
+    "date": "2025-12-20",
+    "readingTime": {
+      "zh": "9 分钟",
+      "en": "9 min"
+    },
+    "headline": {
+      "zh": "技术尽调 2.0：AI 时代的并购新范式",
+      "en": "Tech DD 2.0: A New M&A Paradigm for the AI Era"
+    },
+    "deck": {
+      "zh": "传统技术尽调已不足以评估 AI 公司价值。我们提出覆盖数据资产、模型质量与 AI 治理的全新框架。",
+      "en": "Traditional tech DD is insufficient for valuing AI companies. We propose a new framework covering data assets, model quality, and AI governance."
+    },
+    "sections": {
+      "zh": [
+        "数据资产评估：数据质量、独家性与合规风险",
+        "模型质量审计：准确率、偏差、可复现性",
+        "AI 人才评估：团队密度与关键人物风险",
+        "技术债务量化：AI 系统的隐性维护成本",
+        "整合风险矩阵：文化、技术与监管的三维评估"
+      ],
+      "en": [
+        "Data Asset Valuation: Quality, exclusivity, and compliance risk",
+        "Model Quality Audit: Accuracy, bias, reproducibility",
+        "AI Talent Assessment: Team density and key person risk",
+        "Technical Debt Quantification: Hidden maintenance costs of AI systems",
+        "Integration Risk Matrix: 3D assessment of culture, technology, and regulation"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "AI 公司的真正价值在于数据 + 人才而非模型本身",
+        "模型质量审计应成为 AI 并购的标准环节",
+        "70% 的 AI 并购失败源于文化整合问题"
+      ],
+      "en": [
+        "The real value of an AI company is data + talent, not the model",
+        "Model quality audit should be standard in AI M&A",
+        "70% of AI M&A failures stem from cultural integration issues"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "Sarah Mitchell",
+        "en": "Sarah Mitchell"
+      },
+      {
+        "zh": "陈思远",
+        "en": "Siyuan Chen"
+      }
+    ],
+    "relatedCapabilities": [
+      "strategy-advisory",
+      "ai-strategy"
+    ]
+  },
+  {
+    "id": "art-12",
+    "category": "cyber-resilience",
+    "region": "apac",
+    "date": "2025-12-05",
+    "readingTime": {
+      "zh": "7 分钟",
+      "en": "7 min"
+    },
+    "headline": {
+      "zh": "关键基础设施 OT 安全：亚太视角",
+      "en": "OT Security for Critical Infrastructure: An Asia-Pacific Perspective"
+    },
+    "deck": {
+      "zh": "亚太关键基础设施面临独特的 OT 安全挑战。本文提出基于 IEC 62443 的实用安全框架。",
+      "en": "Asia-Pacific critical infrastructure faces unique OT security challenges. This article proposes a practical IEC 62443-based framework."
+    },
+    "sections": {
+      "zh": [
+        "OT 威胁格局：亚太地区的独特攻击面",
+        "IEC 62443 实施路径：从评估到认证",
+        "IT/OT 融合安全：如何在不牺牲安全的情况下互联",
+        "区域合规要求：中国、日本、新加坡、澳大利亚"
+      ],
+      "en": [
+        "OT Threat Landscape: Unique attack surface in APAC",
+        "IEC 62443 Path: From assessment to certification",
+        "IT/OT Convergence: How to connect without compromising security",
+        "Regional Compliance: China, Japan, Singapore, Australia"
+      ]
+    },
+    "keyTakeaways": {
+      "zh": [
+        "亚太 OT 攻击年增长率达 40%",
+        "IEC 62443 认证可将保险费用降低 25%",
+        "网络分段是最有效的第一道防线"
+      ],
+      "en": [
+        "APAC OT attacks growing 40% annually",
+        "IEC 62443 certification can reduce insurance costs 25%",
+        "Network segmentation is the most effective first line of defense"
+      ]
+    },
+    "authors": [
+      {
+        "zh": "David Okonkwo",
+        "en": "David Okonkwo"
+      },
+      {
+        "zh": "李浩然",
+        "en": "Haoran Li"
+      }
+    ],
+    "relatedCapabilities": [
+      "cyber-resilience",
+      "strategy-advisory"
+    ]
+  }
+]

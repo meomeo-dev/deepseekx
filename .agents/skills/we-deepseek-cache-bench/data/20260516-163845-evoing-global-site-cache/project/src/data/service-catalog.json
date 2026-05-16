@@ -1,0 +1,557 @@
+[
+  {
+    "capabilityId": "ai-strategy",
+    "offerings": [
+      {
+        "id": "ai-maturity-assessment",
+        "name": {
+          "zh": "AI 成熟度评估",
+          "en": "AI Maturity Assessment"
+        },
+        "deliverables": {
+          "zh": [
+            "成熟度评分卡",
+            "差距分析报告",
+            "优先级路线图"
+          ],
+          "en": [
+            "Maturity scorecard",
+            "Gap analysis report",
+            "Priority roadmap"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CTO",
+            "CDO",
+            "BU 负责人"
+          ],
+          "en": [
+            "CTO",
+            "CDO",
+            "BU Heads"
+          ]
+        },
+        "timeToValue": {
+          "zh": "4 周",
+          "en": "4 weeks"
+        }
+      },
+      {
+        "id": "genai-implementation",
+        "name": {
+          "zh": "生成式 AI 解决方案",
+          "en": "Generative AI Solutions"
+        },
+        "deliverables": {
+          "zh": [
+            "GenAI 用例优先级矩阵",
+            "POC 系统",
+            "负责任 AI 框架"
+          ],
+          "en": [
+            "GenAI use-case matrix",
+            "POC system",
+            "Responsible AI framework"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CTO",
+            "法务",
+            "产品 VP"
+          ],
+          "en": [
+            "CTO",
+            "Legal",
+            "VP Product"
+          ]
+        },
+        "timeToValue": {
+          "zh": "6–8 周",
+          "en": "6–8 weeks"
+        }
+      },
+      {
+        "id": "ai-governance",
+        "name": {
+          "zh": "AI 治理框架",
+          "en": "AI Governance Framework"
+        },
+        "deliverables": {
+          "zh": [
+            "AI 政策文档",
+            "风险分类体系",
+            "合规审计清单"
+          ],
+          "en": [
+            "AI policy documentation",
+            "Risk taxonomy",
+            "Compliance audit checklist"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CRO",
+            "CTO",
+            "合规官"
+          ],
+          "en": [
+            "CRO",
+            "CTO",
+            "Compliance Officer"
+          ]
+        },
+        "timeToValue": {
+          "zh": "6 周",
+          "en": "6 weeks"
+        }
+      }
+    ]
+  },
+  {
+    "capabilityId": "code-modernization",
+    "offerings": [
+      {
+        "id": "platform-engineering",
+        "name": {
+          "zh": "内部开发者平台",
+          "en": "Internal Developer Platform"
+        },
+        "deliverables": {
+          "zh": [
+            "IDP 架构设计",
+            "自服务门户",
+            "黄金路径模板"
+          ],
+          "en": [
+            "IDP architecture",
+            "Self-service portal",
+            "Golden path templates"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "平台 VP",
+            "DevOps 主管",
+            "架构师"
+          ],
+          "en": [
+            "VP Platform",
+            "DevOps Lead",
+            "Architects"
+          ]
+        },
+        "timeToValue": {
+          "zh": "8–12 周",
+          "en": "8–12 weeks"
+        }
+      },
+      {
+        "id": "legacy-migration",
+        "name": {
+          "zh": "遗留系统现代化",
+          "en": "Legacy System Modernization"
+        },
+        "deliverables": {
+          "zh": [
+            "系统依赖拓扑图",
+            "迁移策略",
+            "并行运行验证"
+          ],
+          "en": [
+            "System dependency topology",
+            "Migration strategy",
+            "Parallel-run validation"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CTO",
+            "应用负责人",
+            "QA 主管"
+          ],
+          "en": [
+            "CTO",
+            "App Owners",
+            "QA Lead"
+          ]
+        },
+        "timeToValue": {
+          "zh": "12–20 周",
+          "en": "12–20 weeks"
+        }
+      },
+      {
+        "id": "devsecops",
+        "name": {
+          "zh": "DevSecOps 转型",
+          "en": "DevSecOps Transformation"
+        },
+        "deliverables": {
+          "zh": [
+            "CI/CD 流水线",
+            "安全扫描集成",
+            "DORA 指标基线"
+          ],
+          "en": [
+            "CI/CD pipelines",
+            "Security scanning integration",
+            "DORA metrics baseline"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "工程 VP",
+            "安全主管",
+            "SRE 团队"
+          ],
+          "en": [
+            "VP Engineering",
+            "Security Lead",
+            "SRE Team"
+          ]
+        },
+        "timeToValue": {
+          "zh": "6–10 周",
+          "en": "6–10 weeks"
+        }
+      }
+    ]
+  },
+  {
+    "capabilityId": "operating-model",
+    "offerings": [
+      {
+        "id": "org-design",
+        "name": {
+          "zh": "技术组织设计",
+          "en": "Technology Org Design"
+        },
+        "deliverables": {
+          "zh": [
+            "组织架构方案",
+            "角色与职责矩阵",
+            "过渡计划"
+          ],
+          "en": [
+            "Org structure options",
+            "RACI matrix",
+            "Transition plan"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CTO",
+            "CHRO",
+            "CEO"
+          ],
+          "en": [
+            "CTO",
+            "CHRO",
+            "CEO"
+          ]
+        },
+        "timeToValue": {
+          "zh": "6–8 周",
+          "en": "6–8 weeks"
+        }
+      },
+      {
+        "id": "agile-product-ops",
+        "name": {
+          "zh": "敏捷产品运营",
+          "en": "Agile Product Operations"
+        },
+        "deliverables": {
+          "zh": [
+            "产品运营手册",
+            "OKR 对齐框架",
+            "节奏与仪式设计"
+          ],
+          "en": [
+            "Product ops playbook",
+            "OKR alignment framework",
+            "Cadence & ceremony design"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "产品 VP",
+            "工程 VP",
+            "PMO"
+          ],
+          "en": [
+            "VP Product",
+            "VP Engineering",
+            "PMO"
+          ]
+        },
+        "timeToValue": {
+          "zh": "4–6 周",
+          "en": "4–6 weeks"
+        }
+      },
+      {
+        "id": "change-management",
+        "name": {
+          "zh": "技术变革管理",
+          "en": "Technology Change Management"
+        },
+        "deliverables": {
+          "zh": [
+            "变革影响评估",
+            "沟通计划",
+            "变革推动者网络"
+          ],
+          "en": [
+            "Change impact assessment",
+            "Communication plan",
+            "Change champion network"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CTO",
+            "CHRO",
+            "沟通主管"
+          ],
+          "en": [
+            "CTO",
+            "CHRO",
+            "Comms Lead"
+          ]
+        },
+        "timeToValue": {
+          "zh": "8–12 周",
+          "en": "8–12 weeks"
+        }
+      }
+    ]
+  },
+  {
+    "capabilityId": "data-intelligence",
+    "offerings": [
+      {
+        "id": "data-strategy",
+        "name": {
+          "zh": "企业数据战略",
+          "en": "Enterprise Data Strategy"
+        },
+        "deliverables": {
+          "zh": [
+            "数据成熟度评估",
+            "治理框架",
+            "平台选型建议"
+          ],
+          "en": [
+            "Data maturity assessment",
+            "Governance framework",
+            "Platform recommendation"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CDO",
+            "CTO",
+            "数据架构师"
+          ],
+          "en": [
+            "CDO",
+            "CTO",
+            "Data Architects"
+          ]
+        },
+        "timeToValue": {
+          "zh": "4–6 周",
+          "en": "4–6 weeks"
+        }
+      },
+      {
+        "id": "data-platform",
+        "name": {
+          "zh": "数据平台架构",
+          "en": "Data Platform Architecture"
+        },
+        "deliverables": {
+          "zh": [
+            "湖仓一体方案",
+            "数据网格设计",
+            "ETL/ELT 流水线"
+          ],
+          "en": [
+            "Lakehouse design",
+            "Data mesh architecture",
+            "ETL/ELT pipelines"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "数据 VP",
+            "平台团队",
+            "分析主管"
+          ],
+          "en": [
+            "VP Data",
+            "Platform Team",
+            "Analytics Lead"
+          ]
+        },
+        "timeToValue": {
+          "zh": "8–16 周",
+          "en": "8–16 weeks"
+        }
+      }
+    ]
+  },
+  {
+    "capabilityId": "cyber-resilience",
+    "offerings": [
+      {
+        "id": "zero-trust",
+        "name": {
+          "zh": "零信任架构实施",
+          "en": "Zero Trust Implementation"
+        },
+        "deliverables": {
+          "zh": [
+            "零信任蓝图",
+            "微分段设计",
+            "身份联邦方案"
+          ],
+          "en": [
+            "Zero-trust blueprint",
+            "Micro-segmentation design",
+            "Identity federation plan"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CISO",
+            "CTO",
+            "网络架构师"
+          ],
+          "en": [
+            "CISO",
+            "CTO",
+            "Network Architects"
+          ]
+        },
+        "timeToValue": {
+          "zh": "8–12 周",
+          "en": "8–12 weeks"
+        }
+      },
+      {
+        "id": "incident-response",
+        "name": {
+          "zh": "事件响应能力建设",
+          "en": "Incident Response Capability"
+        },
+        "deliverables": {
+          "zh": [
+            "IR 手册",
+            "桌面推演方案",
+            "检测规则库"
+          ],
+          "en": [
+            "IR playbook",
+            "Tabletop exercise plan",
+            "Detection rule library"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CISO",
+            "SOC 主管",
+            "法务"
+          ],
+          "en": [
+            "CISO",
+            "SOC Lead",
+            "Legal"
+          ]
+        },
+        "timeToValue": {
+          "zh": "4–8 周",
+          "en": "4–8 weeks"
+        }
+      }
+    ]
+  },
+  {
+    "capabilityId": "strategy-advisory",
+    "offerings": [
+      {
+        "id": "digital-strategy",
+        "name": {
+          "zh": "数字化增长战略",
+          "en": "Digital Growth Strategy"
+        },
+        "deliverables": {
+          "zh": [
+            "市场扫描",
+            "数字化成熟度基线",
+            "3 年路线图"
+          ],
+          "en": [
+            "Market scan",
+            "Digital maturity baseline",
+            "3-year roadmap"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CEO",
+            "CDO",
+            "战略 VP"
+          ],
+          "en": [
+            "CEO",
+            "CDO",
+            "VP Strategy"
+          ]
+        },
+        "timeToValue": {
+          "zh": "4–6 周",
+          "en": "4–6 weeks"
+        }
+      },
+      {
+        "id": "tech-due-diligence",
+        "name": {
+          "zh": "技术尽职调查",
+          "en": "Technology Due Diligence"
+        },
+        "deliverables": {
+          "zh": [
+            "技术资产评估",
+            "风险矩阵",
+            "整合成本预测"
+          ],
+          "en": [
+            "Tech asset valuation",
+            "Risk matrix",
+            "Integration cost forecast"
+          ]
+        },
+        "stakeholders": {
+          "zh": [
+            "CFO",
+            "CTO",
+            "M&A 团队"
+          ],
+          "en": [
+            "CFO",
+            "CTO",
+            "M&A Team"
+          ]
+        },
+        "timeToValue": {
+          "zh": "3–5 周",
+          "en": "3–5 weeks"
+        }
+      }
+    ]
+  }
+]

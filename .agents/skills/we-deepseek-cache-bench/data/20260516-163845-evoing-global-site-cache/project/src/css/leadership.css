@@ -1,0 +1,84 @@
+/* ============================================================
+   Evoing Leadership — team grid and profile cards
+   ============================================================ */
+
+.leadership-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+}
+
+.leader-card {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xl);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.leader-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.leader-card__name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: var(--fw-semibold);
+  margin-bottom: var(--space-2xs);
+  line-height: var(--lh-tight);
+}
+
+.leader-card__title {
+  font-size: var(--fs-small);
+  color: var(--color-accent);
+  margin-bottom: var(--space-sm);
+  font-weight: var(--fw-medium);
+}
+
+.leader-card__location {
+  font-size: var(--fs-xs);
+  color: var(--color-slate-400);
+  margin-bottom: var(--space-sm);
+}
+
+.leader-card__bio {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+.leader-card__expertise {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.leader-card__tag {
+  font-size: var(--fs-xs);
+  background: var(--color-slate-50);
+  color: var(--color-navy-600);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-full);
+}
+
+.leader-card__languages {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-slate-400);
+}
+
+@media (max-width: 900px) {
+  .leadership-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .leadership-grid {
+    grid-template-columns: 1fr;
+  }
+}

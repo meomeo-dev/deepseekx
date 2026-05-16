@@ -22,7 +22,7 @@ validation）、发布预检（release preflight）和免费额度成本控制
 ## 非目标
 
 - 不执行 npm publish；发布使用 `$we-publish`。
-- 不做私有/公开双仓库同步；公开镜像使用 `$we-release`。
+- 不做公开仓库安全扫描；发布前公开检查使用 `$we-public-sync`。
 - 不替代普通功能开发分支门禁；开始前仍先执行 `$we-feature-dev`
   的 preflight。
 

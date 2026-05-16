@@ -1,0 +1,24 @@
+/* ============================================================
+   Evoing Partner Ecosystem
+   ============================================================ */
+.partners-categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2xl); margin-bottom: var(--space-4xl); }
+
+.partner-category { }
+.partner-category__title { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-semibold); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm); border-bottom: 2px solid var(--color-accent); display: inline-block; }
+
+.partner-category__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+
+.partner-card { background: var(--color-bg-alt); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); padding: var(--space-lg); transition: all var(--duration-normal) var(--ease-out); }
+.partner-card:hover { border-color: var(--color-accent); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.partner-card__name { font-family: var(--font-display); font-size: 1rem; font-weight: var(--fw-semibold); margin-bottom: var(--space-2xs); }
+.partner-card__tier { font-size: var(--fs-xs); color: var(--color-accent); margin-bottom: var(--space-sm); font-weight: var(--fw-medium); }
+.partner-card__competencies { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.partner-card__comp { font-size: var(--fs-xs); background: var(--color-slate-50); color: var(--color-navy-600); padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-full); }
+
+.collab-models { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); margin-top: var(--space-4xl); padding-top: var(--space-3xl); border-top: 1px solid var(--color-border-light); }
+.collab-model { text-align: center; padding: var(--space-2xl); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); background: var(--color-bg-alt); }
+.collab-model__label { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-semibold); margin-bottom: var(--space-sm); }
+.collab-model__desc { font-size: var(--fs-small); color: var(--color-text-secondary); line-height: var(--lh-relaxed); }
+
+@media (max-width: 900px) { .partners-categories { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .partner-category__grid, .collab-models { grid-template-columns: 1fr; } }

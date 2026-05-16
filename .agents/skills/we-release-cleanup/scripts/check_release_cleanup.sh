@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-private_root="${WE_PRIVATE_ROOT:-/Users/jin/projects/deepseekx}"
-public_root="${WE_PUBLIC_ROOT:-/Users/jin/projects/deepseekx-public}"
+repo_root="${WE_REPO_ROOT:-/Users/jin/projects/deepseekx}"
 package_name="${WE_PACKAGE_NAME:-@meomeo-dev/deepseekx}"
 tarball_glob="${WE_PACKAGE_TARBALL_GLOB:-deepseekx-*.tgz}"
 main_branch="${WE_RELEASE_MAIN_BRANCH:-deepseekx/main}"
@@ -80,13 +79,11 @@ repo_report() {
 }
 
 section "release cleanup check"
-echo "private_root=$private_root"
-echo "public_root=$public_root"
+echo "repo_root=$repo_root"
 echo "package_name=$package_name"
 echo "tarball_glob=$tarball_glob"
 
-repo_report "private" "$private_root" "deepseekx"
-repo_report "public" "$public_root" "deepseekx.git"
+repo_report "public" "$repo_root" "meomeo-dev/deepseekx"
 
 section "npm registry"
 if command -v npm >/dev/null 2>&1; then
@@ -98,14 +95,9 @@ fi
 
 section "recent ci"
 if command -v gh >/dev/null 2>&1; then
-  echo "public:"
   gh run list --repo meomeo-dev/deepseekx --limit 3 \
     --json databaseId,status,conclusion,event,displayTitle,url 2>/dev/null || \
-    echo "public_ci=unavailable"
-  echo "private:"
-  gh run list --repo meomeo-dev/deepseekx --limit 3 \
-    --json databaseId,status,conclusion,event,displayTitle,url 2>/dev/null || \
-    echo "private_ci=unavailable"
+    echo "ci=unavailable"
 else
   echo "gh=missing"
 fi
