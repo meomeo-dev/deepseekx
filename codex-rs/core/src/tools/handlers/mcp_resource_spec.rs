@@ -3,6 +3,15 @@ use codex_tools::ResponsesApiTool;
 use codex_tools::ToolSpec;
 use std::collections::BTreeMap;
 
+const MCP_RESOURCE_SCOPE_NOTE: &str = concat!(
+    " Use only for resources exposed by configured MCP servers. A resource may ",
+    "represent a file, database object, document, or virtual filesystem entry, ",
+    "but the server and uri must come from a configured MCP resource listing. ",
+    "Do not use MCP resource tools for arbitrary local workspace paths, absolute ",
+    "filesystem paths, or guessed server names. For normal local workspace ",
+    "files, use local filesystem tools instead."
+);
+
 pub fn create_list_mcp_resources_tool() -> ToolSpec {
     let properties = BTreeMap::from([
         (
@@ -23,7 +32,9 @@ pub fn create_list_mcp_resources_tool() -> ToolSpec {
 
     ToolSpec::Function(ResponsesApiTool {
         name: "list_mcp_resources".to_string(),
-        description: "Lists resources provided by MCP servers. Resources allow servers to share data that provides context to language models, such as files, database schemas, or application-specific information. Prefer resources over web search when possible.".to_string(),
+        description: format!(
+            "Lists resources provided by MCP servers. Resources allow servers to share data that provides context to language models, such as files, database schemas, or application-specific information. Prefer resources over web search when possible.{MCP_RESOURCE_SCOPE_NOTE}"
+        ),
         strict: false,
         defer_loading: None,
         parameters: JsonSchema::object(properties, /*required*/ None, Some(false.into())),
@@ -51,7 +62,9 @@ pub fn create_list_mcp_resource_templates_tool() -> ToolSpec {
 
     ToolSpec::Function(ResponsesApiTool {
         name: "list_mcp_resource_templates".to_string(),
-        description: "Lists resource templates provided by MCP servers. Parameterized resource templates allow servers to share data that takes parameters and provides context to language models, such as files, database schemas, or application-specific information. Prefer resource templates over web search when possible.".to_string(),
+        description: format!(
+            "Lists resource templates provided by MCP servers. Parameterized resource templates allow servers to share data that takes parameters and provides context to language models, such as files, database schemas, or application-specific information. Prefer resource templates over web search when possible.{MCP_RESOURCE_SCOPE_NOTE}"
+        ),
         strict: false,
         defer_loading: None,
         parameters: JsonSchema::object(properties, /*required*/ None, Some(false.into())),
@@ -64,14 +77,14 @@ pub fn create_read_mcp_resource_tool() -> ToolSpec {
         (
             "server".to_string(),
             JsonSchema::string(Some(
-                "MCP server name exactly as configured. Must match the 'server' field returned by list_mcp_resources."
+                "MCP server name exactly as configured. Must match a server field returned by list_mcp_resources or another known configured MCP resource listing. Do not invent server names."
                     .to_string(),
             )),
         ),
         (
             "uri".to_string(),
             JsonSchema::string(Some(
-                "Resource URI to read. Must be one of the URIs returned by list_mcp_resources."
+                "Resource URI to read. Must be one of the URIs returned by list_mcp_resources for the same configured MCP server, unless already known from an equivalent configured MCP resource listing. Do not pass arbitrary local file paths."
                     .to_string(),
             )),
         ),
@@ -79,9 +92,9 @@ pub fn create_read_mcp_resource_tool() -> ToolSpec {
 
     ToolSpec::Function(ResponsesApiTool {
         name: "read_mcp_resource".to_string(),
-        description:
-            "Read a specific resource from an MCP server given the server name and resource URI."
-                .to_string(),
+        description: format!(
+            "Read a specific resource from an MCP server given the server name and resource URI.{MCP_RESOURCE_SCOPE_NOTE}"
+        ),
         strict: false,
         defer_loading: None,
         parameters: JsonSchema::object(

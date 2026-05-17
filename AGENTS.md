@@ -1,3 +1,32 @@
+# DeepSeekX versioning
+
+When changing DeepSeekX release or package versions, keep the downstream
+version line coherent across package ecosystems.
+
+- The canonical DeepSeekX npm and Rust/Cargo release version uses
+  `MAJOR.MINOR.PATCH-deepseekx.N`, for example `0.131.0-deepseekx.2`.
+- `codex-cli/package.json`, `codex-rs/Cargo.toml`, and the DeepSeekX entries
+  in `codex-rs/Cargo.lock` must stay on the same canonical release version.
+- npm platform payload versions append the platform tag to the canonical
+  release version, for example `0.131.0-deepseekx.2-darwin-arm64`.
+- The root npm wrapper package is published as
+  `@meomeo-dev/deepseekx@MAJOR.MINOR.PATCH-deepseekx.N`. Its optional
+  dependency aliases point to platform-tagged `@meomeo-dev/deepseekx`
+  versions and must reference the same canonical release version.
+- Python/PyPI packages cannot use `MAJOR.MINOR.PATCH-deepseekx.N`; that is not
+  valid PEP 440. Map the canonical release to
+  `MAJOR.MINOR.PATCH+deepseekx.N`, for example `0.131.0+deepseekx.2`.
+- The Python SDK package `deepseekx` and runtime wheel package
+  `deepseekx-cli-bin` must use the same PEP 440 version. The SDK dependency
+  must pin the matching runtime exactly, for example
+  `deepseekx-cli-bin==0.131.0+deepseekx.2`.
+- Do not introduce upstream-only prerelease versions such as `0.131.0a4` into
+  DeepSeekX release metadata unless that is an intentional upstream tracking
+  step and the matching DeepSeekX runtime package exists in the target
+  registry.
+- Before treating a release version as valid, verify that registry state and
+  checked-in metadata agree for the ecosystem being released.
+
 # Rust/codex-rs
 
 In the codex-rs folder where the rust code lives:

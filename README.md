@@ -15,7 +15,7 @@ syncs.
 Install from npm:
 
 ```shell
-npm install -g @meomeo-dev/deepseekx@0.131.0-deepseekx.2
+npm install -g @meomeo-dev/deepseekx@0.131.0-deepseekx.3
 ```
 
 Run:
@@ -27,7 +27,7 @@ deepseekx
 For one-off usage:
 
 ```shell
-npx @meomeo-dev/deepseekx@0.131.0-deepseekx.2
+npx @meomeo-dev/deepseekx@0.131.0-deepseekx.3
 ```
 
 Homebrew is not supported yet. GitHub Releases provide release notes and

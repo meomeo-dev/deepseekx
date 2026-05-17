@@ -36,6 +36,75 @@ use crate::deepseek_json_output::deepseek_json_output_instructions;
 pub(crate) const APPLY_PATCH_CHAT_COMPLETIONS_INPUT_FIELD: &str = "input";
 pub(crate) const APPLY_PATCH_TOOL_NAME: &str = "apply_patch";
 
+const APPLY_PATCH_CHAT_COMPLETIONS_INPUT_DESCRIPTION: &str = concat!(
+    "Complete raw apply_patch patch text. It must begin with ",
+    "*** Begin Patch and end with *** End Patch.",
+);
+const APPLY_PATCH_CHAT_COMPLETIONS_DESCRIPTION: &str = concat!(
+    "Use the `apply_patch` tool to edit files. Call this function with an ",
+    "object whose `input` field is the complete raw patch text.\n\n",
+    "Before editing, protect the write by confirming the target file context. ",
+    "For every file you update or delete, first check whether the file exists ",
+    "and read enough current content to avoid stale or blind edits: either the ",
+    "full file with its total line count, or the intended edit region with at ",
+    "least 50 lines before and 50 lines after. For Add File, first confirm the ",
+    "target path does not already exist. Do not generate a patch from memory ",
+    "alone when the file may already exist.\n\n",
+    "The patch language is a stripped-down, file-oriented diff format:\n\n",
+    "*** Begin Patch\n",
+    "[ one or more file sections ]\n",
+    "*** End Patch\n\n",
+    "Each file operation starts with one of:\n",
+    "*** Add File: <path>\n",
+    "*** Delete File: <path>\n",
+    "*** Update File: <path>\n\n",
+    "For Add File, every content line must start with +.\n",
+    "For Update File, use @@ hunks and prefix unchanged, removed, and added ",
+    "lines with a leading space, -, and + respectively.\n",
+    "File paths must be relative.\n",
+    "Do not put a JSON object, Markdown fence, or shell command inside `input`.\n\n",
+    "Few-shot examples. Each example is the exact string value for `input`.\n",
+    "Keep blank lines prefixed too: `+` for Add File, ` ` for Update File.\n\n",
+    "Create a new file:\n",
+    "*** Begin Patch\n",
+    "*** Add File: docs/demo.md\n",
+    "+# Demo @ alpha\n",
+    "+\n",
+    "+Before:\n",
+    "+- old note\n",
+    "+\n",
+    "+@@ literal heading\n",
+    "+After:\n",
+    "++ new note\n",
+    "*** End Patch\n\n",
+    "Update an existing file:\n",
+    "*** Begin Patch\n",
+    "*** Update File: src/example.py\n",
+    "@@ def frame(raw: str) -> str:\n",
+    "-    text = raw\n",
+    "     keep = True\n",
+    "-    return text\n",
+    "+    text = raw.strip()\n",
+    "+\n",
+    "+    return f\"@{text}\"\n",
+    "*** End Patch\n\n",
+    "Delete an existing file; this operation has no hunk body:\n",
+    "*** Begin Patch\n",
+    "*** Delete File: docs/old-notes.md\n",
+    "*** End Patch\n\n",
+    "Rename a file; Move to belongs to Update File and still needs a hunk:\n",
+    "*** Begin Patch\n",
+    "*** Update File: src/old_name.py\n",
+    "*** Move to: src/new_name.py\n",
+    "@@ class Runner:\n",
+    "-    label = \"old-name\"\n",
+    "+    label = \"new-name\"\n",
+    "     keep = True\n",
+    "-    route = \"/v1/@old\"\n",
+    "+    route = \"/v1/@new\"\n",
+    "*** End Patch",
+);
+
 const UNSUPPORTED_IMAGES_MESSAGE: &str = concat!(
     "Chat Completions request adapter ",
     "does not support images",
@@ -374,7 +443,7 @@ fn chat_tool_from_apply_patch(
     properties.insert(
         APPLY_PATCH_CHAT_COMPLETIONS_INPUT_FIELD.to_string(),
         JsonSchema::string(Some(
-            "Raw apply_patch input beginning with *** Begin Patch.".to_string(),
+            APPLY_PATCH_CHAT_COMPLETIONS_INPUT_DESCRIPTION.to_string(),
         )),
     );
     let parameters = JsonSchema::object(
@@ -387,7 +456,7 @@ fn chat_tool_from_apply_patch(
         r#type: ChatToolType::Function,
         function: ChatFunctionTool {
             name: freeform.name.clone(),
-            description: Some(freeform.description.clone()),
+            description: Some(APPLY_PATCH_CHAT_COMPLETIONS_DESCRIPTION.to_string()),
             parameters: serde_json::to_value(parameters).ok(),
             strict: Some(matches!(
                 strict_mode,
@@ -984,6 +1053,35 @@ mod tests {
         assert_eq!(request.tools[0].r#type, ChatToolType::Function);
         assert_eq!(request.tools[0].function.name, "apply_patch");
         assert_eq!(request.tools[0].function.strict, Some(false));
+        let description = request.tools[0]
+            .function
+            .description
+            .as_deref()
+            .expect("apply_patch description");
+        assert!(description.contains("Use the `apply_patch` tool to edit files."));
+        assert!(description.contains("confirming the target file context"));
+        assert!(description.contains("full file with its total line count"));
+        assert!(description.contains("50 lines before and 50 lines after"));
+        assert!(description.contains("target path does not already exist"));
+        assert!(description.contains("*** Begin Patch"));
+        assert!(description.contains("*** Add File: <path>"));
+        assert!(description.contains("*** Update File: <path>"));
+        assert!(description.contains("Few-shot examples."));
+        assert!(description.contains("Keep blank lines prefixed too"));
+        assert!(description.contains("*** Add File: docs/demo.md"));
+        assert!(description.contains("+# Demo @ alpha"));
+        assert!(description.contains("+@@ literal heading"));
+        assert!(description.contains("++ new note"));
+        assert!(description.contains("@@ def frame(raw: str) -> str:"));
+        assert!(description.contains("     keep = True"));
+        assert!(description.contains("+    return f\"@{text}\""));
+        assert!(description.contains("this operation has no hunk body"));
+        assert!(description.contains("*** Delete File: docs/old-notes.md"));
+        assert!(description.contains("Move to belongs to Update File"));
+        assert!(description.contains("*** Move to: src/new_name.py"));
+        assert!(description.contains("+    route = \"/v1/@new\""));
+        assert!(description.contains("Do not put a JSON object"));
+        assert!(!description.contains("shell {\"command\""));
         let ChatMessage::Assistant { tool_calls, .. } = &request.messages[2] else {
             panic!("expected assistant tool call message");
         };
@@ -1039,6 +1137,10 @@ mod tests {
         assert_eq!(request.tools[0].function.strict, Some(true));
         assert_eq!(parameters["required"], serde_json::json!(["input"]));
         assert_eq!(parameters["additionalProperties"], serde_json::json!(false));
+        assert_eq!(
+            parameters["properties"]["input"]["description"],
+            serde_json::json!(super::APPLY_PATCH_CHAT_COMPLETIONS_INPUT_DESCRIPTION)
+        );
     }
 
     #[test]

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.131.0-deepseekx.3
+
+- 为 DeepSeek Chat Completions 的 `apply_patch` 工具描述加入紧凑
+  few-shot 示例和写入前上下文校验约束。
+- 明确 MCP resource 工具只读取已配置 MCP server 暴露的 resource，
+  避免把普通本地路径误当作 MCP resource。
+
 ## 0.131.0-deepseekx.1
 
 - 发布 DeepSeekX npm 包 `@meomeo-dev/deepseekx`。

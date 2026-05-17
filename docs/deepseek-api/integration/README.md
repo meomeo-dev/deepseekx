@@ -12,6 +12,9 @@
   多轮对话、KV cache 和 tool calls 官方建议。
 - `deepseek-json-output-repair-design.md`：记录 DeepSeek JSON Output
   通过本地校验门和虚拟文件 patch repair 模拟 strict 的方案。
+- `deepseek-apply-patch-chat-completions.md`：记录 DeepSeek Chat
+  Completions 不支持 freeform/Lark grammar 时，`apply_patch` 如何降级
+  为普通 function tool，并确定专用说明的改写基准。
 - `provider-profile-provider-id-analysis.md`：分析 `profile + provider`
   配置形状、`/model` 列表来源，以及 DeepSeek provider ID 命名空间。
 - `deepseekx-user-facing-surface.md`：记录 DeepSeekX 换皮的用户感知面、
@@ -38,6 +41,11 @@ OpenAI Chat Completions 格式的 `/chat/completions`。DeepSeek 接入需要
 Chat Completions 适配器必须把 `apply_patch` 做成兼容映射。OpenAI
 Responses 和 DeepSeek Chat Completions 在 Codex 层的可用工具行为应
 保持一致，不能通过关闭 `apply_patch` 规避 provider 差异。
+DeepSeek 的 `apply_patch` 映射应保留 `{ input: raw_patch }` function
+tool 形状，并在 Chat Completions adapter 的 tool description 中注入
+patch 语法说明；该说明以 `gpt_5_2_prompt.md` 的 `apply_patch` 段落为
+基准，不应原样复用面向 shell fallback 的
+`apply_patch_tool_instructions.md`。
 MCP namespace 工具在 DeepSeek 路径下应降级为普通 function tools，
 例如 `mcp__context7__query_docs`，避免用户配置的 MCP server 因
 Responses namespace wire shape 不兼容而不可见。

@@ -32,6 +32,8 @@ metadata 指向公开 GitHub。
 - 不默认删除文件、不推送公开仓库。
 - 不把 `_tasks/`、`_workflows/`、`.deep-research/`、`.env` 或 `.npmrc`
   纳入公开发布内容。
+- `.deep-research/deep-research.sqlite` 是当前仓库有意跟踪的研究数据库
+  例外；其他 `.deep-research/` 路径仍按禁止公开路径处理。
 - `.agents/`、`.codex/`、`.deepseekx/` 是本项目允许公开的内容，但其中
   不得包含凭据、本地 cache、runtime state 或未公开任务内容。
 
@@ -65,7 +67,8 @@ metadata 指向公开 GitHub。
 
 禁止公开：
 
-- `_tasks/`、`_workflows/`、`.deep-research/`。
+- `_tasks/`、`_workflows/`、`.deep-research/`，但允许已确认的
+  `.deep-research/deep-research.sqlite`。
 - `.env`、`.npmrc`、cache、runtime output、tmp、coverage。
 - token、key、secret、credential。
 - `.agents/`、`.codex/`、`.deepseekx/` 可以公开同步，但其中不得包含

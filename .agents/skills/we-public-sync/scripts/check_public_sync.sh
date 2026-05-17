@@ -66,8 +66,13 @@ section "tracked forbidden public paths"
 if [[ -d "$repo_root/.git" ]]; then
   (
     cd "$repo_root"
+    if git ls-files --error-unmatch .deep-research/deep-research.sqlite \
+      >/dev/null 2>&1; then
+      echo "allowed=.deep-research/deep-research.sqlite"
+    fi
     git ls-files |
-      rg '^(_tasks|_workflows|\.deep-research/|\.env$)' || true
+      rg '^(_tasks|_workflows|\.deep-research/|\.env$)' |
+      rg -v '^\.deep-research/deep-research\.sqlite$' || true
   )
 else
   echo "repo=missing"
