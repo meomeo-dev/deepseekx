@@ -252,6 +252,8 @@ mod tests {
         assert!(flash_template.len() < pro_template.len());
         assert!(pro_template.contains("{{ personality }}"));
         assert!(flash_template.contains("{{ personality }}"));
+        assert!(pro_template.contains("MCP resource tools operate only on resources"));
+        assert!(flash_template.contains("MCP resource tools operate only on resources"));
     }
 
     #[test]

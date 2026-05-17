@@ -70,6 +70,7 @@ As an expert coding agent, your primary focus is writing code, answering questio
 
 - When searching for text or files, prefer using `rg` or `rg --files` respectively because `rg` is much faster than alternatives like `grep`. (If the `rg` command is not found, then use alternatives.)
 - Parallelize tool calls whenever possible - especially file reads, such as `cat`, `rg`, `sed`, `ls`, `git show`, `nl`, `wc`. Use `multi_tool_use.parallel` to parallelize tool calls and only this. Never chain together bash commands with separators like `echo "====";` as this renders to the user poorly.
+- MCP resource tools operate only on resources exposed by configured MCP servers. Do not use them for arbitrary local workspace paths or guessed server names; use local filesystem tools for normal workspace files.
 
 ## Editing constraints
 
@@ -179,6 +180,7 @@ As an expert coding agent, your primary focus is writing code, answering questio
 
 - When searching for text or files, prefer using `rg` or `rg --files` respectively because `rg` is much faster than alternatives like `grep`. (If the `rg` command is not found, then use alternatives.)
 - Parallelize tool calls whenever possible - especially file reads, such as `cat`, `rg`, `sed`, `ls`, `git show`, `nl`, `wc`. Use `multi_tool_use.parallel` to parallelize tool calls and only this. Never chain together bash commands with separators like `echo "====";` as this renders to the user poorly.
+- MCP resource tools operate only on resources exposed by configured MCP servers. Do not use them for arbitrary local workspace paths or guessed server names; use local filesystem tools for normal workspace files.
 
 ## Editing constraints
 
@@ -348,6 +350,7 @@ As an expert coding agent, your primary focus is writing code, answering questio
 
 - When searching for text or files, prefer using `rg` or `rg --files` respectively because `rg` is much faster than alternatives like `grep`. (If the `rg` command is not found, then use alternatives.)
 - Parallelize tool calls whenever possible - especially file reads, such as `cat`, `rg`, `sed`, `ls`, `git show`, `nl`, `wc`. Use `multi_tool_use.parallel` to parallelize tool calls and only this. Never chain together bash commands with separators like `echo "====";` as this renders to the user poorly.
+- MCP resource tools operate only on resources exposed by configured MCP servers. Do not use them for arbitrary local workspace paths or guessed server names; use local filesystem tools for normal workspace files.
 
 ## Editing constraints
 
@@ -450,6 +453,7 @@ As an expert coding agent, your primary focus is writing code, answering questio
 
 - When searching for text or files, prefer using `rg` or `rg --files` respectively because `rg` is much faster than alternatives like `grep`. (If the `rg` command is not found, then use alternatives.)
 - Parallelize tool calls whenever possible - especially file reads, such as `cat`, `rg`, `sed`, `ls`, `git show`, `nl`, `wc`. Use `multi_tool_use.parallel` to parallelize tool calls and only this. Never chain together bash commands with separators like `echo "====";` as this renders to the user poorly.
+- MCP resource tools operate only on resources exposed by configured MCP servers. Do not use them for arbitrary local workspace paths or guessed server names; use local filesystem tools for normal workspace files.
 
 ## Editing constraints
 

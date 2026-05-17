@@ -9,7 +9,7 @@ fn list_mcp_resources_tool_matches_expected_spec() {
         create_list_mcp_resources_tool(),
         ToolSpec::Function(ResponsesApiTool {
             name: "list_mcp_resources".to_string(),
-            description: "Lists resources provided by MCP servers. Resources allow servers to share data that provides context to language models, such as files, database schemas, or application-specific information. Prefer resources over web search when possible.".to_string(),
+            description: "Lists resources provided by MCP servers. Resources allow servers to share data that provides context to language models, such as files, database schemas, or application-specific information. Prefer resources over web search when possible. Use only for resources exposed by configured MCP servers. A resource may represent a file, database object, document, or virtual filesystem entry, but the server and uri must come from a configured MCP resource listing. Do not use MCP resource tools for arbitrary local workspace paths, absolute filesystem paths, or guessed server names. For normal local workspace files, use local filesystem tools instead.".to_string(),
             strict: false,
             defer_loading: None,
             parameters: JsonSchema::object(BTreeMap::from([
@@ -39,7 +39,7 @@ fn list_mcp_resource_templates_tool_matches_expected_spec() {
         create_list_mcp_resource_templates_tool(),
         ToolSpec::Function(ResponsesApiTool {
             name: "list_mcp_resource_templates".to_string(),
-            description: "Lists resource templates provided by MCP servers. Parameterized resource templates allow servers to share data that takes parameters and provides context to language models, such as files, database schemas, or application-specific information. Prefer resource templates over web search when possible.".to_string(),
+            description: "Lists resource templates provided by MCP servers. Parameterized resource templates allow servers to share data that takes parameters and provides context to language models, such as files, database schemas, or application-specific information. Prefer resource templates over web search when possible. Use only for resources exposed by configured MCP servers. A resource may represent a file, database object, document, or virtual filesystem entry, but the server and uri must come from a configured MCP resource listing. Do not use MCP resource tools for arbitrary local workspace paths, absolute filesystem paths, or guessed server names. For normal local workspace files, use local filesystem tools instead.".to_string(),
             strict: false,
             defer_loading: None,
             parameters: JsonSchema::object(BTreeMap::from([
@@ -70,7 +70,7 @@ fn read_mcp_resource_tool_matches_expected_spec() {
         ToolSpec::Function(ResponsesApiTool {
             name: "read_mcp_resource".to_string(),
             description:
-                "Read a specific resource from an MCP server given the server name and resource URI."
+                "Read a specific resource from an MCP server given the server name and resource URI. Use only for resources exposed by configured MCP servers. A resource may represent a file, database object, document, or virtual filesystem entry, but the server and uri must come from a configured MCP resource listing. Do not use MCP resource tools for arbitrary local workspace paths, absolute filesystem paths, or guessed server names. For normal local workspace files, use local filesystem tools instead."
                     .to_string(),
             strict: false,
             defer_loading: None,
@@ -78,14 +78,14 @@ fn read_mcp_resource_tool_matches_expected_spec() {
                     (
                         "server".to_string(),
                         JsonSchema::string(Some(
-                                "MCP server name exactly as configured. Must match the 'server' field returned by list_mcp_resources."
+                                "MCP server name exactly as configured. Must match a server field returned by list_mcp_resources or another known configured MCP resource listing. Do not invent server names."
                                     .to_string(),
                             ),),
                     ),
                     (
                         "uri".to_string(),
                         JsonSchema::string(Some(
-                                "Resource URI to read. Must be one of the URIs returned by list_mcp_resources."
+                                "Resource URI to read. Must be one of the URIs returned by list_mcp_resources for the same configured MCP server, unless already known from an equivalent configured MCP resource listing. Do not pass arbitrary local file paths."
                                     .to_string(),
                             ),),
                     ),
